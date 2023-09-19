@@ -1,0 +1,22 @@
+# Setting official Python runtime as base image
+FROM python:3.11-slim
+
+# Add the docker-compose-wait tool to the image
+ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.9.0/wait /wait
+RUN chmod +x /wait
+
+# Setting environment variable
+ENV PYTHONBUFFERED 1
+
+# Creating and setting the working directory
+WORKDIR /app
+
+# Installing dependencies
+COPY requirements.txt /app/
+RUN pip install --upgrade pip && pip install -r requirements.txt
+
+# Copying current directory content into the image working directory
+COPY . /app/
+
+# Run migrations and start the Django server after waiting for the database
+CMD /wait && python manage.py migrate && python manage.py runserver 0.0.0.0:8000
