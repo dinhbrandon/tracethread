@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    "accounts",
     "querier.apps.QuerierConfig",
     "api.apps.ApiConfig",
     "rest_framework",
