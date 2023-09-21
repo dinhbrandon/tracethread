@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    "JobNotebook.apps.JobnotebookConfig",
     "accounts.apps.AccountsConfig",
     "querier.apps.QuerierConfig",
     "api.apps.ApiConfig",
