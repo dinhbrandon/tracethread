@@ -7,6 +7,7 @@ from .views import (
     ListUsersAPI,
     ChangePasssword,
     EditUser,
+    DeleteAccount,
     )
 
 urlpatterns = [
@@ -17,4 +18,5 @@ urlpatterns = [
   path('users', ListUsersAPI.as_view()),
   path('edit-user-details', EditUser.as_view()),
   path('change-password', ChangePasssword.as_view()),
+  path('delete-account', DeleteAccount.as_view()),
 ]
