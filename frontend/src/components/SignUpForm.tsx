@@ -59,14 +59,6 @@ const SignUpForm = () => {
             return '';
         }
     };
-    
-
-    // const [errors, setErrors] = useState<Partial<FormData>>({}); //Store validation errors
-
-    // const validateEmail = (email: string) => {
-    //     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    //     return emailPattern.test(email);
-    // }
 
     const handleFormData = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -80,13 +72,6 @@ const SignUpForm = () => {
             ...prevErrors,
             [name]: validationError,
         }));
-        // if (name === 'email') {
-        //     if (!validateEmail(value)) {
-        //         setErrors((prevErrors) => ({ ...prevErrors, email: 'Invalid email format' }));
-        //     } else {
-        //         setErrors((prevErrors) => ({ ...prevErrors, email: undefined }));
-        //     }
-        // }
       };
 
       const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -94,27 +79,23 @@ const SignUpForm = () => {
 
         setErrors({});
     
-        // if (Object.keys(errors).length === 0) {
-            try {
-                const response = await fetch('http://localhost:8000/accounts/register', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(formData),
-                });
-    
-                if (response.ok) {
-                    navigate('/');
-                } else {
-                    console.error('Error:', response.statusText);
-                }
-            } catch (error) {
-                console.error('Network error:', error);
+        try {
+            const response = await fetch('http://localhost:8000/accounts/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+            });
+
+            if (response.ok) {
+                navigate('/');
+            } else {
+                console.error('Error:', response.statusText);
             }
-        // } else {
-        //     console.error('Form has validation errors. Cannot submit.');
-        // }
+        } catch (error) {
+            console.error('Network error:', error);
+        }
     };
 
     return (
