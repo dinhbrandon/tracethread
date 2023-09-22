@@ -22,5 +22,5 @@ urlpatterns = [
     path("api/", include("api.urls")),
     path("accounts/", include("accounts.urls")),
     path("querier/", include("querier.urls")),
-    path("jobnotebook/", include("jobnotebook.urls")),
+    path("jobnotebook/", include("JobNotebook.urls")),
 ]

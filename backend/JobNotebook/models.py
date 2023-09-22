@@ -1,6 +1,6 @@
 from django.db import models
 from querier.models import JobListing
-from accounts.models import User
+from django.contrib.auth.models import User
 
 
 class Column(models.Model):
