@@ -72,57 +72,13 @@ class DeleteJobListing(generics.DestroyAPIView):
             raise PermissionDenied("You cannot delete this job listing.")
 
 
-class SearchJobListing(generics.ListAPIView):
-    queryset = JobListing.objects.all()
-    serializer_class = JobListingSerializer
-    authentication_classes = (TokenAuthentication,)
-    permission_classes = (AllowAny,)
+# class SearchJobListing(generics.ListAPIView):
+#     queryset = JobListing.objects.all()
+#     serializer_class = JobListingSerializer
+#     authentication_classes = (TokenAuthentication,)
+#     permission_classes = (AllowAny,)
 
-    def build_queries(self, query_params):
-        and_conditions = []
-        or_conditions = []
-
-        for operator, conditions_list in [('and_conditions', and_conditions), ('or_conditions', or_conditions)]:
-            conditions = query_params.get(operator, [])
-            if conditions:
-                try:
-                    conditions = json.loads(conditions)
-                    for condition in conditions:
-                        field = condition.get('field')
-                        value = condition.get('value')
-                        action = condition.get('action', 'icontains')
-                        if field and value:
-                            if field.endswith('_not'):
-                                field = field[:-4]
-                                if field == 'company':
-                                    field = 'company_name'
-                                kwargs = {f'{field}__isnull': True}
-                                conditions_list.append(Q(**kwargs) | Q(**{f'{field}__{action}': value}))
-                            elif '__' in field:
-                                kwargs = {field: value}
-                                conditions_list.append(Q(**kwargs))
-                            else:
-                                kwargs = {f'{field}__{action}': value}
-                                conditions_list.append(Q(**kwargs))
-                except json.JSONDecodeError:
-                    pass
-
-        return and_conditions, or_conditions
-
-    def get_queryset(self):
-        query_params = self.request.query_params
-        and_conditions, or_conditions = self.build_queries(query_params)
-
-        if and_conditions and or_conditions:
-            queryset = self.queryset.filter(Q(*and_conditions) & Q(*or_conditions))
-        elif and_conditions:
-            queryset = self.queryset.filter(*and_conditions)
-        elif or_conditions:
-            queryset = self.queryset.filter(Q(*or_conditions))
-        else:
-            queryset = self.queryset.none()
-
-        return queryset
+#     def get_queryset(self):
 
 
 #     def get_queryset(self):
