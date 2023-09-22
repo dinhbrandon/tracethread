@@ -1,17 +1,23 @@
 from django.shortcuts import render
-from functools import reduce
-from operator import or_, and_
+from .models import JobListing
 from .serializers import JobListingSerializer
-from rest_framework import generics, authentication, permissions
+from rest_framework import generics, authentication, permissions, viewsets
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.exceptions import PermissionDenied
+from rest_framework.response import Response
+from rest_framework.exceptions import ParseError
 from django.core.exceptions import ValidationError
 from .models import JobListing
 from django.db.models import Q
+from functools import reduce
+from operator import or_, and_
 import json
+import ast
+import re
 
-# Create your views here.
+
+
 # This view creates a new job listing (user access creation)
 
 
@@ -71,66 +77,101 @@ class DeleteJobListing(generics.DestroyAPIView):
         else:
             raise PermissionDenied("You cannot delete this job listing.")
 
-
-# class SearchJobListing(generics.ListAPIView):
-#     queryset = JobListing.objects.all()
-#     serializer_class = JobListingSerializer
-#     authentication_classes = (TokenAuthentication,)
-#     permission_classes = (AllowAny,)
-
-#     def get_queryset(self):
+# Define JobListingViewSet class for handling CRUD operations of Job Listings.
+# It inherits from ModelViewSet which provides the implementations
+# for various CRUD operations.
 
 
-#     def get_queryset(self):
-#         queryset = JobListing.objects.all()
-#         query_params = self.request.query_params
-# # This view gets list of all job listings
-# # by filtering the queryset based on the query parameters
-#         fields_to_query = [
-#             'job_title',
-#             'company_name',
-#             'listing_details',
-#             'description',
-#             'location',
-#             'url',
-#         ]
-# # This loop checks if the query parameters contain any of the fields
-# # and filters the queryset accordingly
-#         for field in fields_to_query:
-#             contains_value = query_params.get(f'{field}_contains', None)
-#             not_contains_value = query_params.get(f'{field}_not_contains', None)
-#             contains_any_value = query_params.get(f'{field}_contains_any', None)
+class JobListingViewSet(viewsets.ModelViewSet):
+    # Specifying the serializer class for this viewset
+    serializer_class = JobListingSerializer
 
-# # This condition checks if the query parameters contain any of the fields
-#             if contains_value:
-#                 kwargs = {f'{field}__icontains': contains_value}
-#                 queryset = queryset.filter(**kwargs)
+    # Overriding the get_queryset method to return all JobListing objects
+    def get_queryset(self):
+        return JobListing.objects.all()
 
-# # This condition checks if the query parameters does not contain any of the fields
-#             if not_contains_value:
-#                 kwargs = {f'{field}__icontains': not_contains_value}
-#                 queryset = queryset.exclude(**kwargs)
-
-# # This condition checks if the query parameters
-# # contain a field with multiple values
-# # separated by commas for an 'OR' query
-# # For example, if the query parameters contain
-# # job_title_contains_any=Software Engineer,Data Analyst
-# # then the queryset will be filtered to return all job listings
-# # that contain either Software Engineer or Data Analyst
-#             if contains_any_value:
-#                 values = contains_any_value.split(',')
-#                 queries = [Q(**{f'{field}__icontains': value}) for value in values]
-#                 queryset = queryset.filter(reduce(operator.or_, queries))
-
-#         return queryset
+# Define SearchJobListing class for searching job listings.
+# It inherits from ListAPIView which provides the implementation
+# for listing a queryset.
 
 
-# # An example of a query URL:
+class SearchJobListing(generics.ListAPIView):
+    # Specifying the serializer, authentication and permission classes
+    serializer_class = JobListingSerializer
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (AllowAny,)
 
-#     # http://localhost:8000/querier/search-job-listing/?job_title_contains=Software%20Engineer&company_name_contains=Google&location_contains=New%20York
-#     # In this example, the query parameters are:
-#     # job_title_contains = Software Engineer, written as Software%20Engineer
-#     # company_name_contains = Google, written as Google
-#     # location_contains = New York, written as New%20York
-#     # The %20 is the URL encoding for a space character
+    # Static method to combine query nodes into a single Q object.
+    # The Q object will be used to filter queryset based on the query.
+    @staticmethod
+    def q_combine(node: ast.AST) -> Q:
+        # Handle different types of AST nodes
+        if isinstance(node, ast.Module):
+            assert len(node.body) == 1 and isinstance(node.body[0], ast.Expr)
+            return SearchJobListing.q_combine(node.body[0].value)
+
+        if isinstance(node, ast.BoolOp):
+            # Handle AND boolean operation
+            if isinstance(node.op, ast.And):
+                q = Q()
+                for val in node.values:
+                    q &= SearchJobListing.q_combine(val)
+                return q
+            # Handle OR boolean operation
+            if isinstance(node.op, ast.Or):
+                q = ~Q()
+                for val in node.values:
+                    q |= SearchJobListing.q_combine(val)
+                return q
+
+        if isinstance(node, ast.BinOp):
+            # Handle bitwise OR
+            if isinstance(node.op, ast.BitOr):
+                return SearchJobListing.q_combine(node.left) | SearchJobListing.q_combine(node.right)
+            # Handle bitwise AND
+            elif isinstance(node.op, ast.BitAnd):
+                return SearchJobListing.q_combine(node.left) & SearchJobListing.q_combine(node.right)
+            else:
+                raise ValueError(f'unsupported operator {type(node.op).__name__}')
+
+        if isinstance(node, ast.UnaryOp):
+            # Handle NOT unary operation
+            assert isinstance(node.op, ast.Not)
+            return ~SearchJobListing.q_combine(node.operand)
+
+        if isinstance(node, ast.Compare):
+            # Compile comparison into Q object
+            assert isinstance(node.left, ast.Name)
+            assert len(node.ops) == 1 and isinstance(node.ops[0], ast.Eq)
+            assert len(node.comparators) == 1 and isinstance(node.comparators[0], ast.Constant)
+            return Q(**{node.left.id + '__icontains': str(node.comparators[0].value)})
+
+        # Raise error for unexpected AST node type
+        raise ValueError('unexpected node {}'.format(type(node).__name__))
+
+    # Static method to compile the query expression into Q object.
+    @staticmethod
+    def compile_q(expression: str) -> Q:
+        # Standardize the expression and parse into AST
+        std_expr = (expression.replace("=", "==")
+                    .replace("~", " not ")
+                    .replace("&", " and ")
+                    .replace("|", " or ").lstrip())
+        try:
+            return SearchJobListing.q_combine(ast.parse(std_expr))
+        except SyntaxError as e:
+            raise ParseError(f"Invalid query parameter: {e.text} at offset {e.offset}")
+
+    # Overriding get_queryset to filter based on query parameter 'q'
+    def get_queryset(self):
+        queryset = JobListing.objects.all()
+        # Fetch 'q' query parameter from the request
+        query_param = self.request.query_params.get('q', None)
+        if query_param:
+            try:
+                # Compile 'q' into Q object and filter the queryset
+                q_object = self.compile_q(query_param)
+                queryset = queryset.filter(q_object)
+            except Exception as e:
+                raise ParseError("Invalid query parameter: {}".format(e))
+        return queryset
