@@ -22,30 +22,53 @@ const SignUpForm = () => {
         password2: '',
     });
 
+    // const [errors, setErrors] = useState<Partial<FormData>>({}); //Store validation errors
+
+    // const validateEmail = (email: string) => {
+    //     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    //     return emailPattern.test(email);
+    // }
+
     const handleFormData = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setFormData((prevData) => ({
           ...prevData,
           [name]: value,
         }));
+
+        // if (name === 'email') {
+        //     if (!validateEmail(value)) {
+        //         setErrors((prevErrors) => ({ ...prevErrors, email: 'Invalid email format' }));
+        //     } else {
+        //         setErrors((prevErrors) => ({ ...prevErrors, email: undefined }));
+        //     }
+        // }
       };
 
-    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+      const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-
-        const response = await fetch('http://localhost:8000/accounts/register', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(formData),
-        });
-
-        if (response.ok) {
-            navigate('/');
-        } else {
-            console.error('Error:', response.statusText);
-        }
+    
+        // if (Object.keys(errors).length === 0) {
+            try {
+                const response = await fetch('http://localhost:8000/accounts/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData),
+                });
+    
+                if (response.ok) {
+                    navigate('/');
+                } else {
+                    console.error('Error:', response.statusText);
+                }
+            } catch (error) {
+                console.error('Network error:', error);
+            }
+        // } else {
+        //     console.error('Form has validation errors. Cannot submit.');
+        // }
     };
 
     return (
