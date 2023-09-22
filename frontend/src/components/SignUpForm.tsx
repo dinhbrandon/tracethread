@@ -1,12 +1,19 @@
-import React from 'react'; // Add a line break here
-
+import { useState, ChangeEvent, FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+
+interface FormData {
+    first_name: string;
+    last_name: string;
+    email: string;
+    username: string;
+    password: string;
+    password2: string;
+}
 
 const SignUpForm = () => {
     const navigate = useNavigate();
 
-    const [formData, setFormData] = useState({
+    const [formData, setFormData] = useState<FormData>({
         first_name: '',
         last_name: '',
         email: '',
@@ -15,17 +22,15 @@ const SignUpForm = () => {
         password2: '',
     });
 
-    const handleFormData = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value;
-        const inputName = e.target.name;
+    const handleFormData = (e: ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setFormData((prevData) => ({
+          ...prevData,
+          [name]: value,
+        }));
+      };
 
-        setFormData({
-            ...formData,
-            [inputName]: value,
-        });
-    };
-
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         const response = await fetch('http://localhost:8000/accounts/register', {
