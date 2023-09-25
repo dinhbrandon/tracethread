@@ -115,6 +115,7 @@ const SignUpForm = () => {
             <input
               type="text"
               name="first_name"
+              pattern="[A-Za-zÀ-ÖØ-öø-ÿ\-']+"
               value={formData.first_name}
               onChange={handleFormData}
             />
@@ -125,6 +126,7 @@ const SignUpForm = () => {
             <input
               type="text"
               name="last_name"
+              pattern="[A-Za-zÀ-ÖØ-öø-ÿ\-']+"
               value={formData.last_name}
               onChange={handleFormData}
             />
