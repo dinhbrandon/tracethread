@@ -15,6 +15,7 @@ from operator import or_, and_
 import json
 import ast
 import re
+import urllib.parse
 
 
 
@@ -175,3 +176,4 @@ class SearchJobListing(generics.ListAPIView):
             except Exception as e:
                 raise ParseError("Invalid query parameter: {}".format(e))
         return queryset
+    
