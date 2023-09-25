@@ -74,10 +74,20 @@ const SignUpForm = () => {
         }));
       };
 
+      const capitalizeName = (name: string): string => {
+        return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
+      };
+
       const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         setErrors({});
+
+        const formDataWithCapitalizedNames = {
+          ...formData,
+          first_name: capitalizeName(formData.first_name),
+          last_name: capitalizeName(formData.last_name),
+        };
     
         try {
             const response = await fetch('http://localhost:8000/accounts/register', {
@@ -85,7 +95,7 @@ const SignUpForm = () => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(formData),
+                body: JSON.stringify(formDataWithCapitalizedNames),
             });
 
             if (response.ok) {
