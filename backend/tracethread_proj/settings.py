@@ -57,6 +57,21 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
+ALLOWED_HOSTS = [
+    "localhost",
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:3000",
+]
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+]
+CORS_ALLOW_CREDENTIALS = True
+
+
+
 ROOT_URLCONF = "tracethread_proj.urls"
 
 TEMPLATES = [
