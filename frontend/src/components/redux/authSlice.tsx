@@ -38,7 +38,6 @@ const authSlice = createSlice({
     },
     getUserDetailsSuccess: (state, action: PayloadAction<{ username: string }>) => {
       state.username = action.payload.username;
-      console.log(state.username)
     },
   },
 });

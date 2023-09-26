@@ -20,7 +20,6 @@ export const loginUser = (email: string, password: string) => async (dispatch: a
 
     if (response.ok) {
       const data = await response.json();
-      console.log(data)
       // Dispatch the loginSuccess action upon successful login
       dispatch(loginSuccess({username: data.username, token: data.token}));
     } else {
@@ -52,7 +51,6 @@ export const getUserDetails = () => async (dispatch: AppDispatch, getState: () =
 
     if (response.ok) {
       const data = await response.json();
-      console.log(data)
       // Dispatch the getUserDetailsSuccess action upon successful fetching
       dispatch(getUserDetailsSuccess({ username: data.username }));
     } else {

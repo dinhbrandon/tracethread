@@ -1,28 +1,16 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { logout } from './redux/authActions'; // Import your logout action
+import { logout } from './redux/authActions';
 import { RootState } from './redux/store';
 
 const Nav = () => {
   const dispatch = useDispatch();
   const loggedIn = useSelector((state: RootState) => state.auth.loggedIn);
+  const username = useSelector((state: RootState) => state.auth.username);
 
   const handleLogout = () => {
-    // Dispatch the logout action to update the authentication state
     dispatch(logout());
-    console.log('logout');
-
-    // Optionally, you can perform additional logout-related actions here
-
-    // Redirect or navigate to the desired page, e.g., the home page
+    // Redirect or navigate to the desired page
     // navigate('/');
-  };
-
-  const handleLogin = () => {
-    // Implement your login logic or navigation here
-  };
-
-  const handleSignup = () => {
-    // Implement your signup logic or navigation here
   };
 
   return (
@@ -37,18 +25,21 @@ const Nav = () => {
               <a href="http://localhost:3000/dashboard">Dashboard</a>
             </li>
             <li>
+              <span>{username}</span>
+            </li>
+            <li>
               <button onClick={handleLogout}>Logout</button>
             </li>
           </>
         ) : (
           <>
             <li>
-              <a href="http://localhost:3000/signup" onClick={handleSignup}>
+              <a href="http://localhost:3000/signup">
                 Sign up
               </a>
             </li>
             <li>
-              <a href="http://localhost:3000/login" onClick={handleLogin}>
+              <a href="http://localhost:3000/login">
                 Login
               </a>
             </li>
