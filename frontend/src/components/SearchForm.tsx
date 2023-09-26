@@ -75,20 +75,27 @@ function CustomQueryBuilder({ onSearch }) {
             <div>
                 Fields:
                 {fields.map(field => (
-                    <button key={field.name} onClick={() => addFieldToQuery(field)}>
-                        {field.label}
+                    <button className='ml-2 mt-2 mr-2 bg-gray-500' key={field.name} onClick={() => addFieldToQuery(field)}>
+                        [{field.label}]
                     </button>
                 ))}
             </div>
             <div>
                 Operators:
                 {operators.map(op => (
-                    <button key={op} onClick={() => addOperatorToQuery(op)}>
-                        {op}
+                    <button className='ml-2 mt-2 mr-2 bg-gray-500' key={op} onClick={() => addOperatorToQuery(op)}>
+                        [ {op} ]
                     </button>
                 ))}
             </div>
-            <div>
+            <div className='mt-2'>
+                Commands:
+                <button className='ml-2 mr-2 bg-gray-500' onClick={generateQuery}>Search</button>
+                <button className='ml-2 mr-2 bg-gray-500' onClick={undoLastAction}>Undo</button>
+                <button className='ml-2 mr-2 bg-gray-500' onClick={clearAll}>Clear</button>
+            </div>
+            <div className='mt-2'>
+                <h2>QUERY</h2>
                 {queryComponents.map((comp, index) => (
                     <span key={index}>
                         {comp.type === 'field' ? (
@@ -110,9 +117,6 @@ function CustomQueryBuilder({ onSearch }) {
                     </span>
                 ))}
             </div>
-            <button onClick={generateQuery}>Search</button>
-            <button onClick={undoLastAction}>Undo</button>
-            <button onClick={clearAll}>Clear</button>
         </div>
     );
 }

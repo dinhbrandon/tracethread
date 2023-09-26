@@ -17,6 +17,9 @@ const Nav = () => {
     <nav className="bg-blue-500 h-12">
       <ul className="flex gap-4">
         <li>
+            <span>[{username}]</span>
+        </li>
+        <li>
           <a href="http://localhost:3000">Home</a>
         </li>
         {loggedIn ? (
@@ -25,7 +28,7 @@ const Nav = () => {
               <a href="http://localhost:3000/dashboard">Dashboard</a>
             </li>
             <li>
-              <span>{username}</span>
+              <a href="http://localhost:3000/search">Search</a>
             </li>
             <li>
               <button onClick={handleLogout}>Logout</button>
