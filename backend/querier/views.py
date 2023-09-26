@@ -8,7 +8,6 @@ from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 from rest_framework.exceptions import ParseError
 from django.core.exceptions import ValidationError
-from .models import JobListing
 from django.db.models import Q
 from functools import reduce
 from operator import or_, and_
@@ -95,7 +94,6 @@ class JobListingViewSet(viewsets.ModelViewSet):
 # It inherits from ListAPIView which provides the implementation
 # for listing a queryset.
 
-
 class SearchJobListing(generics.ListAPIView):
     # Specifying the serializer, authentication and permission classes
     serializer_class = JobListingSerializer
@@ -145,7 +143,36 @@ class SearchJobListing(generics.ListAPIView):
             assert isinstance(node.left, ast.Name)
             assert len(node.ops) == 1 and isinstance(node.ops[0], ast.Eq)
             assert len(node.comparators) == 1 and isinstance(node.comparators[0], ast.Constant)
-            return Q(**{node.left.id + '__icontains': str(node.comparators[0].value)})
+            search_value = str(node.comparators[0].value)
+            
+            # Check if search_value is empty or just whitespace
+            if not search_value.strip():
+                raise ParseError("Search value is empty or whitespace only.")
+
+            # Handle exact match
+            if search_value.startswith('"') and search_value.endswith('"'):
+                exact_value = search_value[1:-1]
+                return Q(**{node.left.id + '__icontains': exact_value})
+
+            # Split the search value into words
+            words = search_value.split()
+            
+            # Ensure there's at least one word to search for
+            if not words:
+                raise ParseError("No valid search terms found in the query.")
+
+            # Build a list of Q objects for each word
+            q_objects = [Q(**{node.left.id + '__icontains': word}) for word in words]
+
+            # Start with the first Q object
+            combined_q = q_objects[0]
+
+            # Combine all other Q objects using AND
+            for q in q_objects[1:]:
+                combined_q &= q
+
+            return combined_q
+
 
         # Raise error for unexpected AST node type
         raise ValueError('unexpected node {}'.format(type(node).__name__))
