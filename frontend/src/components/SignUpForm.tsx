@@ -110,6 +110,7 @@ const SignUpForm = () => {
 
     return (
         <form onSubmit={handleSubmit}>
+          <h1>Sign Up</h1>
           <label>
             First Name:
             <input

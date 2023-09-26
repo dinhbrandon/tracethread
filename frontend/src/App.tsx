@@ -1,23 +1,26 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import './App.css'
-import SignUpForm from './components/SignUpForm'
-import LoginForm from "./components/LoginForm";
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { Provider } from 'react-redux';
+import store from './components/redux/store'; // Import your Redux store
+import Nav from './components/Nav';
+import SignUpForm from './components/SignUpForm';
+import LoginForm from './components/LoginForm';
+import Dashboard from './components/Dashboard';
 
 function App() {
-
-
   return (
-    <div>
-      <BrowserRouter>
-      {/* <Nav /> */}
-      <Routes>
-        <Route path="/signup" element={<SignUpForm />} />
-        <Route path="/login" element={<LoginForm />} />
-      </Routes>
-      Tracethread
-      </BrowserRouter>
-    </div>
-  )
+    <Provider store={store}>
+      <div>
+        <BrowserRouter>
+          <Nav />
+          <Routes>
+            <Route path="/signup" element={<SignUpForm />} />
+            <Route path="/login" element={<LoginForm />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+          </Routes>
+        </BrowserRouter>
+      </div>
+    </Provider>
+  );
 }
 
-export default App
+export default App;
