@@ -2,13 +2,20 @@ import { configureStore } from '@reduxjs/toolkit';
 import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import authReducer from './authSlice';
+import jobReducer from './jobSlice';
 
-const persistConfig = {
-  key: 'root',
+const persistConfigAuth = {
+  key: 'auth',
   storage,
 };
 
-const persistedReducer = persistReducer(persistConfig, authReducer);
+const persistConfigJob = {
+  key: 'job',
+  storage,
+};
+
+const persistedAuthReducer = persistReducer(persistConfigAuth, authReducer);
+const persistedJobReducer = persistReducer(persistConfigJob, jobReducer);
 
 const customizedMiddleware = (getDefaultMiddleware: any) =>
   getDefaultMiddleware({
@@ -17,7 +24,8 @@ const customizedMiddleware = (getDefaultMiddleware: any) =>
 
 const store = configureStore({
   reducer: {
-    auth: persistedReducer,
+    auth: persistedAuthReducer,
+    job: persistedJobReducer
   },
   middleware: customizedMiddleware
 });

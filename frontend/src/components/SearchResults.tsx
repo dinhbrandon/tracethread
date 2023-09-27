@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
+import { useDispatch } from 'react-redux';
+import { addJobToNotebook } from './redux/jobSlice';
 
 interface SearchResultsProps {
     encodedQuery: string;
+    onSelectJob: (job: JobListing) => void;
 }
 
-interface JobListing {
+export interface JobListing {
     id: number;
     job_title: string;
     company_name: string;
@@ -13,7 +16,9 @@ interface JobListing {
     location: string;
 }
 
+
 const SearchResults = ({ encodedQuery }: SearchResultsProps) => {
+    const dispatch = useDispatch();
     // Get the URL from SearchForm and make a request to the backend
     // Display the results in a table
     const [data, setData] = useState<JobListing[]>([]);
@@ -55,6 +60,10 @@ const SearchResults = ({ encodedQuery }: SearchResultsProps) => {
                         <td>{data.location}</td>
                         <td>{data.listing_details}</td>
                         <td>{data.description}</td>
+                        <td><button 
+                        className="rounded-xl w-6 bg-gradient-to-r from-cyan-500 to-blue-500"
+                        onClick={() => dispatch(addJobToNotebook(data))}
+                        >+</button></td>
                     </tr>
                 ))}
             </tbody>

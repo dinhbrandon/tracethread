@@ -7,6 +7,7 @@ import Nav from './components/Nav';
 import SignUpForm from './components/SignUpForm';
 import LoginForm from './components/LoginForm';
 import Dashboard from './components/Dashboard';
+import JobNotebook from './components/JobNotebook';
 
 function App() {
 
@@ -20,6 +21,7 @@ function App() {
               <Route path="/signup" element={<SignUpForm />} />
               <Route path="/login" element={<LoginForm />} />
               <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/jobnotebook" element={<JobNotebook />} />
             </Routes>
           </BrowserRouter>
         </div>

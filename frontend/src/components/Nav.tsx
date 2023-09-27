@@ -30,6 +30,9 @@ const Nav = () => {
             <li>
               <button onClick={handleLogout}>Logout</button>
             </li>
+            <li>
+              <a href="http://localhost:3000/jobnotebook">Job Notebook</a>
+            </li>
           </>
         ) : (
           <>
