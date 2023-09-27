@@ -145,15 +145,16 @@ const customEncodeURIComponent = (str: string): string => {
     );
 }
 
-// type SearchFormProps = {
-//     onSearch: (url: string) => void;
-//   }
-const SearchForm = () => {
+interface SearchFormProps {
+    onSearch: (query: string) => void;
+}
+
+const SearchForm = ({ onSearch }: SearchFormProps) => {
     const handleSearch = (query: string) => {
 
         const encodedQuery = customEncodeURIComponent(query);
         const url = `${BASE_URL}?q=${encodedQuery}`;
-        console.log(url);
+        onSearch(url);
 
     };
 

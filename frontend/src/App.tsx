@@ -10,10 +10,6 @@ import Dashboard from './components/Dashboard';
 import SearchForm from "./components/SearchForm";
 
 function App() {
-  
-  // const handleOnSearch = (url: string) => {
-  //   console.log(`Searching for ${url}`);
-  // }
 
   return (
     <Provider store={store}>

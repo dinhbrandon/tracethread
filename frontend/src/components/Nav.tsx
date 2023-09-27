@@ -28,9 +28,6 @@ const Nav = () => {
               <a href="http://localhost:3000/dashboard">Dashboard</a>
             </li>
             <li>
-              <a href="http://localhost:3000/search">Search</a>
-            </li>
-            <li>
               <button onClick={handleLogout}>Logout</button>
             </li>
           </>
