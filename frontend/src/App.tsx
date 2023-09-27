@@ -7,7 +7,6 @@ import Nav from './components/Nav';
 import SignUpForm from './components/SignUpForm';
 import LoginForm from './components/LoginForm';
 import Dashboard from './components/Dashboard';
-import SearchForm from "./components/SearchForm";
 
 function App() {
 
@@ -20,7 +19,6 @@ function App() {
             <Routes>
               <Route path="/signup" element={<SignUpForm />} />
               <Route path="/login" element={<LoginForm />} />
-              <Route path="/search" element={<SearchForm />} />
               <Route path="/dashboard" element={<Dashboard />} />
             </Routes>
           </BrowserRouter>
