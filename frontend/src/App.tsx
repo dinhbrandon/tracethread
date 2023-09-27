@@ -10,9 +10,10 @@ import Dashboard from './components/Dashboard';
 import SearchForm from "./components/SearchForm";
 
 function App() {
-  const handleOnSearch = (url: string) => {
-    console.log(`Searching for ${url}`);
-  }
+  
+  // const handleOnSearch = (url: string) => {
+  //   console.log(`Searching for ${url}`);
+  // }
 
   return (
     <Provider store={store}>
@@ -23,7 +24,7 @@ function App() {
             <Routes>
               <Route path="/signup" element={<SignUpForm />} />
               <Route path="/login" element={<LoginForm />} />
-              <Route path="/search" element={<SearchForm onSearch={handleOnSearch} />} />
+              <Route path="/search" element={<SearchForm />} />
               <Route path="/dashboard" element={<Dashboard />} />
             </Routes>
           </BrowserRouter>

@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 const BASE_URL = "http://localhost:8000/querier/search-job-listing/";
 
-const customEncodeURIComponent = (str) => {
+const customEncodeURIComponent = (str: string): string => {
     return encodeURIComponent(str)
         .replace(/\(/g, '%28')
         .replace(/\)/g, '%29')
@@ -11,9 +11,29 @@ const customEncodeURIComponent = (str) => {
         .replace(/~/g, '%7E');
 };   
 
-function CustomQueryBuilder({ onSearch }) {
-    const [queryComponents, setQueryComponents] = useState([]);
-    const [query, setQuery] = useState('');
+    enum Operator {
+        And = 'AND',
+        Or = 'OR',
+        Not = 'NOT',
+        OpenParenthesis = '(',
+        CloseParenthesis = ')'
+    }
+
+    // Type definitions
+    interface QueryComponent {
+        type: 'field' | 'operator';
+        value: Operator | string;
+        queryName?: string;
+        inputValue?: string;
+    }
+
+    interface CustomQueryBuilderProps {
+        onSearch: (query: string) => void;
+    }
+
+    function CustomQueryBuilder({ onSearch }: CustomQueryBuilderProps) {
+        const [queryComponents, setQueryComponents] = useState<QueryComponent[]>([]);
+        const [query, setQuery] = useState<string>('');
 
     const fields = [
         { name: 'job_title', label: 'Job Title' },
@@ -24,14 +44,18 @@ function CustomQueryBuilder({ onSearch }) {
         
     ];
 
-    const operators = ['AND', 'OR', 'NOT', '(', ')']; 
+    const operators = [Operator.And, Operator.Or, Operator.Not, Operator.OpenParenthesis, Operator.CloseParenthesis]; 
 
-    const addFieldToQuery = (field) => {
+    const addFieldToQuery = (field: { name: string, label: string }) => {
         setQueryComponents([...queryComponents, { type: 'field', value: field.label, queryName: field.name }]);
     };
 
-    const addOperatorToQuery = (operator) => {
-        setQueryComponents([...queryComponents, { type: 'operator', value: operator }]);
+    const addOperatorToQuery = (operator: Operator) => {
+        const newComponent: QueryComponent = {
+            type: 'operator',
+            value: operator
+        };
+        setQueryComponents(prevComponents => [...prevComponents, newComponent]);
     };
 
     const undoLastAction = () => {
@@ -121,8 +145,11 @@ function CustomQueryBuilder({ onSearch }) {
     );
 }
 
+// type SearchFormProps = {
+//     onSearch: (url: string) => void;
+//   }
 const SearchForm = () => {
-    const handleSearch = (query) => {
+    const handleSearch = (query: string) => {
 
         const encodedQuery = customEncodeURIComponent(query);
         const url = `${BASE_URL}?q=${encodedQuery}`;
