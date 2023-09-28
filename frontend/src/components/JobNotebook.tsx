@@ -1,14 +1,22 @@
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from './redux/store';
-import { removeJobFromNotebook } from './redux/jobSlice';  // Update the path accordingly
+import { removeJobFromNotebook } from './redux/jobSlice';
+import { JobListing } from './SearchResults';
 
 const JobNotebook: React.FC = () => {
     const dispatch = useDispatch();
-    const selectedJobs = useSelector((state: RootState) => state.job.selectedJobs);
+    const username = useSelector((state: RootState) => state.auth.username);
+    const selectedJobs = username 
+        ? useSelector((state: RootState) => state.job.jobsByUser[username])
+        : [];
 
-    const handleRemove = (id: number) => {
-      dispatch(removeJobFromNotebook(id));
-    };
+
+    const handleRemove = (jobId: number) => {
+        if (username) {
+          dispatch(removeJobFromNotebook({ jobId, username }));
+        }
+      };
+      
 
     if (!selectedJobs || selectedJobs.length === 0) {
         return <div>No jobs selected</div>;
@@ -16,7 +24,7 @@ const JobNotebook: React.FC = () => {
 
     return (
       <div>
-        {selectedJobs.map(job => (
+        {selectedJobs.map((job: JobListing) => (
           <div
           className='rounded-xl border-2 border-gray-300 p-4 m-4'
           key={job.id}>

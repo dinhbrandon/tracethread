@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { useDispatch } from 'react-redux';
 import { addJobToNotebook } from './redux/jobSlice';
+import { useSelector } from 'react-redux';
+import { RootState } from './redux/store';
+
 
 interface SearchResultsProps {
     encodedQuery: string;
-    onSelectJob: (job: JobListing) => void;
 }
 
 export interface JobListing {
@@ -18,6 +20,8 @@ export interface JobListing {
 
 
 const SearchResults = ({ encodedQuery }: SearchResultsProps) => {
+    const username = useSelector((state: RootState) => state.auth.username);
+
     const dispatch = useDispatch();
     // Get the URL from SearchForm and make a request to the backend
     // Display the results in a table
@@ -53,16 +57,20 @@ const SearchResults = ({ encodedQuery }: SearchResultsProps) => {
                 </tr>
             </thead>
             <tbody>
-                {data.map(data => (
-                    <tr key={data.id}>
-                        <td>{data.job_title}</td>
-                        <td>{data.company_name}</td>
-                        <td>{data.location}</td>
-                        <td>{data.listing_details}</td>
-                        <td>{data.description}</td>
+                {data.map(job => (
+                    <tr key={job.id}>
+                        <td>{job.job_title}</td>
+                        <td>{job.company_name}</td>
+                        <td>{job.location}</td>
+                        <td>{job.listing_details}</td>
+                        <td>{job.description}</td>
                         <td><button 
                         className="rounded-xl w-6 bg-gradient-to-r from-cyan-500 to-blue-500"
-                        onClick={() => dispatch(addJobToNotebook(data))}
+                        onClick={() => {
+                            if (username) {
+                                dispatch(addJobToNotebook({ job: job, username }));
+                            }
+                        }}
                         >+</button></td>
                     </tr>
                 ))}

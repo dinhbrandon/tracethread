@@ -2,8 +2,10 @@ import { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { loginUser, getUserDetails } from './redux/authActions';
 import { RootState, AppDispatch } from './redux/store';
+import { useNavigate } from 'react-router-dom';
 
 const LoginForm: React.FC = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const loggedIn = useSelector((state: RootState) => state.auth.loggedIn);
   const username = useSelector((state: RootState) => state.auth.username);
@@ -30,7 +32,14 @@ const LoginForm: React.FC = () => {
     }
 
     dispatch(loginUser(formData.email, formData.password));
+
   };
+  //navigates the user if login was successful
+  useEffect(() => {
+    if (loggedIn) {
+      navigate('/dashboard');
+    }
+  }, [loggedIn, navigate]);
 
   useEffect(() => {
     dispatch(getUserDetails());
