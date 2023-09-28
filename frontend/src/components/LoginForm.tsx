@@ -53,7 +53,7 @@ const LoginForm: React.FC = () => {
   return (
     <div>
       {loading ? (
-        <div>Loading...</div>  // Render a loading indicator when loading
+        <div>Loading...</div>
       ) : loggedIn ? (
         <p>You are logged in, {username}.</p>
       ) : (
@@ -78,7 +78,7 @@ const LoginForm: React.FC = () => {
             />
           </label>
           <input type="submit" value="Log In" />
-          {error && <div className="error">{error}</div>}
+          {error && <div className="error">There was a problem logging in: {error}</div>}
         </form>
       )}
     </div>
