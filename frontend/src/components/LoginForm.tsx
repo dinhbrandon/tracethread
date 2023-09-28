@@ -11,12 +11,15 @@ const LoginForm: React.FC = () => {
   const username = useSelector((state: RootState) => state.auth.username);
   const error = useSelector((state: RootState) => state.auth.error);
 
+  const [loading, setLoading] = useState(false);
+
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   });
 
-  const handleFormData = (e: ChangeEvent<HTMLInputElement>) => {
+
+  const handleFormData = (e: ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
@@ -24,14 +27,16 @@ const LoginForm: React.FC = () => {
     }));
   };
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
 
     if (!formData.email || !formData.password) {
       return;
     }
 
-    dispatch(loginUser(formData.email, formData.password));
+    setLoading(true);
+    await dispatch(loginUser(formData.email, formData.password));
+    setLoading(false);
 
   };
   //navigates the user if login was successful
@@ -47,7 +52,9 @@ const LoginForm: React.FC = () => {
 
   return (
     <div>
-      {loggedIn ? (
+      {loading ? (
+        <div>Loading...</div>  // Render a loading indicator when loading
+      ) : loggedIn ? (
         <p>You are logged in, {username}.</p>
       ) : (
         <form onSubmit={handleSubmit}>
