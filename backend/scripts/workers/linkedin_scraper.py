@@ -33,12 +33,10 @@ path_to_chromedriver = os.environ['CHROMEDRIVER_PATH']
 service = Service(executable_path=path_to_chromedriver)
 driver = webdriver.Chrome(service=service, options=options)
 
-time.sleep(10)
-
 page_num = 1
 url = 'https://www.linkedin.com/jobs/search?keywords=Software%20Engineer&location=United%20States&geoId=103644278&f_TPR=r604800&position=1&pageNum=0'
 driver.get(url)
-time.sleep(2)
+time.sleep(1)
 
 while True:
 
@@ -58,7 +56,7 @@ while True:
 
     soup = BeautifulSoup(driver.page_source, 'html.parser')
 
-    job_postings = soup.find_all('li', {'class': 'jobs-search-results__list-item'})
+    job_postings = soup.find_all('li', {'class': 'jobs-search-results__list'})
  
     for job_posting in job_postings:
         # Extract job details here
