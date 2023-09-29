@@ -1,6 +1,6 @@
 from django.shortcuts import render
-from .models import JobListing
-from .serializers import JobListingSerializer
+from .models import JobListing, JobSaved
+from .serializers import JobListingSerializer, JobSavedSerializer
 from rest_framework import generics, authentication, permissions, viewsets
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.authentication import TokenAuthentication
