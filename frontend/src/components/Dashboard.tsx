@@ -1,9 +1,9 @@
-import { RootState } from './redux/store';
+import { RootState } from '../redux/store';
 import { useSelector, useDispatch } from 'react-redux';
 import { useState, useEffect } from 'react';
 import SearchForm from "./SearchForm";
 import SearchResults from "./SearchResults";
-import { resetJobAdditionStatus } from './redux/jobSlice';
+import { resetJobAdditionStatus } from '../redux/jobSlice';
 
 const Dashboard = () => {
   const dispatch = useDispatch();

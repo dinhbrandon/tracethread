@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { logout } from './redux/authActions';
-import { RootState } from './redux/store';
+import { logout } from '../redux/authActions';
+import { RootState } from '../redux/store';
 import { useNavigate } from 'react-router-dom';
 
 const Nav = () => {

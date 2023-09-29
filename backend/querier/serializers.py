@@ -9,26 +9,14 @@ class JobListingSerializer(serializers.ModelSerializer):
     class Meta:
         model = JobListing
         # The fields that will be returned in the response
-        fields = [
-            "id",
-            "job_title",
-            "company_name",
-            "listing_details",
-            "description",
-            "location",
-            "url",
-            "interested_users",
-            "date",
-            "posted_by",
-        ]
+        fields = "__all__"
+        
 
 class JobSavedSerializer(serializers.ModelSerializer):
+
+    job_listing = JobListingSerializer()
 
     class Meta:
         model = JobSaved
         # The fields that will be returned in the response
-        fields = [
-            "user",
-            "job_listing",
-            "date_saved",
-        ]
+        fields = "__all__"

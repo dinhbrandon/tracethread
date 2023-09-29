@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from .models import Column, Card
 from accounts.serializers import UserSerializer
-from querier.serializers import JobListingSerializer
+from querier.serializers import JobSavedSerializer
 
 
 class ColumnSerializer(serializers.ModelSerializer):
@@ -12,14 +12,10 @@ class ColumnSerializer(serializers.ModelSerializer):
     #Specifies the Column model fields to be serialized
     class Meta:
         model = Column
-        fields = [
-            'id',
-            'name',
-            'owner',
-            'order'
-        ]
+        fields = "__all__"
 
 class CardSerializer(serializers.ModelSerializer):
+    job_saved = JobSavedSerializer()
     class Meta:
         model = Card
         fields = '__all__'

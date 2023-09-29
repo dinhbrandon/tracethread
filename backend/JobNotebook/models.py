@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 class Column(models.Model):
     name = models.CharField(max_length=255)
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='columns')
-    order = models.IntegerField()
+    order = models.IntegerField(unique=True)
 
     class Meta:
         ordering = ['order']

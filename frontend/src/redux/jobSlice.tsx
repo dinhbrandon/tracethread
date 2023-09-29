@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { JobListing } from '../SearchResults';
+import { JobListing } from '../components/SearchResults';
 
 interface JobState {
   jobsByUser: {

@@ -1,5 +1,5 @@
 import { useDispatch } from 'react-redux';
-import { logout } from './redux/authActions';
+import { logout } from '../redux/authActions';
 
 const LogoutButton: React.FC = () => {
   const dispatch = useDispatch();

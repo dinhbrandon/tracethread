@@ -1,44 +1,112 @@
-import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from './redux/store';
-import { removeJobFromNotebook } from './redux/jobSlice';
-import { JobListing } from './SearchResults';
+import { useState, useEffect } from 'react';
+import { useToken } from '../hooks/useToken';
+
+interface Card {
+  id: number;
+  job_saved: JobSaved;
+  notes: string;
+  column: number;
+}
+
+interface Columns {
+  id: number;
+  name: string;
+  owner: Card[];
+  order: number;
+}
+
+interface JobListing {
+  company_name: string;
+  description: string;
+  job_title: string;
+  location: string;
+  url: string;
+
+}
+
+interface JobSaved {
+  job_listing: JobListing;
+  date_saved: string;
+}
 
 const JobNotebook: React.FC = () => {
-    const dispatch = useDispatch();
-    const username = useSelector((state: RootState) => state.auth.username);
-    const selectedJobs = username 
-        ? useSelector((state: RootState) => state.job.jobsByUser[username])
-        : [];
+  const token = useToken();
+  const [columns, setColumns] = useState<Columns[]>([]);
+  const [cards, setCards] = useState<Card[]>([]);
 
+  async function getColumns() {
+    const url = `http://localhost:8000/jobnotebook/columns`;
+    const response = await fetch(url, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Token ${token}`
+        },
+    });
+    const fetchedData = await response.json();
+    setColumns(fetchedData);
+  }
 
-    const handleRemove = (jobId: number) => {
-        if (username) {
-          dispatch(removeJobFromNotebook({ jobId, username }));
-        }
-      };
-      
+  async function getCards() {
+    const url = `http://localhost:8000/jobnotebook/cards`;
+    const reponse = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Token ${token}`
+      },
+    });
+    const fetchedData = await reponse.json();
+    setCards(fetchedData);
+  }
+  console.log(cards)
+  useEffect(() => {
+    getColumns();
+    getCards();
+  }, [])
 
-    if (!selectedJobs || selectedJobs.length === 0) {
-        return <div>No jobs selected</div>;
-    }
-
-    return (
-      <div>
-        {selectedJobs.map((job: JobListing) => (
-          <div
-          className='rounded-xl border-2 border-gray-300 p-4 m-4'
-          key={job.id}>
-            Job Title: {job.job_title} Company: {job.company_name} Location: {job.location} Description: {job.description}
-            <button
-              className="ml-4 bg-red-500 px-2 py-1 rounded"
-              onClick={() => handleRemove(job.id)}
-            >
-              Remove
-            </button>
+  return (
+    <div className="flex gap-4">
+      {columns.map((column) => (
+        <div className="bg-black-200 p-4 rounded-lg border-2" key={column.id}>
+          <h2 className="text-xl font-bold mb-4">{column.name}</h2>
+          <div className="flex flex-col gap-2">
+            {cards
+              .filter((card) => card.column === column.id)
+              .map((filteredCard) => (
+                <div className="bg-black p-4 rounded-lg border border-gray-300" key={filteredCard.id}>
+                  <div className="mb-2">
+                    <strong>Job Title:</strong> {filteredCard.job_saved.job_listing.job_title}
+                  </div>
+                  <div className="mb-2">
+                    <strong>Company:</strong> {filteredCard.job_saved.job_listing.company_name}
+                  </div>
+                  <div className="mb-2">
+                    <strong>Location:</strong> {filteredCard.job_saved.job_listing.location}
+                  </div>
+                  <div className="mb-2">
+                    <strong>Description:</strong> {filteredCard.job_saved.job_listing.description}
+                  </div>
+                  <div className="mb-2">
+                    <strong>Notes:</strong> {filteredCard.notes}
+                  </div>
+                  <div>
+                    <a
+                      href={filteredCard.job_saved.job_listing.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-500 hover:underline"
+                    >
+                      Application Link
+                    </a>
+                  </div>
+                </div>
+              ))}
           </div>
-        ))}
-      </div>
-    );
+        </div>
+      ))}
+    </div>
+  );
 }
 
 export default JobNotebook;

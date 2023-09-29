@@ -1,7 +1,7 @@
 import { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { loginUser, getUserDetails } from './redux/authActions';
-import { RootState, AppDispatch } from './redux/store';
+import { loginUser, getUserDetails } from '../redux/authActions';
+import { RootState, AppDispatch } from '../redux/store';
 import { useNavigate } from 'react-router-dom';
 
 const LoginForm: React.FC = () => {
