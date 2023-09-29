@@ -59,7 +59,6 @@ const JobNotebook: React.FC = () => {
     const fetchedData = await reponse.json();
     setCards(fetchedData);
   }
-  console.log(cards)
   useEffect(() => {
     getColumns();
     getCards();

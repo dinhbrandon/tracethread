@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import JobListing, JobSaved
+from django.contrib.auth.models import User
 
 # Serializer for Job Listings
 
@@ -15,7 +16,7 @@ class JobListingSerializer(serializers.ModelSerializer):
 class JobSavedSerializer(serializers.ModelSerializer):
 
     job_listing = JobListingSerializer()
-
+    user = User()
     class Meta:
         model = JobSaved
         # The fields that will be returned in the response

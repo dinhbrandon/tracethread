@@ -46,9 +46,13 @@ const SearchResults = ({ encodedQuery }: SearchResultsProps) => {
                 "Content-Type": "application/json",
                 "Authorization": `Token ${token}`
             },
-            body: JSON.stringify({ id: jobListingId }),
+            // body: JSON.stringify({ id: jobListingId }),
         });
-        console.log(jobListingId)
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error("Error:", errorData);
+            throw new Error(errorData.detail || "An error occurred while saving the job.");
+        }
     }
     
 
