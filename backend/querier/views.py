@@ -16,7 +16,15 @@ import ast
 import re
 import urllib.parse
 
+# This view creates of all saved jobs for a user
 
+class JobSavedList(generics.CreateAPIView):
+    serializer_class = JobSavedSerializer
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
 # This view creates a new job listing (user access creation)
 
