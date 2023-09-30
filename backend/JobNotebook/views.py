@@ -8,10 +8,14 @@ from django.shortcuts import get_object_or_404
 from querier.models import JobSaved
 
 #Rename ColumnList to account for creating functionality
+
+
 class ColumnList(generics.ListCreateAPIView):
-    queryset = Column.objects.all()
     serializer_class = ColumnSerializer
     permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Column.objects.filter(owner=self.request.user)
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
@@ -44,13 +48,6 @@ class CardList(generics.ListCreateAPIView):
         else:
             # Handle the case where the user is not authorized to create a card for this JobSaved instance
             raise PermissionDenied("You do not have permission to create a card for this job listing.")
-
-# class CardCreate(generics.CreateAPIView):
-#     serializer = CardSerializer
-#     permission_classes = [IsAuthenticated]
-
-#     def perform_create(self, serializer):
-#         serializer.save(owner=self.request.user)
 
 
 class CardDetail(generics.RetrieveUpdateDestroyAPIView):

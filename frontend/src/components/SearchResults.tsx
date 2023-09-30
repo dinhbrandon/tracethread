@@ -24,7 +24,6 @@ const SearchResults = ({ encodedQuery }: SearchResultsProps) => {
     const username = useSelector((state: RootState) => state.auth.username);
     const dispatch = useDispatch();
     const [results, setResults] = useState<JobListing[]>([]);
-    console.log(results)
     async function getQueryFromURL(encodedQuery: string) {
         const url = encodedQuery;
         const response = await fetch(url, {
@@ -48,11 +47,7 @@ const SearchResults = ({ encodedQuery }: SearchResultsProps) => {
             },
             // body: JSON.stringify({ id: jobListingId }),
         });
-        if (!response.ok) {
-            const errorData = await response.json();
-            console.error("Error:", errorData);
-            throw new Error(errorData.detail || "An error occurred while saving the job.");
-        }
+
     }
     
 

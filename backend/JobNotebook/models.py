@@ -6,10 +6,11 @@ from django.contrib.auth.models import User
 class Column(models.Model):
     name = models.CharField(max_length=255)
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='columns')
-    order = models.IntegerField(unique=True)
+    order = models.IntegerField()
 
     class Meta:
         ordering = ['order']
+        unique_together = ['owner', 'order']
 
     def __str__(self):
         return self.name
