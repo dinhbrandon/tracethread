@@ -12,7 +12,6 @@ Responsibilities:
 - Rate Limiting: Implement pauses or delays to respect LinkedIn's `robots.txt` file and avoid being IP-banned.
 - Monitoring and Logging: Keep track of the data scraping process, monitor success rates, and log significant events or errors.
 
-Note: Web scraping may involve legal and ethical considerations. Ensure you have permission and are in compliance with LinkedIn's terms of service and any applicable laws.
 """
 
 
@@ -27,108 +26,106 @@ import time
 import json
 import os
 
+# if testing locally
+from dotenv import load_dotenv
+load_dotenv()
+
 options = webdriver.ChromeOptions()
 options.add_argument("--start-maximized")
 path_to_chromedriver = os.environ['CHROMEDRIVER_PATH']
 service = Service(executable_path=path_to_chromedriver)
 driver = webdriver.Chrome(service=service, options=options)
 
-page_num = 1
+
 url = 'https://www.linkedin.com/jobs/search?keywords=Software%20Engineer&location=United%20States&geoId=103644278&f_TPR=r604800&position=1&pageNum=0'
 driver.get(url)
-time.sleep(1)
+time.sleep(3)
 
-while True:
+processed_links = set()
+newly_processed = True
+all_jobs_data = []
 
-    data = []
-    scrollable_element = driver.find_element(By.CLASS_NAME, 'jobs-search-results-list')
-    last_height = driver.execute_script('return arguments[0].scrollHeight', scrollable_element)
+while newly_processed:
+    newly_processed = False
+    job_listings = driver.find_elements(By.CSS_SELECTOR, "a.base-card__full-link")
 
-    while True:
-        driver.execute_script('arguments[0].scrollBy(0, 400);', scrollable_element)
-        time.sleep(0.15) 
-        new_height = driver.execute_script('return arguments[0].scrollHeight', scrollable_element)
-        if new_height == last_height:
-            break
-        last_height = new_height
+    for job_listing in job_listings:
+        job_link = job_listing.get_attribute('href')
 
-    time.sleep(0.2)
-
-    soup = BeautifulSoup(driver.page_source, 'html.parser')
-
-    job_postings = soup.find_all('li', {'class': 'jobs-search-results__list'})
- 
-    for job_posting in job_postings:
-        # Extract job details here
-
-        job_link = job_posting.find('a', class_='job-card-list__title')
-        if job_link:
-            job_link_element = driver.find_element(By.CSS_SELECTOR, f'a[href="{job_link["href"]}"]')
-            driver.execute_script("arguments[0].click();", job_link_element)
-            time.sleep(0.20)
-            
-            driver.switch_to.window(driver.window_handles[-1])
-
-            time.sleep(0.20)
+        if job_link not in processed_links:
+            job_listing.click()
+            time.sleep(2)
 
             soup = BeautifulSoup(driver.page_source, 'html.parser')
-            job_description_element = soup.find('div', id='job-details')
 
+            job_data = {}
+            
+            # Extracting job title
+            title_element = soup.find('h2', {'class': 'top-card-layout__title'})
+            job_data['job_title'] = title_element.text.strip() if title_element else None
+            
+            # Extracting company name
+            company_name_element = soup.find('a', {'class': 'topcard__org-name-link'})
+            job_data['company_name'] = company_name_element.text.strip() if company_name_element else None
+
+            # Extracting listing details
+            ul_element = soup.find('ul', {'class': 'description__job-criteria-list'})
+            listing_details = []
+            for li in ul_element.find_all('li', {'class': 'description__job-criteria-item'}):
+                subheader = li.find('h3', {'class': 'description__job-criteria-subheader'}).text.strip()
+                detail = li.find('span', {'class': 'description__job-criteria-text'}).text.strip()
+                listing_details.append(f"{subheader}: {detail}")
+            job_data['listing_details'] = ', '.join(listing_details)
+            
+            # Extracting description
+            description_element = soup.find('div', {'class': 'description__text'})
+            job_data['description'] = description_element.text.strip() if description_element else None
+
+            # Extracting location
+            location_element = soup.find('span', {'class': 'topcard__flavor topcard__flavor--bullet'})
+            job_data['location'] = location_element.text.strip() if location_element else None
+
+            # Extract company website URL
             try:
-                high_level_details = soup.find('li', class_='jobs-unified-top-card__job-insight').get_text().strip()
-                job_description_span = job_description_element.find('span')
-                job_description = ""
-                for tag in job_description_span.find_all(['p', 'li']):
-                    job_description += tag.get_text(strip=True) + " "
-            except AttributeError:
-                job_description = None
+                apply_button = driver.find_element(By.CSS_SELECTOR, "button[data-tracking-control-name='public_jobs_apply-link-offsite_sign-up-modal']")
+                apply_button.click()
+                time.sleep(2)
 
-        try:
-            job_title = job_posting.find('a', class_='job-card-list__title').get_text().strip()
-        except AttributeError:
-            job_title = None
+                # Click the exit button to open the company website in a new tab.
+                exit_button = driver.find_element(By.CSS_SELECTOR, "button[data-tracking-control-name='public_jobs_apply-link-offsite_sign-up-modal_modal_dismiss']")
+                exit_button.click()
+                time.sleep(2)
 
-        try:
-            company_name = job_posting.find('span', class_='job-card-container__primary-description').get_text().strip()
-        except AttributeError:
-            company_name = None
+                # Switch to the new tab.
+                driver.switch_to.window(driver.window_handles[-1])
+                time.sleep(3)
 
-        try:
-            job_insight = job_posting.find('div', class_='job-card-container__job-insight-text').get_text().strip()
-        except AttributeError:
-            job_insight = None
+                # Assigning the company website URL to the job_data dictionary.
+                job_data['url'] = driver.current_url
+                print(job_data)
 
-        try:
-            location = job_posting.find('li', class_='job-card-container__metadata-item').get_text().strip()
-        except AttributeError:
-            location = None
+                # Close the new tab.
+                driver.close()
 
-        company_url_element = job_posting.find('a', class_='job-card-container__link')
-        company_url = company_url_element['href'] if company_url_element else None
+                # Switch back to the main page.
+                driver.switch_to.window(driver.window_handles[0])
 
-        data.append({
-            'Job Title': job_title,
-            'Company Name': company_name,
-            'High Level Details': high_level_details,
-            'Job Description': job_description,
-            'Location': location,
-            'Job Insight': job_insight,
-            'Company URL': f"https://www.linkedin.com{company_url}"
-        })
+            except Exception as e:
+                print(f"Error while processing job listing {job_link}: {e}")
 
-    # Save the data to a JSON file
-    with open(f'linkedin_jobs_{page_num}.json', 'w') as file:
-        json.dump(data, file, indent=4)
-
-    try:
-        # Find the button for the next page
-        next_page_button = driver.find_element(By.CSS_SELECTOR, f'button[aria-label="Page {page_num + 1}"]')
-        driver.execute_script("arguments[0].click();", next_page_button)
-        time.sleep(2)
-        page_num += 1
-    except Exception as e:
-        print("Failed to click next page button: ", e)
-        break
-
+            all_jobs_data.append(job_data)
+            processed_links.add(job_link)
+            newly_processed = True
+    
+    driver.execute_script("window.scrollBy(0, 400);")
+    time.sleep(2)
+#         break
 
 driver.quit()
+
+
+
+
+
+
+

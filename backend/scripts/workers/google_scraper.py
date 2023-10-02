@@ -12,7 +12,6 @@ Responsibilities:
 - Rate Limiting: Introduce pauses or delays to respect Google's rate limits and to prevent potential IP bans.
 - Monitoring and Logging: Monitor the scraping process, track success metrics, and log any significant events or challenges.
 
-Note: Always be aware of the legal and ethical implications of web scraping. Ensure compliance with Google's terms and conditions and any relevant laws or regulations.
 """
 
 
