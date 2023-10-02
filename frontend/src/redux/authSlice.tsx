@@ -13,7 +13,7 @@ const initialState: AuthState = {
   email: null,
   error: null,
   username: null,
-  token : null,
+  token: null,
 };
 
 const authSlice = createSlice({
@@ -25,16 +25,15 @@ const authSlice = createSlice({
     },
     loginSuccess: (state, action: PayloadAction<{ username: string, token: string }>) => {
       state.loggedIn = true;
+      state.username = action.payload.username;
       state.token = action.payload.token;
     },
     loginFailure: (state, action: PayloadAction<string>) => {
       state.error = action.payload;
     },
     logout: (state) => {
-      state.loggedIn = false;
-      state.email = null;
-      state.username = null;
-      state.token = null;
+      // Resetting state upon logout
+      return initialState;
     },
     getUserDetailsSuccess: (state, action: PayloadAction<{ username: string }>) => {
       state.username = action.payload.username;
@@ -44,4 +43,3 @@ const authSlice = createSlice({
 
 export const { login, logout, loginSuccess, loginFailure, getUserDetailsSuccess } = authSlice.actions;
 export default authSlice.reducer;
-

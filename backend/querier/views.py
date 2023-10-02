@@ -1,6 +1,7 @@
-from django.shortcuts import render
-from .models import JobListing
-from .serializers import JobListingSerializer
+from django.shortcuts import render, get_object_or_404
+from .models import JobListing, JobSaved
+from JobNotebook.models import Card, Column
+from .serializers import JobListingSerializer, JobSavedSerializer
 from rest_framework import generics, authentication, permissions, viewsets
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.authentication import TokenAuthentication
@@ -17,6 +18,19 @@ import re
 import urllib.parse
 
 
+class JobSavedList(generics.CreateAPIView):
+    serializer_class = JobSavedSerializer
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def perform_create(self, serializer):
+        job_listing_id = self.kwargs.get('pk')  # Get job listing ID from URL kwargs
+        job_listing = get_object_or_404(JobListing, id=job_listing_id)
+        serializer.save(user=self.request.user, job_listing=job_listing)
+
+        default_column = Column.objects.get(owner=self.request.user, order=0)
+
+        Card.objects.create(job_saved=serializer.instance, column=default_column)
 
 # This view creates a new job listing (user access creation)
 
