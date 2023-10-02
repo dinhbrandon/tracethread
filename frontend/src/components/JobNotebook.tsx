@@ -25,6 +25,7 @@ interface JobListing {
 }
 
 interface JobSaved {
+  id: number;
   job_listing: JobListing;
   date_saved: string;
 }
@@ -59,6 +60,24 @@ const JobNotebook: React.FC = () => {
     const fetchedData = await reponse.json();
     setCards(fetchedData);
   }
+
+  async function deleteCard(e: React.FormEvent, jobId: number) {
+    e.preventDefault();
+    const url = `http://localhost:8000/querier/delete-jobsaved/${jobId}`;
+    const response = await fetch(url, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Token ${token}`
+      },
+    });
+    console.log(url)
+    if (response.ok) {
+      console.log("deleted")
+      getCards();
+    }
+  };
+
   useEffect(() => {
     getColumns();
     getCards();
@@ -76,6 +95,10 @@ const JobNotebook: React.FC = () => {
                 <div className="bg-black p-4 rounded-lg border border-gray-300" key={filteredCard.id}>
                   <div className="mb-2">
                     <strong>Job Title:</strong> {filteredCard.job_saved.job_listing.job_title}
+                    <button 
+                    className="rounded-xl bg-red-600 w-6" 
+                    onClick={(e) => deleteCard(e, filteredCard.job_saved.id)}>X</button>
+
                   </div>
                   <div className="mb-2">
                     <strong>Company:</strong> {filteredCard.job_saved.job_listing.company_name}

@@ -32,6 +32,20 @@ class JobSavedList(generics.CreateAPIView):
 
         Card.objects.create(job_saved=serializer.instance, column=default_column)
 
+class DeleteJobSaved(generics.DestroyAPIView):
+    queryset = JobSaved.objects.all()
+    serializer_class = JobSavedSerializer
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def perform_destroy(self, instance):
+        print("hello")
+        print("instance", instance)
+        if instance.user == self.request.user:
+            instance.delete()
+        else:
+            raise PermissionDenied("You cannot delete this saved job.")
+
 # This view creates a new job listing (user access creation)
 
 
@@ -207,6 +221,12 @@ class SearchJobListing(generics.ListAPIView):
     # Overriding get_queryset to filter based on query parameter 'q'
     def get_queryset(self):
         queryset = JobListing.objects.all()
+        user = self.request.user
+        print(f'User authenticated: {user.is_authenticated}')
+        #if there is a logged in user, exclude jobs that the user has already saved
+        if user.is_authenticated:
+            saved_job_ids = JobSaved.objects.filter(user=user).values_list('job_listing_id', flat=True)
+            queryset = queryset.exclude(id__in=saved_job_ids)
         # Fetch 'q' query parameter from the request
         query_param = self.request.query_params.get('q', None)
         if query_param:
