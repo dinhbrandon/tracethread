@@ -1,16 +1,17 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { logout } from './redux/authActions';
-import { RootState } from './redux/store';
+import { logout } from '../redux/authActions';
+import { RootState } from '../redux/store';
+import { useNavigate } from 'react-router-dom';
 
 const Nav = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const loggedIn = useSelector((state: RootState) => state.auth.loggedIn);
   const username = useSelector((state: RootState) => state.auth.username);
 
   const handleLogout = () => {
     dispatch(logout());
-    // Redirect or navigate to the desired page
-    // navigate('/');
+    navigate('/');
   };
 
   return (
@@ -29,6 +30,9 @@ const Nav = () => {
             </li>
             <li>
               <button onClick={handleLogout}>Logout</button>
+            </li>
+            <li>
+              <a href="http://localhost:3000/jobnotebook">Job Notebook</a>
             </li>
           </>
         ) : (

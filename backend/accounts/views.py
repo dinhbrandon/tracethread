@@ -15,6 +15,7 @@ from .serializers import (
     UpdateUserSerializer,
     ChangePasswordSerializer
     )
+from JobNotebook.models import Column
 
 # Class based view to get user details
 
@@ -46,6 +47,15 @@ class ListUsersAPI(ListAPIView):
 class RegisterUserAPIView(generics.CreateAPIView):
     permission_classes = [AllowAny, ]
     serializer_class = RegisterSerializer
+
+    def perform_create(self, serializer):
+        user = serializer.save()
+        Column.objects.create(name='Saved', owner=user, order=0)
+        Column.objects.create(name='Applied', owner=user, order=1)
+        Column.objects.create(name='Followed Up', owner=user, order=2)
+        Column.objects.create(name='Interviewing', owner=user, order=3)
+        Column.objects.create(name='Offer', owner=user, order=4)
+        Column.objects.create(name='Rejected', owner=user, order=5)
 
 
 # Class based view to login user
