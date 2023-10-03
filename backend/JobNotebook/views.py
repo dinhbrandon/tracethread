@@ -67,14 +67,18 @@ class ChangeCardColumnView(generics.UpdateAPIView):
 
         # Extract the new column_id from the request data
         new_column_id = request.data.get('new_column_id')
+        new_order = request.data.get('order')
         if new_column_id is None:
             return Response({'error': 'new_column_id is required'}, status=400)
 
         # Retrieve the new column based on the new_column_id
         new_column = get_object_or_404(Column, pk=new_column_id)
 
-        # Update the card's column
+        # Update the card's column and order
         instance.column = new_column
+        if new_order is not None:
+            instance.order = new_order
+
         instance.save()
 
         # Serialize and return the updated card
