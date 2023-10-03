@@ -36,7 +36,7 @@ class CardList(generics.ListCreateAPIView):
             # Get JobSaved instances for the logged-in user
             job_saved_ids = JobSaved.objects.filter(user=user).values_list('id', flat=True)
             # Filter cards based on the JobSaved instances
-            return Card.objects.filter(job_saved__id__in=job_saved_ids)
+            return Card.objects.filter(job_saved__id__in=job_saved_ids).order_by('column', 'order')
         return Card.objects.none()  # Return an empty queryset if the user is not authenticated
 
     def perform_create(self, serializer):

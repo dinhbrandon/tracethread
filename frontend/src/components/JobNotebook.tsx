@@ -34,6 +34,28 @@ const JobNotebook: React.FC = () => {
   const token = useToken();
   const [columns, setColumns] = useState<Columns[]>([]);
   const [cards, setCards] = useState<Card[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [currentCardId, setCurrentCardId] = useState<number | null>(null);
+  const [currentNotes, setCurrentNotes] = useState<string>("");
+
+  // Open the modal and set the current card and its notes
+  function openModal(cardId: number, notes: string) {
+    setCurrentCardId(cardId);
+    setCurrentNotes(notes);
+    setIsModalOpen(true);
+  }
+
+  // Close the modal and reset
+  function closeModal() {
+    setIsModalOpen(false);
+    setCurrentCardId(null);
+    setCurrentNotes("");
+  }
+
+  // Handle the notes change in the modal
+  function handleNotesChange(e: React.ChangeEvent<HTMLInputElement>) {
+    setCurrentNotes(e.target.value);
+  }
 
   async function getColumns() {
     const url = `http://localhost:8000/jobnotebook/columns`;
@@ -50,14 +72,14 @@ const JobNotebook: React.FC = () => {
 
   async function getCards() {
     const url = `http://localhost:8000/jobnotebook/cards`;
-    const reponse = await fetch(url, {
+    const response = await fetch(url, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Token ${token}`
       },
     });
-    const fetchedData = await reponse.json();
+    const fetchedData = await response.json();
     setCards(fetchedData);
   }
 
@@ -71,12 +93,30 @@ const JobNotebook: React.FC = () => {
         "Authorization": `Token ${token}`
       },
     });
-    console.log(url)
     if (response.ok) {
-      console.log("deleted")
       getCards();
     }
   };
+
+  async function saveNotes() {
+    if (currentCardId !== null) {
+      const url = `http://localhost:8000/jobnotebook/cards/${currentCardId}`;
+      const response = await fetch(url, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Token ${token}`
+        },
+        body: JSON.stringify({ notes: currentNotes })  // <-- Send the updated notes
+      });
+      if(response.ok) {
+        closeModal();
+        getCards();
+      } else {
+        console.error('Failed to update notes.');
+      }
+    }
+  }
 
   useEffect(() => {
     getColumns();
@@ -112,6 +152,8 @@ const JobNotebook: React.FC = () => {
                   <div className="mb-2">
                     <strong>Notes:</strong> {filteredCard.notes}
                   </div>
+                  <button className="rounded-xl p-2 bg-green-500" onClick={() => openModal(filteredCard.id, filteredCard.notes)}>Edit Notes</button>
+                  
                   <div>
                     <a
                       href={filteredCard.job_saved.job_listing.url}
@@ -127,6 +169,17 @@ const JobNotebook: React.FC = () => {
           </div>
         </div>
       ))}
+      {/* Modal */}
+      {isModalOpen && (
+                    <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center">
+                      <div className="bg-white p-4 rounded-lg shadow-md">
+                        <h3 className="text-xl font-bold mb-4">Edit Notes</h3>
+                        <input type="text" value={currentNotes} onChange={handleNotesChange} className="border p-2 rounded-lg w-full mb-4" />
+                        <button onClick={saveNotes} className="bg-blue-500 text-white px-4 py-2 rounded-lg mr-2">Save</button>
+                        <button onClick={closeModal} className="bg-red-500 text-white px-4 py-2 rounded-lg">Cancel</button>
+                      </div>
+                    </div>
+                  )}
     </div>
   );
 }

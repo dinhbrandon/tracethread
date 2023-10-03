@@ -15,7 +15,7 @@ class ColumnSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 class CardSerializer(serializers.ModelSerializer):
-    job_saved = JobSavedSerializer()
+    job_saved = JobSavedSerializer(read_only=True)
     class Meta:
         model = Card
         fields = '__all__'
