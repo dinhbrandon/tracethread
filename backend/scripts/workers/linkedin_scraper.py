@@ -30,36 +30,49 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 
-options = webdriver.ChromeOptions()
-options.add_argument("--start-maximized")
-path_to_chromedriver = os.environ['CHROMEDRIVER_PATH']
-service = Service(executable_path=path_to_chromedriver)
-driver = webdriver.Chrome(service=service, options=options)
+
+def setup_driver():
+    options = webdriver.ChromeOptions()
+    options.add_argument("--start-maximized")
+    path_to_chromedriver = os.environ['CHROMEDRIVER_PATH']
+    service = Service(executable_path=path_to_chromedriver)
+    driver = webdriver.Chrome(service=service, options=options)
+    return driver
 
 
-url = 'https://www.linkedin.com/jobs/search?keywords=Software%20Engineer&location=United%20States&geoId=103644278&f_TPR=r604800&position=1&pageNum=0'
-driver.get(url)
-time.sleep(3)
+def navigate_to_url(driver):
+    BASE_URL = 'https://www.linkedin.com/jobs/search?keywords={job_role}&location=United%20States&geoId=103644278&f_TPR=r604800&position=1&pageNum=0'
+    JOB_ROLE = 'Software Engineer'
+    driver.get(BASE_URL.format(job_role=JOB_ROLE))
+    time.sleep(3)
 
-processed_links = set()
-newly_processed = True
-all_jobs_data = []
 
-while newly_processed:
-    newly_processed = False
+def save_to_json(data):
+    """
+    Saves the given data to a JSON file.
+    """
+    with open("linkedin_data.json", "w") as file:
+        json.dump(data, file, indent=4)
+
+
+def extract_job_data(driver, processed_links):
     job_listings = driver.find_elements(By.CSS_SELECTOR, "a.base-card__full-link")
+    all_jobs_data = []
 
     for job_listing in job_listings:
         job_link = job_listing.get_attribute('href')
 
         if job_link not in processed_links:
             job_listing.click()
-            time.sleep(2)
+
+            WebDriverWait(driver, 10).until(
+                EC.element_to_be_clickable((By.CSS_SELECTOR, "h2.top-card-layout__title"))
+            )
 
             soup = BeautifulSoup(driver.page_source, 'html.parser')
 
             job_data = {}
-            
+                
             # Extracting job title
             title_element = soup.find('h2', {'class': 'top-card-layout__title'})
             job_data['job_title'] = title_element.text.strip() if title_element else None
@@ -85,20 +98,31 @@ while newly_processed:
             location_element = soup.find('span', {'class': 'topcard__flavor topcard__flavor--bullet'})
             job_data['location'] = location_element.text.strip() if location_element else None
 
+            # Fall back to the URL if the company URL is not found
+            linkedin_url = job_listing.get_attribute('href')
+            job_data['url'] = linkedin_url
             # Extract company website URL
             try:
-                apply_button = driver.find_element(By.CSS_SELECTOR, "button[data-tracking-control-name='public_jobs_apply-link-offsite_sign-up-modal']")
+                apply_button = WebDriverWait(driver, 10).until(
+                    EC.element_to_be_clickable((By.CSS_SELECTOR, "button[data-tracking-control-name='public_jobs_apply-link-offsite_sign-up-modal']"))
+                )
                 apply_button.click()
-                time.sleep(2)
 
                 # Click the exit button to open the company website in a new tab.
-                exit_button = driver.find_element(By.CSS_SELECTOR, "button[data-tracking-control-name='public_jobs_apply-link-offsite_sign-up-modal_modal_dismiss']")
+                exit_button = WebDriverWait(driver, 10).until(
+                    EC.element_to_be_clickable((By.CSS_SELECTOR, "button[data-tracking-control-name='public_jobs_apply-link-offsite_sign-up-modal_modal_dismiss']"))
+                )
                 exit_button.click()
-                time.sleep(2)
 
                 # Switch to the new tab.
+                WebDriverWait(driver, 10).until(EC.number_of_windows_to_be(2))  # Ensure the new tab has opened
                 driver.switch_to.window(driver.window_handles[-1])
-                time.sleep(3)
+
+                # Wait until the URL changes from LinkedIn to the company's website
+                def url_changes_from_linkedin(driver):
+                    return "linkedin.com" not in driver.current_url
+
+                WebDriverWait(driver, 10).until(url_changes_from_linkedin)
 
                 # Assigning the company website URL to the job_data dictionary.
                 job_data['url'] = driver.current_url
@@ -115,17 +139,37 @@ while newly_processed:
 
             all_jobs_data.append(job_data)
             processed_links.add(job_link)
-            newly_processed = True
-    
+            save_to_json(all_jobs_data)
+
+    return all_jobs_data, processed_links
+
+
+def scroll_page(driver):
     driver.execute_script("window.scrollBy(0, 400);")
-    time.sleep(2)
-#         break
-
-driver.quit()
 
 
+def main():
+
+    driver = setup_driver()
+    navigate_to_url(driver)
+
+    processed_links = set()
+    newly_processed = True
+    all_jobs_data = []
+
+    while newly_processed:
+        newly_processed = False
+        try:
+            new_data, processed_links = extract_job_data(driver, processed_links)
+            all_jobs_data.extend(new_data)
+            if new_data:
+                newly_processed = True
+            scroll_page(driver)
+        except Exception as e:
+            print(f"Error encountered: {e}")
+
+    driver.quit()
 
 
-
-
-
+if __name__ == "__main__":
+    main()
