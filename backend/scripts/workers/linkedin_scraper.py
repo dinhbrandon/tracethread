@@ -25,6 +25,7 @@ from bs4 import BeautifulSoup
 import time
 import json
 import os
+import random
 
 # if testing locally
 from dotenv import load_dotenv
@@ -55,6 +56,11 @@ def save_to_json(data):
         json.dump(data, file, indent=4)
 
 
+def random_sleep(min_time=1, max_time=3):
+    """Sleeps for a random time between min_time and max_time seconds."""
+    time.sleep(random.uniform(min_time, max_time))
+
+
 def extract_job_data(driver, processed_links):
     job_listings = driver.find_elements(By.CSS_SELECTOR, "a.base-card__full-link")
     all_jobs_data = []
@@ -63,6 +69,8 @@ def extract_job_data(driver, processed_links):
         job_link = job_listing.get_attribute('href')
 
         if job_link not in processed_links:
+
+            random_sleep()
             job_listing.click()
 
             WebDriverWait(driver, 10).until(
@@ -106,12 +114,14 @@ def extract_job_data(driver, processed_links):
                 apply_button = WebDriverWait(driver, 10).until(
                     EC.element_to_be_clickable((By.CSS_SELECTOR, "button[data-tracking-control-name='public_jobs_apply-link-offsite_sign-up-modal']"))
                 )
+                random_sleep()
                 apply_button.click()
 
                 # Click the exit button to open the company website in a new tab.
                 exit_button = WebDriverWait(driver, 10).until(
                     EC.element_to_be_clickable((By.CSS_SELECTOR, "button[data-tracking-control-name='public_jobs_apply-link-offsite_sign-up-modal_modal_dismiss']"))
                 )
+                random_sleep()
                 exit_button.click()
 
                 # Switch to the new tab.
@@ -145,6 +155,7 @@ def extract_job_data(driver, processed_links):
 
 
 def scroll_page(driver):
+    random_sleep()
     driver.execute_script("window.scrollBy(0, 400);")
 
 
