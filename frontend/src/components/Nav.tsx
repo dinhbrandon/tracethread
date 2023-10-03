@@ -23,11 +23,11 @@ const Nav = () => {
         <li>
           <a href="http://localhost:3000">Home</a>
         </li>
+        <li>
+          <a href="http://localhost:3000/dashboard">Dashboard</a>
+        </li>
         {loggedIn ? (
           <>
-            <li>
-              <a href="http://localhost:3000/dashboard">Dashboard</a>
-            </li>
             <li>
               <button onClick={handleLogout}>Logout</button>
             </li>

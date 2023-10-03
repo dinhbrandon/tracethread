@@ -33,26 +33,31 @@ const SearchResults = ({ encodedQuery }: SearchResultsProps) => {
     const [results, setResults] = useState<JobListing[]>([]);
     
     async function getQueryFromURL(encodedQuery: string) {
-        console.log('getQueryFromURL called with encodedQuery:', encodedQuery);  // Log when the function is called and with what argument
-    
-        const url = encodedQuery;
-        const response = await fetch(url, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
-    
-        if (!response.ok) {
-            console.error('Error fetching data:', response.statusText);  // Log an error if the fetch fails
-            return;
+        const headers: Record<string, string> = {
+            "Content-Type": "application/json",
+        };
+
+        if (token) {
+            headers["Authorization"] = `Token ${token}`;
         }
-    
-        const fetchedData = await response.json();
-        console.log('fetchedData:', fetchedData);  // Log the data fetched from the server
-    
-        setResults(fetchedData);
+
+        try {
+            const response = await fetch(encodedQuery, {
+                method: "GET",
+                headers: headers,
+            });
+
+            if (!response.ok) {
+                throw new Error(`Error fetching data: ${response.statusText}`);
+            }
+
+            const fetchedData = await response.json();
+            setResults(fetchedData);
+        } catch (error) {
+            console.error((error as Error).message);
+        }
     }
+    
     
 
     async function saveJob(jobListingId: number) {
