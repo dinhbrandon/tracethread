@@ -17,15 +17,19 @@ Responsibilities:
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.chrome.service import Service
+from datetime import datetime, timedelta
 from bs4 import BeautifulSoup
 import time
 import json
 import os
+import sys
 import random
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'data-pipeline'))
+from data_serializer import clean_and_transform_data, save_processed_data 
+
 
 # if testing locally
 from dotenv import load_dotenv
@@ -48,22 +52,28 @@ def navigate_to_url(driver):
     time.sleep(3)
 
 
-def save_to_json(data):
-    """
-    Saves the given data to a JSON file.
-    """
-    with open("linkedin_data.json", "w") as file:
-        json.dump(data, file, indent=4)
-
-
 def random_sleep(min_time=1, max_time=3):
     """Sleeps for a random time between min_time and max_time seconds."""
     time.sleep(random.uniform(min_time, max_time))
 
 
+def calculate_posted_date(date_posted):
+    parts = date_posted.split()
+    number = int(parts[0])
+    unit = parts[1]
+
+    current_date = datetime.now()
+
+    if 'day' in unit:
+        return current_date - timedelta(days=number)
+    elif 'hour' in unit:
+        return current_date - timedelta(hours=number)
+    else:
+        return current_date
+
+
 def extract_job_data(driver, processed_links):
     job_listings = driver.find_elements(By.CSS_SELECTOR, "a.base-card__full-link")
-    all_jobs_data = []
 
     for job_listing in job_listings:
         job_link = job_listing.get_attribute('href')
@@ -106,9 +116,18 @@ def extract_job_data(driver, processed_links):
             location_element = soup.find('span', {'class': 'topcard__flavor topcard__flavor--bullet'})
             job_data['location'] = location_element.text.strip() if location_element else None
 
+            # Extracting date posted
+            posted_date_element = soup.find('span', {'class': 'posted-time-ago__text topcard__flavor--metadata'})
+            if posted_date_element:
+                post_date_str = posted_date_element.text.strip()
+                job_data['date'] = calculate_posted_date(post_date_str)
+            else:
+                job_data['date'] = datetime.now()
+
             # Fall back to the URL if the company URL is not found
             linkedin_url = job_listing.get_attribute('href')
             job_data['url'] = linkedin_url
+
             # Extract company website URL
             try:
                 apply_button = WebDriverWait(driver, 10).until(
@@ -136,7 +155,6 @@ def extract_job_data(driver, processed_links):
 
                 # Assigning the company website URL to the job_data dictionary.
                 job_data['url'] = driver.current_url
-                print(job_data)
 
                 # Close the new tab.
                 driver.close()
@@ -147,11 +165,10 @@ def extract_job_data(driver, processed_links):
             except Exception as e:
                 print(f"Error while processing job listing {job_link}: {e}")
 
-            all_jobs_data.append(job_data)
+            yield job_data
             processed_links.add(job_link)
-            save_to_json(all_jobs_data)
 
-    return all_jobs_data, processed_links
+    return processed_links
 
 
 def scroll_page(driver):
@@ -163,21 +180,29 @@ def main():
 
     driver = setup_driver()
     navigate_to_url(driver)
-
     processed_links = set()
-    newly_processed = True
-    all_jobs_data = []
 
-    while newly_processed:
-        newly_processed = False
-        try:
-            new_data, processed_links = extract_job_data(driver, processed_links)
-            all_jobs_data.extend(new_data)
-            if new_data:
-                newly_processed = True
+    try:
+        batches = 1
+        job_batch = []
+        for job_data in extract_job_data(driver, processed_links):
+            processed_data = clean_and_transform_data(job_data)
+            job_batch.append(processed_data)
+            print(f"Processing {len(job_batch)} of 10 in batch {batches}...")
+
+            if len(job_batch) >= 10:
+                save_processed_data(job_batch)
+                batches += 1
+                job_batch = []
+            
+            random_sleep()
             scroll_page(driver)
-        except Exception as e:
-            print(f"Error encountered: {e}")
+
+        if job_batch:
+            save_processed_data(job_batch)
+
+    except Exception as e:
+        print(f"Error encountered: {e}")
 
     driver.quit()
 
