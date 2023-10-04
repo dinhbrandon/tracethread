@@ -9,7 +9,6 @@ from querier.models import JobSaved
 
 #Rename ColumnList to account for creating functionality
 
-
 class ColumnList(generics.ListCreateAPIView):
     serializer_class = ColumnSerializer
     permission_classes = [IsAuthenticated]
@@ -63,6 +62,7 @@ class ChangeCardColumnView(generics.UpdateAPIView):
 
     def update(self, request, *args, **kwargs):
         # Retrieve the card to be updated
+        
         instance = self.get_object()
 
         # Extract the new column_id from the request data
@@ -73,6 +73,10 @@ class ChangeCardColumnView(generics.UpdateAPIView):
 
         # Retrieve the new column based on the new_column_id
         new_column = get_object_or_404(Column, pk=new_column_id)
+
+        # Check if the new column is owned by the authenticated user
+        if new_column.owner != self.request.user:
+            raise PermissionDenied("You do not have permission to move a card to this column.")
 
         # Update the card's column and order
         instance.column = new_column

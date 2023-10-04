@@ -40,64 +40,164 @@ const JobNotebook: React.FC = () => {
   const [currentNotes, setCurrentNotes] = useState<string>("");
 
 //to test if the correct card is being selected
-  function handleMouseDown(e: React.MouseEvent, card: Card) {
-    console.log('Card clicked:', card);
+  // function handleMouseDown(e: React.MouseEvent, card: Card) {
+  //   console.log('Card clicked:', card);
+  // }
+
+//   async function handleDragEnd(result: DropResult) {
+//     if (!result.destination) return;
+
+//     const sourceColumnId = Number(result.source.droppableId);
+//     const destinationColumnId = Number(result.destination.droppableId);
+
+//     // Create a copy of the cards array to avoid mutating the state directly
+//     const updatedCards = Array.from(cards);
+
+//     // Find the moved card based on its index in the cards array, not its order in a particular column
+//     const movedCard = updatedCards[result.source.index];
+
+//     if (!movedCard) {
+//       console.error('Card not found');
+//       return;
+//     }
+
+//     // Remove the moved card from the cards array
+//     updatedCards.splice(result.source.index, 1);
+
+//     // Update the column property of the moved card to the destination column id
+//     movedCard.column = destinationColumnId;
+
+//     // Insert the moved card into the cards array at the new index
+//     updatedCards.splice(result.destination.index, 0, movedCard);
+
+//     // Update the state with the new cards array
+//     setCards(updatedCards);
+
+//     const cardId = movedCard.id;
+//     const newColumnId = destinationColumnId;
+//     const newOrder = result.destination.index;
+
+//     const response = await fetch(`http://localhost:8000/jobnotebook/cards/${cardId}/change-column`, {
+//         method: 'PATCH',
+//         headers: {
+//             'Content-Type': 'application/json',
+//             'Authorization': `Token ${token}`
+//         },
+//         body: JSON.stringify({
+//             new_column_id: newColumnId,
+//             order: newOrder
+//         })
+//     });
+
+//     if (response.ok) {
+//         const updatedCard = await response.json();
+//         // console.log('Card updated successfully:', updatedCard);
+//     } else {
+//         console.error('Error updating card:', await response.text());
+//     }
+//     console.log('Source Index:', result.source.index);
+//     console.log('Destination Index:', result.destination.index);
+//     console.log('Updated Cards:', updatedCards);
+//     console.log('Moved Card:', movedCard);
+
+
+// }
+
+// async function handleDragEnd(result: DropResult) {
+//   const { source, destination } = result;
+//   console.log("source: ", source)
+//   console.log("destination: ", destination)
+//   console.log("result: ",result)
+
+//   // Early return if the card was dropped outside of a column
+//   if (!destination) return;
+
+//   const updatedCards = Array.from(cards);
+
+//   // Find the moved card based on its index in the source column
+//   const [movedCard] = updatedCards.splice(source.index, 1);
+//   // const [movedCard] = Draggable.
+//   // Update the column property of the moved card to the destination column id
+//   movedCard.column = Number(destination.droppableId);
+
+//   // Insert the moved card into the updatedCards array at the new index
+//   updatedCards.splice(destination.index, 0, movedCard);
+//   console.log("updatedCards: ", updatedCards)
+
+//   // Update the state with the new cards array
+//   setCards(updatedCards);
+
+//   // Updating the backend
+//   const cardId = movedCard.id;
+//   console.log("movedCard.id: ",movedCard.id)
+//   const newColumnId = Number(destination.droppableId);
+//   const newOrder = destination.index;
+
+//   const response = await fetch(`http://localhost:8000/jobnotebook/cards/${cardId}/change-column`, {
+//       method: 'PATCH',
+//       headers: {
+//           'Content-Type': 'application/json',
+//           'Authorization': `Token ${token}`
+//       },
+//       body: JSON.stringify({
+//           new_column_id: newColumnId,
+//           order: newOrder
+//       })
+//   });
+
+//   if (response.ok) {
+//       const updatedCard = await response.json();
+//       // console.log('Card updated successfully:', updatedCard);
+//   } else {
+//       console.error('Error updating card:', await response.text());
+//   }
+// }
+async function handleDragEnd(result: DropResult) {
+  const { source, destination } = result;
+
+  // Early return if the card was dropped outside of a column
+  if (!destination) return;
+
+  // Create a local copy of the cards array
+  const updatedCards = [...cards];
+
+  // Find the moved card based on its index in the source column
+  const movedCard = updatedCards[source.index];
+
+  // Update the column property of the moved card to the destination column id
+  movedCard.column = Number(destination.droppableId);
+
+  // Remove the card from its original position
+  updatedCards.splice(source.index, 1);
+
+  // Insert the moved card into the updatedCards array at the new index
+  updatedCards.splice(destination.index, 0, movedCard);
+
+  // Now, make the API call
+  const cardId = movedCard.id;
+  const newColumnId = Number(destination.droppableId);
+  const newOrder = destination.index;
+
+  const response = await fetch(`http://localhost:8000/jobnotebook/cards/${cardId}/change-column`, {
+      method: 'PATCH',
+      headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Token ${token}`
+      },
+      body: JSON.stringify({
+          new_column_id: newColumnId,
+          order: newOrder
+      })
+  });
+
+  if (response.ok) {
+      // Update the state only if the API call was successful
+      setCards(updatedCards);
+  } else {
+      console.error('Error updating card:', await response.text());
   }
-
-  async function handleDragEnd(result: DropResult) {
-    if (!result.destination) return;
-
-    const sourceColumnId = Number(result.source.droppableId);
-    const destinationColumnId = Number(result.destination.droppableId);
-
-    // Create a copy of the cards array to avoid mutating the state directly
-    const updatedCards = Array.from(cards);
-
-    // Find the moved card based on its index in the cards array, not its order in a particular column
-    const movedCard = updatedCards[result.source.index];
-
-    if (!movedCard) {
-      console.error('Card not found');
-      return;
-    }
-
-    // Remove the moved card from the cards array
-    updatedCards.splice(result.source.index, 1);
-
-    // Update the column property of the moved card to the destination column id
-    movedCard.column = destinationColumnId;
-
-    // Insert the moved card into the cards array at the new index
-    updatedCards.splice(result.destination.index, 0, movedCard);
-
-    // Update the state with the new cards array
-    setCards(updatedCards);
-
-    const cardId = movedCard.id;
-    const newColumnId = destinationColumnId;
-    const newOrder = result.destination.index;
-
-    const response = await fetch(`http://localhost:8000/jobnotebook/cards/${cardId}/change-column`, {
-        method: 'PATCH',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Token ${token}`
-        },
-        body: JSON.stringify({
-            new_column_id: newColumnId,
-            order: newOrder
-        })
-    });
-
-    if (response.ok) {
-        const updatedCard = await response.json();
-        // console.log('Card updated successfully:', updatedCard);
-    } else {
-        console.error('Error updating card:', await response.text());
-    }
-    console.log('Moved Card:', movedCard);
-
 }
+
 
 
 
@@ -196,8 +296,9 @@ const JobNotebook: React.FC = () => {
                   {cards.filter((card) => card.column === column.id).map((filteredCard, index) => (
                     <Draggable key={filteredCard.id} draggableId={filteredCard.id.toString()} index={index}>
                       {(provided) => (
-                        <div {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef} onMouseDown={(e) => handleMouseDown(e, filteredCard)} className="bg-black p-4 rounded-lg border border-gray-300">
+                        <div {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef} className="bg-black p-4 rounded-lg border border-gray-300">
                           <div className="mb-2">
+                            <h1>{filteredCard.id}</h1>
                             <strong>Job Title:</strong> {filteredCard.job_saved.job_listing.job_title}
                             <button 
                             className="rounded-xl bg-red-600 w-6" 
