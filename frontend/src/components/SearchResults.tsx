@@ -1,18 +1,6 @@
 import { useEffect, useState } from "react";
 import { useToken } from '../hooks/useToken';
-
-interface SearchResultsProps {
-    encodedQuery: string;
-}
-
-export interface JobListing {
-    id: number;
-    job_title: string;
-    company_name: string;
-    listing_details: string;
-    description: string;
-    location: string;
-}
+import { JobListing, SearchResultsProps } from '../types/types';
 
 const Modal = ({ isVisible, onClose, status }: { isVisible: boolean, onClose: () => void, status: string }) => {
     if (!isVisible) return null;
@@ -31,6 +19,7 @@ const SearchResults = ({ encodedQuery }: SearchResultsProps) => {
     const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
     const [status, setStatus] = useState<string>("not saved");
     const [results, setResults] = useState<JobListing[]>([]);
+    const [expandedJobId, setExpandedJobId] = useState<number | null>(null);
     
     async function getQueryFromURL(encodedQuery: string) {
         const headers: Record<string, string> = {
@@ -88,30 +77,48 @@ const SearchResults = ({ encodedQuery }: SearchResultsProps) => {
     return (
         <div>
             <h1>Search Results</h1>
-            <table className="results-table">
-            <thead>
+            <table>
+            <thead className="bg-gray-700">
                 <tr>
-                    <th>Job Title</th>
+                    <th className="px-6 py-3">Job Title</th>
                     <th>Company Name</th>
                     <th>Location</th>
-                    <th>Listing Details</th>
-                    <th>Description</th>
+                    {expandedJobId !== null && (
+                    <>
+                        <th>Listing Details</th>
+                        <th>Description</th>
+                    </>
+                )}
+                <th>Action</th>
                 </tr>
             </thead>
             <tbody>
                 {results.map(job => (
-                    <tr key={job.id}>
-                        <td>{job.job_title}</td>
+                    <tr 
+                    className="bg-gray-800 hover:bg-gray-700 border-b"
+                    key={job.id}>
+                        <td className="px-6 py-4">{job.job_title}</td>
                         <td>{job.company_name}</td>
                         <td>{job.location}</td>
-                        <td>{job.listing_details}</td>
-                        <td>{job.description}</td>
+                        {expandedJobId === job.id && (
+                            <>
+                                <td>{job.listing_details}</td>
+                                <td>{job.description}</td>
+                            </>
+                        )}
+                        <td>
+                            {expandedJobId !== job.id ? (
+                                <button className="bg-orange-500 rounded-xl m-1 p-1" onClick={() => setExpandedJobId(job.id)}>See More</button>
+                            ) : (
+                                <button className="bg-purple-500 rounded-xl m-1 p-1" onClick={() => setExpandedJobId(null)}>See Less</button>
+                            )}
+                        </td>
                         <td>
                             <button 
-                                className="rounded-xl w-6 bg-gradient-to-r from-cyan-500 to-blue-500"
+                                className="rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 m-1 p-1"
                                 onClick={() => saveJob(job.id).catch(error => console.log(error))}
                             >
-                                +
+                                Save Job
                             </button>
                         </td>
                     </tr>

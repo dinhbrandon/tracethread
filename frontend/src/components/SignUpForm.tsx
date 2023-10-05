@@ -1,14 +1,6 @@
 import { useState, ChangeEvent, FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
-
-interface FormData {
-    first_name: string;
-    last_name: string;
-    email: string;
-    username: string;
-    password: string;
-    password2: string;
-}
+import { FormData } from '../types/types'
 
 const SignUpForm = () => {
     const navigate = useNavigate();

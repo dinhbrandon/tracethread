@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { QueryComponent, CustomQueryBuilderProps, Operator } from '../types/types';
 
 const BASE_URL = "http://localhost:8000/querier/search-job-listing/";
 
@@ -10,26 +11,6 @@ const customEncodeURIComponent = (str: string): string => {
         .replace(/\|/g, '%7C')
         .replace(/~/g, '%7E');
 };   
-
-    enum Operator {
-        And = 'AND',
-        Or = 'OR',
-        Not = 'NOT',
-        OpenParenthesis = '(',
-        CloseParenthesis = ')'
-    }
-
-    // Type definitions
-    interface QueryComponent {
-        type: 'field' | 'operator';
-        value: Operator | string;
-        queryName?: string;
-        inputValue?: string;
-    }
-
-    interface CustomQueryBuilderProps {
-        onSearch: (query: string) => void;
-    }
 
     function CustomQueryBuilder({ onSearch }: CustomQueryBuilderProps) {
         const [queryComponents, setQueryComponents] = useState<QueryComponent[]>([]);

@@ -1,35 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useToken } from '../hooks/useToken';
-import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
-
-interface Card {
-  id: number;
-  job_saved: JobSaved;
-  notes: string;
-  column: number;
-}
-
-interface Columns {
-  id: number;
-  name: string;
-  owner: Card[];
-  order: number;
-}
-
-interface JobListing {
-  company_name: string;
-  description: string;
-  job_title: string;
-  location: string;
-  url: string;
-
-}
-
-interface JobSaved {
-  id: number;
-  job_listing: JobListing;
-  date_saved: string;
-}
+import { Card, Columns} from '../types/types';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 const JobNotebook: React.FC = () => {
   const token = useToken();
