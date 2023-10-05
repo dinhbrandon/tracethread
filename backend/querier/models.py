@@ -21,6 +21,7 @@ class JobListing(models.Model):
             self.date = datetime.now().strftime('%m/%d/%Y %I:%M%p')
         elif '-' in self.date:
             self.date = dateutil.parser.parse(self.date).strftime('%m/%d/%Y %I:%M%p')
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f'{self.job_title} at {self.company_name}'
