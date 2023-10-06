@@ -12,6 +12,8 @@ const JobNotebook: React.FC = () => {
   const [currentCardId, setCurrentCardId] = useState<number | null>(null);
   const [currentNotes, setCurrentNotes] = useState<string>("");
   const [searchTerm, setSearchTerm] = useState<string>('');
+  const [selectedCard, setSelectedCard] = useState<Card | null>(null);
+  const [isNotesModalOpen, setIsNotesModalOpen] = useState<boolean>(false);
 
   // This function is called when a card is dragged and dropped
   // It updates the column and order of the card
@@ -61,16 +63,25 @@ const JobNotebook: React.FC = () => {
     setColumns(updatedColumnsArray);
 };
 
+function openCardModal(card: Card) {
+  setSelectedCard(card);
+  setIsModalOpen(true);
+}
+
+function closeCardModal() {
+  setIsModalOpen(false);
+  setSelectedCard(null);
+}
 
 
-  function openModal(cardId: number, notes: string) {
+  function openEditModal(cardId: number, notes: string) {
     setCurrentCardId(cardId);
     setCurrentNotes(notes);
-    setIsModalOpen(true);
+    setIsNotesModalOpen(true);
   }
 
-  function closeModal() {
-    setIsModalOpen(false);
+  function closeEditModal() {
+    setIsNotesModalOpen(false);
     setCurrentCardId(null);
     setCurrentNotes("");
   }
@@ -116,6 +127,7 @@ const JobNotebook: React.FC = () => {
       },
     });
     if (response.ok) {
+      closeCardModal();
       getCards();
     }
   };
@@ -132,7 +144,19 @@ const JobNotebook: React.FC = () => {
         body: JSON.stringify({ notes: currentNotes })  // <-- Send the updated notes
       });
       if(response.ok) {
-        closeModal();
+        closeEditModal();
+
+        //update the selectedCard state to show the new notes
+        setSelectedCard(prevState => {
+          if (prevState) {
+            return {
+              ...prevState,
+              notes: currentNotes
+            };
+          }
+          return prevState;
+        });
+
         getCards();
       } else {
         console.error('Failed to update notes.');
@@ -195,9 +219,9 @@ const JobNotebook: React.FC = () => {
                 <div 
                   {...provided.droppableProps}
                   ref={provided.innerRef}
-                  className="bg-black-200 p-4 rounded-lg border-2"
+                  className="bg-black-200 p-4 rounded-lg border-2 md:min-w-80 md:w-80 md:min-h-[700px]"
                 >
-                  <h2 className="text-xl font-bold mb-4">{column.name}</h2>
+                  <h2 className="text-xl font-bold mb-4 text-center underline">{column.name}</h2>
                   <div className="flex flex-col gap-2">
 
                 {/* Filter cards by search term */}
@@ -206,54 +230,29 @@ const JobNotebook: React.FC = () => {
                     .filter(card => card.column === column.id)
                     .map((filteredCard, index) => (
                       <Draggable key={filteredCard.id} draggableId={String(filteredCard.id)} index={index}>
-                        {(provided) => (
-                          <div 
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                            {...provided.dragHandleProps}
-                            className="bg-black p-4 rounded-lg border border-gray-300"
-                          >
-                            <div className="mb-2">
-                              <h1>{filteredCard.id}</h1>
-                              <strong>Job Title:</strong> {filteredCard.job_saved.job_listing.job_title}
+                          {(provided) => (
+                            <div 
+                              ref={provided.innerRef}
+                              {...provided.draggableProps}
+                              {...provided.dragHandleProps}
+                              className="bg-black p-4 rounded-lg border border-gray-300"
+                            >
+                              <div className="mb-2">
+                                <strong>Job Title:</strong> {filteredCard.job_saved.job_listing.job_title}
+                              </div>
+                              <div className="mb-2">
+                                <strong>Company:</strong> {filteredCard.job_saved.job_listing.company_name}
+                              </div>
+                              {/* New See More button */}
                               <button
-                                className="rounded-xl bg-red-600 w-6"
-                                onClick={(e) => deleteCard(e, filteredCard.job_saved.id)}
+                                className="rounded-xl p-2 bg-blue-500"
+                                onClick={() => openCardModal(filteredCard)}
                               >
-                                X
+                                See More
                               </button>
                             </div>
-                            <div className="mb-2">
-                              <strong>Company:</strong> {filteredCard.job_saved.job_listing.company_name}
-                            </div>
-                            <div className="mb-2">
-                              <strong>Location:</strong> {filteredCard.job_saved.job_listing.location}
-                            </div>
-                            <div className="mb-2">
-                              <strong>Description:</strong> {filteredCard.job_saved.job_listing.description}
-                            </div>
-                            <div className="mb-2">
-                              <strong>Notes:</strong> {filteredCard.notes}
-                            </div>
-                            <button
-                              className="rounded-xl p-2 bg-green-500"
-                              onClick={() => openModal(filteredCard.id, filteredCard.notes)}
-                            >
-                              Edit Notes
-                            </button>
-                            <div>
-                              <a
-                                href={filteredCard.job_saved.job_listing.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-blue-500 hover:underline"
-                              >
-                                Application Link
-                              </a>
-                            </div>
-                          </div>
-                        )}
-                      </Draggable>
+                          )}
+                        </Draggable>
                     ))}
                     {provided.placeholder}
                   </div>
@@ -263,27 +262,61 @@ const JobNotebook: React.FC = () => {
           ))}
 
           {/* Modal for editing notes on a card */}
-          {isModalOpen && (
+          {isModalOpen && selectedCard && (
             <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center">
-              <div className="bg-white p-4 rounded-lg shadow-md">
-                <h3 className="text-xl font-bold mb-4">Edit Notes</h3>
-                <input
-                  type="text"
-                  value={currentNotes}
-                  onChange={handleNotesChange}
-                  className="border p-2 rounded-lg w-full mb-4"
-                />
-                <button onClick={saveNotes} className="bg-blue-500 text-white px-4 py-2 rounded-lg mr-2">
-                  Save
+              <div className="bg-black p-4 flex flex-col rounded-lg shadow-md md:w-[800px]">
+                <h3 className="text-xl font-bold mb-4">{selectedCard.job_saved.job_listing.job_title}</h3>
+                <div><strong>Company:</strong> {selectedCard.job_saved.job_listing.company_name}</div>
+                <div><strong>Location:</strong> {selectedCard.job_saved.job_listing.location}</div>
+                <div><strong>Description:</strong> {selectedCard.job_saved.job_listing.description}</div>
+                <div><strong>Notes:</strong> {selectedCard.notes}</div>
+                <button
+                  className="bg-green-500 text-white px-4 py-2 rounded-lg mt-4"
+                  onClick={() => openEditModal(selectedCard.id, selectedCard.notes)}
+                >
+                  Edit Notes
                 </button>
-                <button onClick={closeModal} className="bg-red-500 text-white px-4 py-2 rounded-lg">
-                  Cancel
+                <a
+                  href={selectedCard.job_saved.job_listing.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-500 hover:underline block mt-2"
+                >
+                  Application Link
+                </a>
+                <button onClick={closeCardModal} className="bg-red-500 text-white px-4 py-2 rounded-lg mt-4">
+                  Close
                 </button>
-                
+                <button
+                  onClick={(e) => deleteCard(e, selectedCard.job_saved.id)}                  className="bg-red-500 text-white px-4 py-2 rounded-lg mt-4"
+                >
+                  Delete
+                </button>
               </div>
             </div>
           )}
         </DragDropContext>
+        {/* Modal for editing notes on a card */}
+        {isNotesModalOpen && currentCardId && (
+          <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center">
+            <div className="bg-white p-4 rounded-lg shadow-md">
+              <h3 className="text-xl font-bold mb-4">Edit Notes</h3>
+              <input
+                type="text"
+                value={currentNotes}
+                onChange={handleNotesChange}
+                className="border p-2 rounded-lg w-full mb-4"
+              />
+              <button onClick={saveNotes} className="bg-blue-500 text-white px-4 py-2 rounded-lg mr-2">
+                Save
+              </button>
+              <button onClick={closeEditModal} className="bg-red-500 text-white px-4 py-2 rounded-lg">
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
+
       </div>
     </div>
   );
