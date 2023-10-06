@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useToken } from '../hooks/useToken';
 import { Card, Columns} from '../types/types';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import JobNotebookSearch from './JobNotebookSearch';
 
 const JobNotebook: React.FC = () => {
   const token = useToken();
@@ -10,6 +11,7 @@ const JobNotebook: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [currentCardId, setCurrentCardId] = useState<number | null>(null);
   const [currentNotes, setCurrentNotes] = useState<string>("");
+  const [searchTerm, setSearchTerm] = useState<string>('');
 
   // This function is called when a card is dragged and dropped
   // It updates the column and order of the card
@@ -158,101 +160,131 @@ const JobNotebook: React.FC = () => {
     }
 }
 
+  function isSearchTermPresent(card: Card) {
+
+    //create an array of fields to search
+    const fieldsToSearch = [
+      card.job_saved.job_listing.job_title,
+      card.job_saved.job_listing.company_name,
+      card.job_saved.job_listing.location,
+      card.job_saved.job_listing.description,
+      card.notes,
+    ];
+
+    //use .some to check if any of the fields contain the search term
+    return fieldsToSearch.some(field => 
+      field && field.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }
+
   useEffect(() => {
     getColumns();
     getCards();
   }, [])
 
   return (
-    <div className="flex gap-4">
-      <DragDropContext onDragEnd={(result) => onDragEnd(result, columns, setColumns)}>
-        {columns.map((column, columnIndex) => (
-          <Droppable droppableId={String(column.id)} key={column.id}>
-            {(provided) => (
-              <div 
-                {...provided.droppableProps}
-                ref={provided.innerRef}
-                className="bg-black-200 p-4 rounded-lg border-2"
-              >
-                <h2 className="text-xl font-bold mb-4">{column.name}</h2>
-                <div className="flex flex-col gap-2">
-                  {cards.filter((card) => card.column === column.id).map((filteredCard, index) => (
-                    <Draggable key={filteredCard.id} draggableId={String(filteredCard.id)} index={index}>
-                      {(provided) => (
-                        <div 
-                          ref={provided.innerRef}
-                          {...provided.draggableProps}
-                          {...provided.dragHandleProps}
-                          className="bg-black p-4 rounded-lg border border-gray-300"
-                        >
-                          <div className="mb-2">
-                            <h1>{filteredCard.id}</h1>
-                            <strong>Job Title:</strong> {filteredCard.job_saved.job_listing.job_title}
-                            <button
-                              className="rounded-xl bg-red-600 w-6"
-                              onClick={(e) => deleteCard(e, filteredCard.job_saved.id)}
-                            >
-                              X
-                            </button>
-                          </div>
-                          <div className="mb-2">
-                            <strong>Company:</strong> {filteredCard.job_saved.job_listing.company_name}
-                          </div>
-                          <div className="mb-2">
-                            <strong>Location:</strong> {filteredCard.job_saved.job_listing.location}
-                          </div>
-                          <div className="mb-2">
-                            <strong>Description:</strong> {filteredCard.job_saved.job_listing.description}
-                          </div>
-                          <div className="mb-2">
-                            <strong>Notes:</strong> {filteredCard.notes}
-                          </div>
-                          <button
-                            className="rounded-xl p-2 bg-green-500"
-                            onClick={() => openModal(filteredCard.id, filteredCard.notes)}
+    <div className="flex gap-4 flex-col">
+      <JobNotebookSearch searchTerm={searchTerm} onSearchTermChange={setSearchTerm} />
+      <div className='flex'>
+        <DragDropContext onDragEnd={(result) => onDragEnd(result, columns, setColumns)}>
+
+          {/* Map through each column */}
+          {columns.map((column) => (
+            <Droppable droppableId={String(column.id)} key={column.id}>
+              {(provided) => (
+                <div 
+                  {...provided.droppableProps}
+                  ref={provided.innerRef}
+                  className="bg-black-200 p-4 rounded-lg border-2"
+                >
+                  <h2 className="text-xl font-bold mb-4">{column.name}</h2>
+                  <div className="flex flex-col gap-2">
+
+                {/* Filter cards by search term */}
+                  {cards
+                    .filter(card => isSearchTermPresent(card))
+                    .filter(card => card.column === column.id)
+                    .map((filteredCard, index) => (
+                      <Draggable key={filteredCard.id} draggableId={String(filteredCard.id)} index={index}>
+                        {(provided) => (
+                          <div 
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                            className="bg-black p-4 rounded-lg border border-gray-300"
                           >
-                            Edit Notes
-                          </button>
-                          <div>
-                            <a
-                              href={filteredCard.job_saved.job_listing.url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-blue-500 hover:underline"
+                            <div className="mb-2">
+                              <h1>{filteredCard.id}</h1>
+                              <strong>Job Title:</strong> {filteredCard.job_saved.job_listing.job_title}
+                              <button
+                                className="rounded-xl bg-red-600 w-6"
+                                onClick={(e) => deleteCard(e, filteredCard.job_saved.id)}
+                              >
+                                X
+                              </button>
+                            </div>
+                            <div className="mb-2">
+                              <strong>Company:</strong> {filteredCard.job_saved.job_listing.company_name}
+                            </div>
+                            <div className="mb-2">
+                              <strong>Location:</strong> {filteredCard.job_saved.job_listing.location}
+                            </div>
+                            <div className="mb-2">
+                              <strong>Description:</strong> {filteredCard.job_saved.job_listing.description}
+                            </div>
+                            <div className="mb-2">
+                              <strong>Notes:</strong> {filteredCard.notes}
+                            </div>
+                            <button
+                              className="rounded-xl p-2 bg-green-500"
+                              onClick={() => openModal(filteredCard.id, filteredCard.notes)}
                             >
-                              Application Link
-                            </a>
+                              Edit Notes
+                            </button>
+                            <div>
+                              <a
+                                href={filteredCard.job_saved.job_listing.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-blue-500 hover:underline"
+                              >
+                                Application Link
+                              </a>
+                            </div>
                           </div>
-                        </div>
-                      )}
-                    </Draggable>
-                  ))}
-                  {provided.placeholder}
+                        )}
+                      </Draggable>
+                    ))}
+                    {provided.placeholder}
+                  </div>
                 </div>
+              )}
+            </Droppable>
+          ))}
+
+          {/* Modal for editing notes on a card */}
+          {isModalOpen && (
+            <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center">
+              <div className="bg-white p-4 rounded-lg shadow-md">
+                <h3 className="text-xl font-bold mb-4">Edit Notes</h3>
+                <input
+                  type="text"
+                  value={currentNotes}
+                  onChange={handleNotesChange}
+                  className="border p-2 rounded-lg w-full mb-4"
+                />
+                <button onClick={saveNotes} className="bg-blue-500 text-white px-4 py-2 rounded-lg mr-2">
+                  Save
+                </button>
+                <button onClick={closeModal} className="bg-red-500 text-white px-4 py-2 rounded-lg">
+                  Cancel
+                </button>
+                
               </div>
-            )}
-          </Droppable>
-        ))}
-        {isModalOpen && (
-          <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center">
-            <div className="bg-white p-4 rounded-lg shadow-md">
-              <h3 className="text-xl font-bold mb-4">Edit Notes</h3>
-              <input
-                type="text"
-                value={currentNotes}
-                onChange={handleNotesChange}
-                className="border p-2 rounded-lg w-full mb-4"
-              />
-              <button onClick={saveNotes} className="bg-blue-500 text-white px-4 py-2 rounded-lg mr-2">
-                Save
-              </button>
-              <button onClick={closeModal} className="bg-red-500 text-white px-4 py-2 rounded-lg">
-                Cancel
-              </button>
             </div>
-          </div>
-        )}
-      </DragDropContext>
+          )}
+        </DragDropContext>
+      </div>
     </div>
   );
   

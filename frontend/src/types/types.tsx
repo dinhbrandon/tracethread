@@ -65,3 +65,9 @@ export enum Operator {
     OpenParenthesis = '(',
     CloseParenthesis = ')'
 }
+
+//JobNotebookSearch types
+export interface JobNotebookSearchProps {
+    searchTerm: string;
+    onSearchTermChange: (newTerm: string) => void;
+}
