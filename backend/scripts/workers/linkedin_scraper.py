@@ -20,6 +20,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.chrome.service import Service
+from selenium.common.exceptions import StaleElementReferenceException
 from datetime import datetime, timedelta
 from bs4 import BeautifulSoup
 import time
@@ -76,98 +77,100 @@ def extract_job_data(driver, processed_links):
     job_listings = driver.find_elements(By.CSS_SELECTOR, "a.base-card__full-link")
 
     for job_listing in job_listings:
-        job_link = job_listing.get_attribute('href')
+        try:
+            job_link = job_listing.get_attribute('href')
+            if job_link not in processed_links:
 
-        if job_link not in processed_links:
+                random_sleep()
+                job_listing.click()
 
-            random_sleep()
-            job_listing.click()
+                WebDriverWait(driver, 10).until(
+                    EC.element_to_be_clickable((By.CSS_SELECTOR, "h2.top-card-layout__title"))
+                )
 
-            WebDriverWait(driver, 10).until(
-                EC.element_to_be_clickable((By.CSS_SELECTOR, "h2.top-card-layout__title"))
-            )
+                soup = BeautifulSoup(driver.page_source, 'html.parser')
 
-            soup = BeautifulSoup(driver.page_source, 'html.parser')
-
-            job_data = {}
+                job_data = {}
+                    
+                # Extracting job title
+                title_element = soup.find('h2', {'class': 'top-card-layout__title'})
+                job_data['job_title'] = title_element.text.strip() if title_element else None
                 
-            # Extracting job title
-            title_element = soup.find('h2', {'class': 'top-card-layout__title'})
-            job_data['job_title'] = title_element.text.strip() if title_element else None
-            
-            # Extracting company name
-            company_name_element = soup.find('a', {'class': 'topcard__org-name-link'})
-            job_data['company_name'] = company_name_element.text.strip() if company_name_element else None
+                # Extracting company name
+                company_name_element = soup.find('a', {'class': 'topcard__org-name-link'})
+                job_data['company_name'] = company_name_element.text.strip() if company_name_element else None
 
-            # Extracting listing details
-            ul_element = soup.find('ul', {'class': 'description__job-criteria-list'})
-            listing_details = []
-            for li in ul_element.find_all('li', {'class': 'description__job-criteria-item'}):
-                subheader = li.find('h3', {'class': 'description__job-criteria-subheader'}).text.strip()
-                detail = li.find('span', {'class': 'description__job-criteria-text'}).text.strip()
-                listing_details.append(f"{subheader}: {detail}")
-            job_data['listing_details'] = ', '.join(listing_details)
-            
-            # Extracting description
-            description_element = soup.find('div', {'class': 'description__text'})
-            job_data['description'] = description_element.text.strip() if description_element else None
+                # Extracting listing details
+                ul_element = soup.find('ul', {'class': 'description__job-criteria-list'})
+                listing_details = []
+                for li in ul_element.find_all('li', {'class': 'description__job-criteria-item'}):
+                    subheader = li.find('h3', {'class': 'description__job-criteria-subheader'}).text.strip()
+                    detail = li.find('span', {'class': 'description__job-criteria-text'}).text.strip()
+                    listing_details.append(f"{subheader}: {detail}")
+                job_data['listing_details'] = ', '.join(listing_details)
+                
+                # Extracting description
+                description_element = soup.find('div', {'class': 'description__text'})
+                job_data['description'] = description_element.text.strip() if description_element else None
 
-            # Extracting location
-            location_element = soup.find('span', {'class': 'topcard__flavor topcard__flavor--bullet'})
-            job_data['location'] = location_element.text.strip() if location_element else None
+                # Extracting location
+                location_element = soup.find('span', {'class': 'topcard__flavor topcard__flavor--bullet'})
+                job_data['location'] = location_element.text.strip() if location_element else None
 
-            # Extracting date posted
-            posted_date_element = soup.find('span', {'class': 'posted-time-ago__text topcard__flavor--metadata'})
-            if posted_date_element:
-                post_date_str = posted_date_element.text.strip()
-                job_data['date'] = calculate_posted_date(post_date_str)
-            else:
-                job_data['date'] = datetime.now()
+                # Extracting date posted
+                posted_date_element = soup.find('span', {'class': 'posted-time-ago__text topcard__flavor--metadata'})
+                if posted_date_element:
+                    post_date_str = posted_date_element.text.strip()
+                    job_data['date'] = calculate_posted_date(post_date_str)
+                else:
+                    job_data['date'] = datetime.now()
 
-            # Fall back to the URL if the company URL is not found
-            linkedin_url = job_listing.get_attribute('href')
-            job_data['url'] = linkedin_url
+                # Fall back to the URL if the company URL is not found
+                linkedin_url = job_listing.get_attribute('href')
+                job_data['url'] = linkedin_url
 
-            # Extract company website URL
-            try:
-                apply_button = WebDriverWait(driver, 10).until(
-                    EC.element_to_be_clickable((By.CSS_SELECTOR, "button[data-tracking-control-name='public_jobs_apply-link-offsite_sign-up-modal']"))
-                )
-                random_sleep()
-                apply_button.click()
+                # Extract company website URL
+                try:
+                    apply_button = WebDriverWait(driver, 10).until(
+                        EC.element_to_be_clickable((By.CSS_SELECTOR, "button[data-tracking-control-name='public_jobs_apply-link-offsite_sign-up-modal']"))
+                    )
+                    random_sleep()
+                    apply_button.click()
 
-                # Click the exit button to open the company website in a new tab.
-                exit_button = WebDriverWait(driver, 10).until(
-                    EC.element_to_be_clickable((By.CSS_SELECTOR, "button[data-tracking-control-name='public_jobs_apply-link-offsite_sign-up-modal_modal_dismiss']"))
-                )
-                random_sleep()
-                exit_button.click()
+                    # Click the exit button to open the company website in a new tab.
+                    exit_button = WebDriverWait(driver, 10).until(
+                        EC.element_to_be_clickable((By.CSS_SELECTOR, "button[data-tracking-control-name='public_jobs_apply-link-offsite_sign-up-modal_modal_dismiss']"))
+                    )
+                    random_sleep()
+                    exit_button.click()
 
-                # Switch to the new tab.
-                WebDriverWait(driver, 10).until(EC.number_of_windows_to_be(2))  # Ensure the new tab has opened
-                driver.switch_to.window(driver.window_handles[-1])
+                    # Switch to the new tab.
+                    WebDriverWait(driver, 10).until(EC.number_of_windows_to_be(2))  # Ensure the new tab has opened
+                    driver.switch_to.window(driver.window_handles[-1])
 
-                # Wait until the URL changes from LinkedIn to the company's website
-                def url_changes_from_linkedin(driver):
-                    return "linkedin.com" not in driver.current_url
+                    # Wait until the URL changes from LinkedIn to the company's website
+                    def url_changes_from_linkedin(driver):
+                        return "linkedin.com" not in driver.current_url
 
-                WebDriverWait(driver, 10).until(url_changes_from_linkedin)
+                    WebDriverWait(driver, 10).until(url_changes_from_linkedin)
 
-                # Assigning the company website URL to the job_data dictionary.
-                job_data['url'] = driver.current_url
+                    # Assigning the company website URL to the job_data dictionary.
+                    job_data['url'] = driver.current_url
 
-                # Close the new tab.
-                driver.close()
+                    # Close the new tab.
+                    driver.close()
 
-                # Switch back to the main page.
-                driver.switch_to.window(driver.window_handles[0])
+                    # Switch back to the main page.
+                    driver.switch_to.window(driver.window_handles[0])
 
-            except Exception as e:
-                print(f"Error while processing job listing {job_link}: {e}")
+                except Exception as e:
+                    print(f"Error while processing job listing {job_link}: {e}")
 
-            yield job_data
-            processed_links.add(job_link)
-
+                yield job_data
+                processed_links.add(job_link)
+        except StaleElementReferenceException:
+            print(f"Error while processing job listing {job_link}: {e}. Skipping...")
+            continue
     return processed_links
 
 
@@ -177,32 +180,40 @@ def scroll_page(driver):
 
 
 def main():
-
     driver = setup_driver()
     navigate_to_url(driver)
     processed_links = set()
 
-    try:
-        batches = 1
-        job_batch = []
-        for job_data in extract_job_data(driver, processed_links):
+    batches = 1
+    job_batch = []
+
+    for job_data in extract_job_data(driver, processed_links):
+        try:
+            if len(job_batch) == 0:
+                start_time = time.time()
+
             processed_data = clean_and_transform_data(job_data)
             job_batch.append(processed_data)
             print(f"Processing {len(job_batch)} of 10 in batch {batches}...")
 
             if len(job_batch) >= 10:
+                end_time = time.time()
+                time_elapsed = end_time - start_time
+                time_elapsed_formatted = str(timedelta(seconds=int(time_elapsed)))
+                print(f"Batch {batches} completed in {time_elapsed_formatted} seconds.")
                 save_processed_data(job_batch)
                 batches += 1
                 job_batch = []
-            
+
             random_sleep()
             scroll_page(driver)
 
-        if job_batch:
-            save_processed_data(job_batch)
+        except StaleElementReferenceException as e:
+            print(f"Error encountered while processing a job listing: {e}")
+            continue  # Continue to the next job listing even if this one fails
 
-    except Exception as e:
-        print(f"Error encountered: {e}")
+    if job_batch:
+        save_processed_data(job_batch)
 
     driver.quit()
 

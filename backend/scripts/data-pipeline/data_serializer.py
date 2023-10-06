@@ -15,6 +15,8 @@ This component acts as an intermediary step between stream processing and data s
 import json
 import os
 from datetime import datetime
+from unicode_replacements import unicode_replacements
+
 
 # Function to clean the job description by removing site-specific text and replacing newlines with <br>
 
@@ -22,10 +24,18 @@ from datetime import datetime
 def clean_description(description):
     # Remove 'Show more' and 'Show less'
     description = description.replace('Show more', '').replace('Show less', '')
-    
+
     # Replace newlines with <br> for HTML rendering
-    description = description.replace('\n', '<br>')
-    
+    # description = description.replace('\n', '<br>')
+    # description = description.replace('\u2019', "'")
+    # description = description.replace('\u2013', '-')
+    # description = description.replace('\u2026', '...')
+
+
+    # Replace unicode escape characters with their actual characters
+    # for key, value in unicode_replacements.items():
+    #     description = description.replace(key, value)
+
     return description.strip()
 
 
