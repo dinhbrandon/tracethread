@@ -221,7 +221,7 @@ function closeCardModal() {
                   ref={provided.innerRef}
                   className="bg-black-200 p-4 rounded-lg border-2 md:min-w-80 md:w-80 md:min-h-[700px]"
                 >
-                  <h2 className="text-xl font-bold mb-4 text-center underline">{column.name}</h2>
+                  <h2 className="text-xl font-bold mb-4 text-center border-b">{column.name}</h2>
                   <div className="flex flex-col gap-2">
 
                 {/* Filter cards by search term */}
