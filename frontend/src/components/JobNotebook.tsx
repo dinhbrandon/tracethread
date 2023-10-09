@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useToken } from '../hooks/useToken';
 import { Card, Columns} from '../types/types';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
@@ -14,6 +14,7 @@ const JobNotebook: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [selectedCard, setSelectedCard] = useState<Card | null>(null);
   const [isNotesModalOpen, setIsNotesModalOpen] = useState<boolean>(false);
+  const modalRef = useRef<HTMLDivElement>(null);
 
   // This function is called when a card is dragged and dropped
   // It updates the column and order of the card
@@ -206,10 +207,23 @@ function closeCardModal() {
     getCards();
   }, [])
 
+  useEffect(() => {
+    const clickOutside = (e: MouseEvent) => {
+      if (isModalOpen && modalRef.current && !modalRef.current.contains(e.target as Node)) {
+        setIsModalOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', clickOutside);
+    return () => {
+      document.removeEventListener('mousedown', clickOutside);
+    };
+  }, [isModalOpen]);
+
   return (
     <div className="flex gap-4 flex-col">
       <JobNotebookSearch searchTerm={searchTerm} onSearchTermChange={setSearchTerm} />
-      <div className='flex'>
+      {/* justify center to make card modal center*/}
+      <div className='flex justify-center'>
         <DragDropContext onDragEnd={(result) => onDragEnd(result, columns, setColumns)}>
 
           {/* Map through each column */}
@@ -263,8 +277,8 @@ function closeCardModal() {
 
           {/* Modal for editing notes on a card */}
           {isModalOpen && selectedCard && (
-            <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center">
-              <div className="bg-black p-4 flex flex-col rounded-lg shadow-md md:w-[800px]">
+            <div ref={modalRef} className="fixed flex items-center justify-center">
+              <div className="md: max-w-[800px] md:max-h-[600px] overflow-auto bg-black p-4 flex flex-col rounded-lg shadow-md">
                 <h3 className="text-xl font-bold mb-4">{selectedCard.job_saved.job_listing.job_title}</h3>
                 <div><strong>Company:</strong> {selectedCard.job_saved.job_listing.company_name}</div>
                 <div><strong>Location:</strong> {selectedCard.job_saved.job_listing.location}</div>
@@ -298,7 +312,7 @@ function closeCardModal() {
         </DragDropContext>
         {/* Modal for editing notes on a card */}
         {isNotesModalOpen && currentCardId && (
-          <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center">
+          <div className="fixed inset-0 flex items-center justify-center z-50">
             <div className="bg-white p-4 rounded-lg shadow-md">
               <h3 className="text-xl font-bold mb-4">Edit Notes</h3>
               <input
