@@ -23,6 +23,7 @@ from selenium.webdriver.chrome.service import Service
 from selenium.common.exceptions import StaleElementReferenceException
 from datetime import datetime, timedelta
 from bs4 import BeautifulSoup
+from selenium.webdriver.common.keys import Keys
 import time
 import json
 import os
@@ -47,10 +48,19 @@ def setup_driver():
 
 
 def navigate_to_url(driver):
-    BASE_URL = 'https://www.linkedin.com/jobs/search?keywords={job_role}&location=United%20States&geoId=103644278&f_TPR=r604800&position=1&pageNum=0'
-    JOB_ROLE = 'Software Engineer'
-    driver.get(BASE_URL.format(job_role=JOB_ROLE))
+    # BASE_URL = 'https://www.linkedin.com/jobs/search?keywords={job_role}&location=United%20States&geoId=103644278&f_TPR=r604800&position=1&pageNum=0'
+    # JOB_ROLE = 'Software Engineer'
+    # driver.get(BASE_URL.format(job_role=JOB_ROLE))
+    BASE_URL = 'https://www.linkedin.com/jobs/search'
+    JOB_ROLE = input('Enter job role to scrape: ')
+    driver.get(BASE_URL)
     time.sleep(3)
+
+    search_input = driver.find_element(By.ID, 'job-search-bar-keywords')
+    search_input.send_keys(JOB_ROLE)
+    search_input.send_keys(Keys.ENTER)
+
+    random_sleep()
 
 
 def random_sleep(min_time=1, max_time=3):
@@ -99,6 +109,10 @@ def extract_job_data(driver, processed_links):
                 # Extracting company name
                 company_name_element = soup.find('a', {'class': 'topcard__org-name-link'})
                 job_data['company_name'] = company_name_element.text.strip() if company_name_element else None
+
+                # Extracting company Logo
+                logo_element = soup.select_one('.top-card-layout .artdeco-entity-image')
+                job_data['company_logo'] = logo_element['src'] if logo_element and 'src' in logo_element.attrs else None
 
                 # Extracting listing details
                 ul_element = soup.find('ul', {'class': 'description__job-criteria-list'})
@@ -168,7 +182,7 @@ def extract_job_data(driver, processed_links):
 
                 yield job_data
                 processed_links.add(job_link)
-        except StaleElementReferenceException:
+        except StaleElementReferenceException as e:
             print(f"Error while processing job listing {job_link}: {e}. Skipping...")
             continue
     return processed_links
@@ -194,6 +208,7 @@ def main():
 
             processed_data = clean_and_transform_data(job_data)
             job_batch.append(processed_data)
+            print(f"Processed the following job listing: {processed_data}")
             print(f"Processing {len(job_batch)} of 10 in batch {batches}...")
 
             if len(job_batch) >= 10:

@@ -80,6 +80,7 @@ const SearchResults = ({ encodedQuery }: SearchResultsProps) => {
             <table>
             <thead className="bg-gray-700">
                 <tr>
+                    <th>    </th>
                     <th className="px-6 py-3">Job Title</th>
                     <th>Company Name</th>
                     <th>Location</th>
@@ -90,6 +91,7 @@ const SearchResults = ({ encodedQuery }: SearchResultsProps) => {
                     </>
                 )}
                 <th>Action</th>
+                <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -97,6 +99,7 @@ const SearchResults = ({ encodedQuery }: SearchResultsProps) => {
                     <tr 
                     className="bg-gray-800 hover:bg-gray-700 border-b"
                     key={job.id}>
+                        <td><img src={job.company_logo} alt="Company Logo" /></td>
                         <td className="px-6 py-4">{job.job_title}</td>
                         <td>{job.company_name}</td>
                         <td>{job.location}</td>

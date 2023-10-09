@@ -8,6 +8,7 @@ class JobListing(models.Model):
     id = models.AutoField(primary_key=True)
     job_title = models.CharField(max_length=100)
     company_name = models.CharField(max_length=100)
+    company_logo = models.URLField(max_length=2000, null=True, blank=True)
     listing_details = models.CharField(max_length=500)
     description = models.TextField()
     location = models.CharField(max_length=100)

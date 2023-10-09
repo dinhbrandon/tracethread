@@ -237,6 +237,10 @@ function closeCardModal() {
                               {...provided.dragHandleProps}
                               className="bg-black p-4 rounded-lg border border-gray-300"
                             >
+                              <div>
+                                {/* job_listing.company_logo rounded */}
+                                <img src={filteredCard.job_saved.job_listing.company_logo} alt="Company Logo" />
+                              </div>
                               <div className="mb-2">
                                 <strong>Job Title:</strong> {filteredCard.job_saved.job_listing.job_title}
                               </div>
