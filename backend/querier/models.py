@@ -38,3 +38,13 @@ class JobSaved(models.Model):
 
     def __str__(self):
         return f'{self.job_listing.job_title} at {self.job_listing.company_name}'
+    
+
+class SavedSearchParameters(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    name = models.CharField(max_length=100)
+    query = models.TextField()
+    date_saved = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.name} for {self.user.username}'

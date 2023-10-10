@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404
-from .models import JobListing, JobSaved
+from .models import JobListing, JobSaved, SavedSearchParameters
 from JobNotebook.models import Card, Column
-from .serializers import JobListingSerializer, JobSavedSerializer
+from .serializers import JobListingSerializer, JobSavedSerializer, SavedSearchParametersSerializer
 from rest_framework import generics, authentication, permissions, viewsets
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.authentication import TokenAuthentication
@@ -16,6 +16,39 @@ import json
 import ast
 import re
 import urllib.parse
+
+
+class SavedSearchParametersListCreate(generics.ListCreateAPIView):
+    serializer_class = SavedSearchParametersSerializer
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        user = self.request.user
+        return SavedSearchParameters.objects.filter(user=user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+
+class SavedSearchParametersDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = SavedSearchParameters.objects.all()
+    serializer_class = SavedSearchParametersSerializer
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+    # checks if the user is the owner of the saved search by checking the user field of the saved search
+    
+    def perform_update(self, serializer):
+        if serializer.instance.user == self.request.user:
+            serializer.save(user=self.request.user)
+        else:
+            raise PermissionDenied("You cannot edit this saved search.")
+
+    def perform_destroy(self, instance):
+        if instance.user == self.request.user:
+            instance.delete()
+        else:
+            raise PermissionDenied("You cannot delete this saved search.")
 
 
 class JobSavedList(generics.CreateAPIView):

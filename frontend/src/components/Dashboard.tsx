@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useState, useEffect } from 'react';
 import SearchForm from "./SearchForm";
 import SearchResults from "./SearchResults";
+import SavedParameters from './SavedParameters';
 import { resetJobAdditionStatus } from '../redux/jobSlice';
 
 const Dashboard = () => {
@@ -17,6 +18,12 @@ const Dashboard = () => {
   const [showModal, setShowModal] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
   const [modalColor, setModalColor] = useState('green');
+  const [refreshKey, setRefreshKey] = useState(false);
+
+  const refreshSavedParameters = () => {
+    setRefreshKey(!refreshKey);
+  }
+
 
   const handleSearch = (url: string) => {
     setSearchUrl(url);
@@ -44,7 +51,10 @@ const Dashboard = () => {
       <h1>Dashboard</h1>
       {isAuthenticated && <h2>Welcome, {username}</h2>}
       <div>
-        <SearchForm onSearch={handleSearch} />
+        <SearchForm onSearch={handleSearch} onRefresh={refreshSavedParameters} />
+      </div>
+      <div>
+        <SavedParameters refreshKey={refreshKey} />
       </div>
       <div>
         {searchUrl && <SearchResults encodedQuery={searchUrl} />}

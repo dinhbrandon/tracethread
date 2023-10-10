@@ -1,5 +1,22 @@
 
 //SearchForm types
+
+// Search parameters have the following format:
+// user = models.ForeignKey(User, on_delete=models.CASCADE)
+// job_listing = models.ForeignKey(JobListing, on_delete=models.CASCADE)
+// date_saved = models.DateTimeField(auto_now_add=True)
+
+export interface SavedParametersProps {
+    refreshKey: boolean;
+}
+
+export interface SavedSearchParameters {
+    id: number;
+    name: string;
+    query: string;
+    date_saved: string;
+}
+
 export interface SearchResultsProps {
     encodedQuery: string;
 }
@@ -59,6 +76,7 @@ export interface QueryComponent {
 
 export interface CustomQueryBuilderProps {
     onSearch: (query: string) => void;
+    onRefresh: () => void; 
 }
 
 export enum Operator {

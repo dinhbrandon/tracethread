@@ -120,7 +120,6 @@ function closeCardModal() {
       },
     });
     const fetchedData = await response.json();
-    console.log("Fetched cards:", fetchedData);
     setCards(fetchedData);
   }
 
@@ -173,7 +172,6 @@ function closeCardModal() {
   }
 
   async function editCardColumn(cardId: number, newColumnId: number, newOrder: number, timestamp: Date) {
-    console.log(timestamp)
     const response = await fetch(`http://localhost:8000/jobnotebook/cards/${cardId}/change-column`, {
         method: 'PATCH',
         headers: {
@@ -191,7 +189,6 @@ function closeCardModal() {
         order: newOrder,
         timestamp: timestamp
     };
-    console.log(requestBody);
     if (response.ok) {
         getCards();
     } else {
