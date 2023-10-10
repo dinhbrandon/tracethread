@@ -3,6 +3,7 @@ import { useToken } from '../hooks/useToken';
 import { Card, Columns} from '../types/types';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import JobNotebookSearch from './JobNotebookSearch';
+import TimeSince from './TimeSince';
 
 const JobNotebook: React.FC = () => {
   const token = useToken();
@@ -46,14 +47,16 @@ const JobNotebook: React.FC = () => {
         return;
     }
     if (source.droppableId !== destination.droppableId) {
-        const [removed] = sourceColumn.items.splice(source.index, 1);
-        destColumn.items.splice(destination.index, 0, removed);
-        await editCardColumn(removed.id, parseInt(destination.droppableId), destination.index);
-    } else {
-        const [removed] = sourceColumn.items.splice(source.index, 1);
-        sourceColumn.items.splice(destination.index, 0, removed);
-        await editCardColumn(removed.id, parseInt(source.droppableId), destination.index);
-    }
+      const [removed] = sourceColumn.items.splice(source.index, 1);
+      removed.timestamp = new Date().toISOString(); // update the timestamp
+      destColumn.items.splice(destination.index, 0, removed);
+      await editCardColumn(removed.id, parseInt(destination.droppableId), destination.index, removed.timestamp);
+  } else {
+      const [removed] = sourceColumn.items.splice(source.index, 1);
+      sourceColumn.items.splice(destination.index, 0, removed);
+      await editCardColumn(removed.id, parseInt(source.droppableId), destination.index, removed.timestamp);
+  }
+  
 
     // Convert back to array
     const updatedColumnsArray = Object.values(columns).map(column => {
@@ -63,6 +66,9 @@ const JobNotebook: React.FC = () => {
 
     setColumns(updatedColumnsArray);
 };
+
+
+
 
 function openCardModal(card: Card) {
   setSelectedCard(card);
@@ -114,6 +120,7 @@ function closeCardModal() {
       },
     });
     const fetchedData = await response.json();
+    console.log("Fetched cards:", fetchedData);
     setCards(fetchedData);
   }
 
@@ -165,7 +172,8 @@ function closeCardModal() {
     }
   }
 
-  async function editCardColumn(cardId: number, newColumnId: number, newOrder: number) {
+  async function editCardColumn(cardId: number, newColumnId: number, newOrder: number, timestamp: Date) {
+    console.log(timestamp)
     const response = await fetch(`http://localhost:8000/jobnotebook/cards/${cardId}/change-column`, {
         method: 'PATCH',
         headers: {
@@ -174,10 +182,16 @@ function closeCardModal() {
         },
         body: JSON.stringify({
             new_column_id: newColumnId,
-            order: newOrder
+            order: newOrder,
+            timestamp: timestamp
         })
     });
-
+    const requestBody = {
+        new_column_id: newColumnId,
+        order: newOrder,
+        timestamp: timestamp
+    };
+    console.log(requestBody);
     if (response.ok) {
         getCards();
     } else {
@@ -245,32 +259,43 @@ function closeCardModal() {
                   {cards
                     .filter(card => isSearchTermPresent(card))
                     .filter(card => card.column === column.id)
-                    .map((filteredCard, index) => (
-                      <Draggable key={filteredCard.id} draggableId={String(filteredCard.id)} index={index}>
-                          {(provided) => (
-                            <div 
-                              ref={provided.innerRef}
-                              {...provided.draggableProps}
-                              {...provided.dragHandleProps}
-                              className="bg-black p-4 rounded-lg border border-gray-300"
-                            >
-                              <div className="mb-2">
-                                <strong>Job Title:</strong> {filteredCard.job_saved.job_listing.job_title}
-                              </div>
-                              <div className="mb-2">
-                                <strong>Company:</strong> {filteredCard.job_saved.job_listing.company_name}
-                              </div>
-                              {/* New See More button */}
-                              <button
-                                className="rounded-xl p-2 bg-blue-500"
-                                onClick={() => openCardModal(filteredCard)}
-                              >
-                                See More
-                              </button>
+                    .map((filteredCard, index) => {
+                      return(
+                        <Draggable key={filteredCard.id} draggableId={String(filteredCard.id)} index={index}>
+                        {(provided) => (
+                          <div 
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                            className="bg-black p-4 rounded-lg border border-gray-300"
+                          >
+                            <div>
+                              {/* job_listing.company_logo rounded */}
+                              <img src={filteredCard.job_saved.job_listing.company_logo} alt="Company Logo" />
                             </div>
-                          )}
-                        </Draggable>
-                    ))}
+                            <div className="mb-2">
+                              <strong>Job Title:</strong> {filteredCard.job_saved.job_listing.job_title}
+                            </div>
+                            <div className="mb-2">
+                              <strong>Company:</strong> {filteredCard.job_saved.job_listing.company_name}
+                            </div>
+                            <div>
+                              <strong>Time in this column: </strong>
+                              <TimeSince date={filteredCard.timestamp} />
+                            </div>
+                            {/* New See More button */}
+                            <button
+                              className="rounded-xl p-2 bg-blue-500"
+                              onClick={() => openCardModal(filteredCard)}
+                            >
+                              See More
+                            </button>
+                          </div>
+                        )}
+                      </Draggable>
+                      )
+
+                    })}
                     {provided.placeholder}
                   </div>
                 </div>
@@ -305,7 +330,8 @@ function closeCardModal() {
                   Close
                 </button>
                 <button
-                  onClick={(e) => deleteCard(e, selectedCard.job_saved.id)}                  className="bg-red-500 text-white px-4 py-2 rounded-lg mt-4"
+                  onClick={(e) => deleteCard(e, selectedCard.job_saved.id)}
+                  className="bg-red-500 text-white px-4 py-2 rounded-lg mt-4"
                 >
                   Delete
                 </button>

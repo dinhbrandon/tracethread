@@ -8,9 +8,11 @@ export interface JobListing {
     id: number;
     job_title: string;
     company_name: string;
+    company_logo: string;
     listing_details: string;
     description: string;
     location: string;
+    date: string;
     url: string;
 }
 
@@ -20,6 +22,7 @@ export interface Card {
     job_saved: JobSaved;
     notes: string;
     column: number;
+    timestamp: string;
 }
   
 export interface Columns {
