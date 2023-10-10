@@ -51,10 +51,8 @@ const Dashboard = () => {
       <h1>Dashboard</h1>
       {isAuthenticated && <h2>Welcome, {username}</h2>}
       <div>
-        <SearchForm onSearch={handleSearch} onRefresh={refreshSavedParameters} />
-      </div>
-      <div>
-        <SavedParameters refreshKey={refreshKey} />
+      <SearchForm onSearch={handleSearch} onRefresh={refreshSavedParameters} refreshKey={refreshKey} />
+
       </div>
       <div>
         {searchUrl && <SearchResults encodedQuery={searchUrl} />}

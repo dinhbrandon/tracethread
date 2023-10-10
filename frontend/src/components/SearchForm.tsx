@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { QueryComponent, CustomQueryBuilderProps, Operator } from '../types/types';
 import { useToken } from '../hooks/useToken';
+import SavedParameters from './SavedParameters';
 
 
 const BASE_URL = "http://localhost:8000/querier/search-job-listing/";
@@ -164,17 +165,25 @@ const customEncodeURIComponent = (str: string): string => {
 
 interface SearchFormProps {
     onSearch: (query: string) => void;
+    refreshKey: boolean;  // Add this line
 }
 
-const SearchForm = ({ onSearch, onRefresh }: SearchFormProps & { onRefresh: () => void }) => {
+
+const SearchForm = ({ onSearch, onRefresh, refreshKey }: SearchFormProps & { onRefresh: () => void }) => {
     const handleSearch = (query: string) => {
         const encodedQuery = customEncodeURIComponent(query);
         const url = `${BASE_URL}?q=${encodedQuery}`;
         onSearch(url);
     };
 
-    return <CustomQueryBuilder onSearch={handleSearch} onRefresh={onRefresh} />;
+    return (
+        <div>
+            <CustomQueryBuilder onSearch={handleSearch} onRefresh={onRefresh} />
+            <SavedParameters onSearch={handleSearch} refreshKey={refreshKey} /> 
+        </div>
+    );
 }
+
 
 
 export default SearchForm;

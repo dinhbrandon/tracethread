@@ -8,6 +8,7 @@
 
 export interface SavedParametersProps {
     refreshKey: boolean;
+    onSearch: (query: string) => void;
 }
 
 export interface SavedSearchParameters {
