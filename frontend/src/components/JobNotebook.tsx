@@ -221,7 +221,10 @@ function closeCardModal() {
 
   return (
     <div className="flex gap-4 flex-col">
-      <JobNotebookSearch searchTerm={searchTerm} onSearchTermChange={setSearchTerm} />
+      <div className='flex justify-between'>
+        <JobNotebookSearch searchTerm={searchTerm} onSearchTermChange={setSearchTerm} />
+        <button className='rounded-xl bg-orange-500 m-4 p-2'><a href='http://localhost:3000/editcolumns'>Edit Columns</a></button>
+      </div>
       {/* justify center to make card modal center*/}
       <div className='flex justify-center'>
         <DragDropContext onDragEnd={(result) => onDragEnd(result, columns, setColumns)}>

@@ -8,6 +8,7 @@ import SignUpForm from './components/SignUpForm';
 import LoginForm from './components/LoginForm';
 import Dashboard from './components/Dashboard';
 import JobNotebook from './components/JobNotebook';
+import EditColumns from './components/EditColumns';
 
 function App() {
 
@@ -22,6 +23,7 @@ function App() {
               <Route path="/login" element={<LoginForm />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/jobnotebook" element={<JobNotebook />} />
+              <Route path="/editcolumns" element={<EditColumns />} />
             </Routes>
           </BrowserRouter>
         </div>
