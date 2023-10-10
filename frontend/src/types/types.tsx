@@ -12,6 +12,7 @@ export interface JobListing {
     listing_details: string;
     description: string;
     location: string;
+    date: string;
     url: string;
 }
 
@@ -21,6 +22,7 @@ export interface Card {
     job_saved: JobSaved;
     notes: string;
     column: number;
+    timestamp: string;
 }
   
 export interface Columns {

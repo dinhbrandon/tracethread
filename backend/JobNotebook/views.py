@@ -68,6 +68,8 @@ class ChangeCardColumnView(generics.UpdateAPIView):
         # Extract the new column_id from the request data
         new_column_id = request.data.get('new_column_id')
         new_order = request.data.get('order')
+        timestamp = request.data.get('timestamp')
+        
         if new_column_id is None:
             return Response({'error': 'new_column_id is required'}, status=400)
 
@@ -82,6 +84,8 @@ class ChangeCardColumnView(generics.UpdateAPIView):
         instance.column = new_column
         if new_order is not None:
             instance.order = new_order
+        if timestamp:
+            instance.timestamp = timestamp
 
         instance.save()
 

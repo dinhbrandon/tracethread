@@ -22,6 +22,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.chrome.service import Service
 from selenium.common.exceptions import StaleElementReferenceException
 from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta
 from bs4 import BeautifulSoup
 from selenium.webdriver.common.keys import Keys
 import time
@@ -79,6 +80,12 @@ def calculate_posted_date(date_posted):
         return current_date - timedelta(days=number)
     elif 'hour' in unit:
         return current_date - timedelta(hours=number)
+    elif 'week' in unit:
+        return current_date - timedelta(weeks=number)
+    elif 'month' in unit:
+        return current_date - relativedelta(months=number)
+    elif 'year' in unit:
+        return current_date - relativedelta(years=number)
     else:
         return current_date
 

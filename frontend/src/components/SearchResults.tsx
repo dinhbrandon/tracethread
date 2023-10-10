@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useToken } from '../hooks/useToken';
 import { JobListing, SearchResultsProps } from '../types/types';
+import TimeSince from "./TimeSince";
+
 
 const Modal = ({ isVisible, onClose, status }: { isVisible: boolean, onClose: () => void, status: string }) => {
     if (!isVisible) return null;
@@ -81,9 +83,10 @@ const SearchResults = ({ encodedQuery }: SearchResultsProps) => {
             <thead className="bg-gray-700">
                 <tr>
                     <th>    </th>
-                    <th className="px-6 py-3">Job Title</th>
+                    <th>Job Title</th>
                     <th>Company Name</th>
                     <th>Location</th>
+                    <th>Date Posted</th>
                     {expandedJobId !== null && (
                     <>
                         <th>Listing Details</th>
@@ -99,10 +102,14 @@ const SearchResults = ({ encodedQuery }: SearchResultsProps) => {
                     <tr 
                     className="bg-gray-800 hover:bg-gray-700 border-b"
                     key={job.id}>
+                        {console.log(job)}
                         <td><img src={job.company_logo} alt="Company Logo" /></td>
-                        <td className="px-6 py-4">{job.job_title}</td>
-                        <td>{job.company_name}</td>
-                        <td>{job.location}</td>
+                        <td className="text-center">{job.job_title}</td>
+                        <td className="text-center">{job.company_name}</td>
+                        <td className="text-center">{job.location}</td>
+                        <td className="text-center">
+                            <TimeSince date={job.date}/>
+                        </td>
                         {expandedJobId === job.id && (
                             <>
                                 <td>{job.listing_details}</td>
@@ -115,8 +122,6 @@ const SearchResults = ({ encodedQuery }: SearchResultsProps) => {
                             ) : (
                                 <button className="bg-purple-500 rounded-xl m-1 p-1" onClick={() => setExpandedJobId(null)}>See Less</button>
                             )}
-                        </td>
-                        <td>
                             <button 
                                 className="rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 m-1 p-1"
                                 onClick={() => saveJob(job.id).catch(error => console.log(error))}
