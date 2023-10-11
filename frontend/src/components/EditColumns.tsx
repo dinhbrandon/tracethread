@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Card, Columns } from '../types/types';
 import { useToken } from '../hooks/useToken';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import { getCards, getColumns, deleteColumn, checkForAssociatedCards, saveColumnOrder } from '../utils/api.tsx';
+import { getCards, getColumns, deleteColumn, createColumn, checkForAssociatedCards, saveColumnOrder } from '../utils/api.tsx';
 
 const ConfirmationModal = ({ onCancel, onConfirm }: { onCancel: () => void; onConfirm: () => void; }) => {
     return (
@@ -23,6 +23,8 @@ const EditColumns = () => {
     const [columns, setColumns] = useState<Columns[]>([]);
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const [columnToDelete, setColumnToDelete] = useState<number | null>(null);
+    const [isAddingColumn, setIsAddingColumn] = useState(false);
+    const [newColumnName, setNewColumnName] = useState('');
 
     const handleDeleteClick = async (id: number) => {
         if (!token) {
@@ -40,6 +42,15 @@ const EditColumns = () => {
         }
     };
 
+    const handleAddColumnClick = (e: React.FormEvent) => {
+        e.preventDefault();
+        setIsAddingColumn(true);
+    };
+
+    const handleNewColumnNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setNewColumnName(e.target.value);
+    };
+
     // Function to handle the confirmation of deletion
     const handleConfirmDelete = async () => {
         if (columnToDelete !== null) {
@@ -49,7 +60,7 @@ const EditColumns = () => {
             }
             const result = await deleteColumn(columnToDelete, token);
             if (result.success) {
-                await getColumns(token);
+                setColumns(prevColumns => prevColumns.filter(column => column.id !== columnToDelete));
             } else {
                 console.error('Error deleting column:', result.error);
                 // Show error modal
@@ -78,6 +89,31 @@ const EditColumns = () => {
         }
     };
 
+    //Function to handle adding a column
+    const handleAddColumnSubmit = async () => {
+        if (!token) {
+            console.error('Token is null');
+            return;
+        }
+        const order = columns.length;  // Determine the order based on the number of existing columns
+        // Now call createColumn with the new column name and the order
+        const result = await createColumn(newColumnName, order.toString(), token);
+        if (result.success) {
+            // Fetch the updated list of columns to ensure the state reflects the latest data
+            const columnsResult = await getColumns(token);
+            if (columnsResult.error) {
+                console.error('Error fetching columns:', columnsResult.error);
+            } else {
+                setColumns(columnsResult.data);
+            }
+            setIsAddingColumn(false);
+            setNewColumnName('');
+        } else {
+            console.error('Error adding column:', result.error);
+        }
+    };
+    
+
     //Function to handle the drag and drop of columns
     const onDragEnd = async (result: { destination: any; source: any; draggableId: any; }) => {
         const { destination, source } = result;
@@ -104,14 +140,7 @@ const EditColumns = () => {
         }
     };
 
-    interface Card {
-        id: number;
-        column: {
-            id: number;
-        };
-    }
-
-    const countCardsForColumn = (column: { id: number }) => {
+    const countCardsForColumn = (column: Columns) => {
         return cards.filter((card: Card) => card.column === column.id).length;
     };
 
@@ -175,13 +204,30 @@ const EditColumns = () => {
                         ref={provided.innerRef}
                     >
                         <h1 className="text-xl font-bold mb-4 text-center border-b">
-                            {column.name} ({countCardsForColumn({ id: column.id })} {getCardLabel(countCardsForColumn({ id: column.id }))})
+                            {column.name} ({countCardsForColumn(column)} {getCardLabel(countCardsForColumn(column))})
                         </h1>
                         <button onClick={() => handleDeleteClick(column.id)} className='m-4 p-1 bg-red-500 rounded-xl'>Delete</button>
                     </div>
                   )}
                 </Draggable>
               ))}
+                {/* Adding column form */}
+                <form 
+                    className="bg-black-200 p-4 rounded-lg border-2 md:min-w-80 md:w-80 md:min-h-[700px] flex items-center"
+                    onSubmit={handleAddColumnSubmit}
+                >
+                    <input 
+                        type="text" 
+                        value={newColumnName} 
+                        onChange={handleNewColumnNameChange}
+                        placeholder="New Column Name"
+                        className="mb-4 p-2 border rounded"
+                        required  // Require a value before submission
+                    />
+                    <button type="submit" className='p-2 bg-green-500 rounded-xl'>
+                        +
+                    </button>
+                </form>
               {provided.placeholder}
             </div>
           )}

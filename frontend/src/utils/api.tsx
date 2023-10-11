@@ -22,6 +22,30 @@ export async function getColumns(token: string) {
     }
 }
 
+//function to add new columns
+export async function createColumn(name: string, order: string, token: string): Promise<{ success: boolean, error: string | null }> {
+  const url = `http://localhost:8000/jobnotebook/columns`;
+  try {
+      const response = await fetch(url, {
+          method: "POST",
+          headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Token ${token}`
+          },
+          body: JSON.stringify({ name, order })
+      });
+      if (!response.ok) {
+          throw new Error(`Failed to create column: ${response.statusText}`);
+      }
+      return { success: true, error: null };
+  } catch (error: any) {
+      console.error(error);
+      return { success: false, error: error.message || String(error) };
+  }
+}
+
+
+
 //function to delete columns
 export async function deleteColumn(id: number, token: string): Promise<{ success: boolean, error: string | null }> {
     const url = `http://localhost:8000/jobnotebook/columns/${id}`;
