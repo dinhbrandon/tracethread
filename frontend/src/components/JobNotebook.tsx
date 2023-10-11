@@ -214,6 +214,7 @@ const JobNotebook: React.FC = () => {
     getCards();
   }, [])
 
+  //useEffect for closing the modal when clicked outside
   useEffect(() => {
     const clickOutside = (e: MouseEvent) => {
       if (isModalOpen && modalRef.current && !modalRef.current.contains(e.target as Node)) {
