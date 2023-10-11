@@ -65,6 +65,8 @@ const SearchResults = ({ encodedQuery }: SearchResultsProps) => {
             setIsModalVisible(true);
             // Refresh the job listings to reflect the saved job
             getQueryFromURL(encodedQuery);
+        } else {
+            console.error('Error saving job');
         }
     }
 
@@ -102,7 +104,6 @@ const SearchResults = ({ encodedQuery }: SearchResultsProps) => {
                     <tr 
                     className="bg-gray-800 hover:bg-gray-700 border-b"
                     key={job.id}>
-                        {console.log(job)}
                         <td><img src={job.company_logo} alt="Company Logo" /></td>
                         <td className="text-center">{job.job_title}</td>
                         <td className="text-center">{job.company_name}</td>

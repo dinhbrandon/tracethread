@@ -65,21 +65,17 @@ const JobNotebook: React.FC = () => {
     });
 
     setColumns(updatedColumnsArray);
-};
+  };
 
+  function openCardModal(card: Card) {
+    setSelectedCard(card);
+    setIsModalOpen(true);
+  }
 
-
-
-function openCardModal(card: Card) {
-  setSelectedCard(card);
-  setIsModalOpen(true);
-}
-
-function closeCardModal() {
-  setIsModalOpen(false);
-  setSelectedCard(null);
-}
-
+  function closeCardModal() {
+    setIsModalOpen(false);
+    setSelectedCard(null);
+  }
 
   function openEditModal(cardId: number, notes: string) {
     setCurrentCardId(cardId);
@@ -120,7 +116,6 @@ function closeCardModal() {
       },
     });
     const fetchedData = await response.json();
-    console.log("Fetched cards:", fetchedData);
     setCards(fetchedData);
   }
 
@@ -173,7 +168,6 @@ function closeCardModal() {
   }
 
   async function editCardColumn(cardId: number, newColumnId: number, newOrder: number, timestamp: Date) {
-    console.log(timestamp)
     const response = await fetch(`http://localhost:8000/jobnotebook/cards/${cardId}/change-column`, {
         method: 'PATCH',
         headers: {
@@ -191,7 +185,6 @@ function closeCardModal() {
         order: newOrder,
         timestamp: timestamp
     };
-    console.log(requestBody);
     if (response.ok) {
         getCards();
     } else {

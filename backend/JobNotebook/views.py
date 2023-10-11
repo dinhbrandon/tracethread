@@ -1,4 +1,5 @@
-from rest_framework import generics
+from rest_framework import generics, status
+from rest_framework.views import APIView
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -6,6 +7,7 @@ from .serializers import ColumnSerializer, CardSerializer
 from .models import Column, Card
 from django.shortcuts import get_object_or_404
 from querier.models import JobSaved
+from django.db import transaction
 
 #Rename ColumnList to account for creating functionality
 
@@ -25,17 +27,47 @@ class ColumnDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ColumnSerializer
     permission_classes = [IsAuthenticated]
 
+
+#This is the view for the batch update of columns
+class ColumnBatchUpdate(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def patch(self, request, *args, **kwargs):
+        updated_columns = request.data
+
+        # First, assign temporary order values to avoid unique constraint violations
+        with transaction.atomic():
+            for index, column_data in enumerate(updated_columns):
+                column = get_object_or_404(Column, id=column_data['id'])
+                # Assign temporary order values (e.g., negative values)
+                column.order = -1 - index
+                column.save()
+
+        # Now, assign the final order values
+        with transaction.atomic():
+            for column_data in updated_columns:
+                column = get_object_or_404(Column, id=column_data['id'])
+                column.order = column_data['order']
+                column.save()
+
+        return Response(status=status.HTTP_200_OK)
+
 #Rename CardList to account for creating functionality
 class CardList(generics.ListCreateAPIView):
     serializer_class = CardSerializer
 
     def get_queryset(self):
         user = self.request.user
+        column_id = self.request.query_params.get('column_id', None)
         if user.is_authenticated:
             # Get JobSaved instances for the logged-in user
             job_saved_ids = JobSaved.objects.filter(user=user).values_list('id', flat=True)
             # Filter cards based on the JobSaved instances
-            return Card.objects.filter(job_saved__id__in=job_saved_ids).order_by('column', 'order')
+            queryset = Card.objects.filter(job_saved__id__in=job_saved_ids).order_by('column', 'order')
+            if column_id is not None:
+                # Filter cards by column_id if provided
+                queryset = queryset.filter(column__id=column_id)
+            return queryset
         return Card.objects.none()  # Return an empty queryset if the user is not authenticated
 
     def perform_create(self, serializer):
