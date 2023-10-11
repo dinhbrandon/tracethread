@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import JobListing, JobSaved
+from .models import JobListing, JobSaved, SavedSearchParameters
 from django.contrib.auth.models import User
 
 # Serializer for Job Listings
@@ -27,3 +27,11 @@ class JobSavedSerializer(serializers.ModelSerializer):
             'job_listing': {'required': False, 'write_only': True},
             'user': {'required': False, 'write_only': True},
         }
+
+
+class SavedSearchParametersSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(read_only=True)
+
+    class Meta:
+        model = SavedSearchParameters
+        fields = "__all__"

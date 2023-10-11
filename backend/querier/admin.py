@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import JobListing, JobSaved
+from .models import JobListing, JobSaved, SavedSearchParameters
 
 
 # Register your models here.
@@ -17,4 +17,9 @@ class JobListingAdmin(admin.ModelAdmin):
 class JobSavedAdmin(admin.ModelAdmin):
     list_display = ('user', 'job_listing', 'date_saved')
     # list_display_links = ('id', 'job_title')
+    list_per_page = 25
+
+@admin.register(SavedSearchParameters)
+class SavedSearchParametersAdmin(admin.ModelAdmin):
+    list_display = ('user', 'name', 'query', 'date_saved')
     list_per_page = 25

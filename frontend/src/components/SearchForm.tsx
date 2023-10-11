@@ -1,5 +1,8 @@
 import { useState } from 'react';
 import { QueryComponent, CustomQueryBuilderProps, Operator } from '../types/types';
+import { useToken } from '../hooks/useToken';
+import SavedParameters from './SavedParameters';
+
 
 const BASE_URL = "http://localhost:8000/querier/search-job-listing/";
 
@@ -12,67 +15,91 @@ const customEncodeURIComponent = (str: string): string => {
         .replace(/~/g, '%7E');
 };   
 
-    function CustomQueryBuilder({ onSearch }: CustomQueryBuilderProps) {
+    function CustomQueryBuilder({ onSearch, onRefresh }: CustomQueryBuilderProps) {
         const [queryComponents, setQueryComponents] = useState<QueryComponent[]>([]);
         const [query, setQuery] = useState<string>('');
+        const [savedSearchName, setSavedSearchName] = useState<string>('');
+        const token = useToken();
 
-    const fields = [
-        { name: 'job_title', label: 'Job Title' },
-        { name: 'company_name', label: 'Company Name' },
-        { name: 'listing_details', label: 'Listing Details' },
-        { name: 'description', label: 'Job Description' },
-        { name: 'location', label: 'Location' },
-        
-    ];
+        async function saveParameters(name: string, encodedQuery: string) {
+            const url = `http://localhost:8000/querier/saved-search-parameters`;
+            const response = await fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Token ${token}`
+                },
+                body: JSON.stringify({
+                    name: name,
+                    query: encodedQuery 
+                })
+            });
+            if (response.ok) {
+                onRefresh();
+            }
 
-    const operators = [Operator.And, Operator.Or, Operator.Not, Operator.OpenParenthesis, Operator.CloseParenthesis]; 
+        }
 
-    const addFieldToQuery = (field: { name: string, label: string }) => {
-        setQueryComponents([...queryComponents, { type: 'field', value: field.label, queryName: field.name }]);
-    };
+        const handleSaveSearch = () => {
+            saveParameters(savedSearchName, query);
+        }
+        const fields = [
+            { name: 'job_title', label: 'Job Title' },
+            { name: 'company_name', label: 'Company Name' },
+            { name: 'listing_details', label: 'Listing Details' },
+            { name: 'description', label: 'Job Description' },
+            { name: 'location', label: 'Location' },
+            
+        ];
 
-    const addOperatorToQuery = (operator: Operator) => {
-        const newComponent: QueryComponent = {
-            type: 'operator',
-            value: operator
+        const operators = [Operator.And, Operator.Or, Operator.Not, Operator.OpenParenthesis, Operator.CloseParenthesis]; 
+
+        const addFieldToQuery = (field: { name: string, label: string }) => {
+            setQueryComponents([...queryComponents, { type: 'field', value: field.label, queryName: field.name }]);
         };
-        setQueryComponents(prevComponents => [...prevComponents, newComponent]);
-    };
 
-    const undoLastAction = () => {
-        const updatedComponents = [...queryComponents];
-        updatedComponents.pop();
-        setQueryComponents(updatedComponents);
-    }
+        const addOperatorToQuery = (operator: Operator) => {
+            const newComponent: QueryComponent = {
+                type: 'operator',
+                value: operator
+            };
+            setQueryComponents(prevComponents => [...prevComponents, newComponent]);
+        };
 
-    const clearAll = () => {
-        setQueryComponents([]);
-    }
+        const undoLastAction = () => {
+            const updatedComponents = [...queryComponents];
+            updatedComponents.pop();
+            setQueryComponents(updatedComponents);
+        }
 
-    const generateQuery = () => {
-        let queryString = queryComponents.map(comp => {
-            if (comp.type === 'field') {
-                return `${comp.queryName}='${comp.inputValue || 'value'}'`; 
-                // Replace 'value' with actual user input if available
-            }
-            if (comp.type === 'operator') {
-                switch (comp.value) {
-                    case 'AND':
-                        return '&';
-                    case 'OR':
-                        return '|';
-                    case 'NOT':
-                        return '~';
-                    default:
-                        return comp.value;
+        const clearAll = () => {
+            setQueryComponents([]);
+        }
+
+        const generateQuery = () => {
+            let queryString = queryComponents.map(comp => {
+                if (comp.type === 'field') {
+                    return `${comp.queryName}='${comp.inputValue || 'value'}'`; 
+                    // Replace 'value' with actual user input if available
                 }
-            }
-            return comp.value;
-        }).join(' ');
-    
-        setQuery(queryString);
-        onSearch(queryString);
-    };
+                if (comp.type === 'operator') {
+                    switch (comp.value) {
+                        case 'AND':
+                            return '&';
+                        case 'OR':
+                            return '|';
+                        case 'NOT':
+                            return '~';
+                        default:
+                            return comp.value;
+                    }
+                }
+                return comp.value;
+            }).join(' ');
+        
+            setQuery(queryString);
+            onSearch(queryString);
+        };
     
 
     return (
@@ -100,7 +127,7 @@ const customEncodeURIComponent = (str: string): string => {
                 <button className='ml-2 mr-2 bg-gray-500' onClick={clearAll}>Clear</button>
             </div>
             <div className='mt-2'>
-                <h2>QUERY</h2>
+                <h2>QUERY BUILDER - </h2>
                 {queryComponents.map((comp, index) => (
                     <span key={index}>
                         {comp.type === 'field' ? (
@@ -122,24 +149,41 @@ const customEncodeURIComponent = (str: string): string => {
                     </span>
                 ))}
             </div>
+            <div className="mt-2">
+                <label>Save Search As: </label>
+                <input 
+                    type="text" 
+                    value={savedSearchName} 
+                    onChange={(e) => setSavedSearchName(e.target.value)} 
+                    placeholder="Name your search" 
+                />
+                <button className='ml-2 mr-2 bg-gray-500' onClick={() => handleSaveSearch()}>Save</button>
+            </div>
         </div>
     );
 }
 
 interface SearchFormProps {
     onSearch: (query: string) => void;
+    refreshKey: boolean;  // Add this line
 }
 
-const SearchForm = ({ onSearch }: SearchFormProps) => {
-    const handleSearch = (query: string) => {
 
+const SearchForm = ({ onSearch, onRefresh, refreshKey }: SearchFormProps & { onRefresh: () => void }) => {
+    const handleSearch = (query: string) => {
         const encodedQuery = customEncodeURIComponent(query);
         const url = `${BASE_URL}?q=${encodedQuery}`;
         onSearch(url);
-
     };
 
-    return <CustomQueryBuilder onSearch={handleSearch} />;
+    return (
+        <div>
+            <CustomQueryBuilder onSearch={handleSearch} onRefresh={onRefresh} />
+            <SavedParameters onSearch={handleSearch} refreshKey={refreshKey} /> 
+        </div>
+    );
 }
+
+
 
 export default SearchForm;
