@@ -9,6 +9,8 @@ import LoginForm from './components/LoginForm';
 import Dashboard from './components/Dashboard';
 import JobNotebook from './components/JobNotebook';
 import EditColumns from './components/EditColumns';
+import JobSearch from './components/JobSearch';
+// import SavedParameters from './components/SavedParameters';
 
 function App() {
 
@@ -24,6 +26,8 @@ function App() {
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/jobnotebook" element={<JobNotebook />} />
               <Route path="/editcolumns" element={<EditColumns />} />
+              <Route path="/search" element={<JobSearch />} />
+              {/* <Route path="/saved-search" element={<SavedParameters />} /> */}
             </Routes>
           </BrowserRouter>
         </div>

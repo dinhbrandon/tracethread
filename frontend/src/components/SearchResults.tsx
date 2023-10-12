@@ -24,6 +24,7 @@ const SearchResults = ({ encodedQuery }: SearchResultsProps) => {
     const [expandedJobId, setExpandedJobId] = useState<number | null>(null);
     
     async function getQueryFromURL(encodedQuery: string) {
+        console.log(encodedQuery)
         const headers: Record<string, string> = {
             "Content-Type": "application/json",
         };

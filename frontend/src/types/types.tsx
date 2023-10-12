@@ -6,10 +6,58 @@
 // job_listing = models.ForeignKey(JobListing, on_delete=models.CASCADE)
 // date_saved = models.DateTimeField(auto_now_add=True)
 
+export type Condition = {
+    field: { name: string, label: string };
+    operator: 'contains' | 'does not contain';
+    value: string;
+    logic?: 'AND' | 'OR';  // This is the new addition
+};
+
+
+export type LogicCard = {
+    conditions: Condition[];
+    logic: 'AND' | 'OR';
+    cardLogic?: 'AND' | 'OR';  // This specifies the logic with the next card.
+}
+
+
+
+export type SearchCard = {
+    lines: Line[];
+    selectedOperator: Operator; 
+    operatorBetweenCards?: Operator; 
+};
+
+
+
+export type InputType = 'field' | 'operator' | 'value';
+
+export interface LogicCardProps {
+    onAdd: () => void;
+    onRemove: (index: number) => void;
+    fields: { name: string, label: string }[];
+    onLineChange: (lines: Line[], operator: Operator | null) => void;  // Updated this line
+}
+
+
+
+export type Line = {
+    field: string;
+    operator: string;
+    value: string;
+};
+
+export interface SearchFormProps {
+    onSearch: (query: string) => void;
+    refreshKey: boolean;  // Add this line
+}
+
 export interface SavedParametersProps {
     refreshKey: boolean;
     onSearch: (query: string) => void;
+    savedParameters: SavedSearchParameters[];  // Add this line
 }
+
 
 export interface SavedSearchParameters {
     id: number;
