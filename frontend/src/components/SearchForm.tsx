@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import { QueryComponent, CustomQueryBuilderProps, Operator, SearchFormProps, Condition, LogicCard } from '../types/types';
+import { QueryComponent, CustomQueryBuilderProps, SearchFormProps, Condition, LogicCard } from '../types/types';
 import { useToken } from '../hooks/useToken';
 import SavedParameters from './SavedParameters';
+import { SavedSearchParameters } from '../types/types';
 
 
 const BASE_URL = "http://localhost:8000/querier/search-job-listing/";
@@ -20,6 +21,15 @@ const customEncodeURIComponent = (str: string): string => {
         const [query, setQuery] = useState<string>('');
         const [savedSearchName, setSavedSearchName] = useState<string>('');
         const [selectedSavedParameter, setSelectedSavedParameter] = useState('');
+        const [showOptionalField, setShowOptionalField] = useState<boolean[][]>([]);
+        const token = useToken();
+
+        const handleToggleOptionalField = (cardIndex: number) => {
+            const newShowOptionalField = [...showOptionalField];
+            newShowOptionalField[cardIndex] = newShowOptionalField[cardIndex] || [];
+            newShowOptionalField[cardIndex].push(true);
+            setShowOptionalField(newShowOptionalField);
+        };
 
         const fields = [
             { name: 'job_title', label: 'Job Title' },
@@ -29,39 +39,38 @@ const customEncodeURIComponent = (str: string): string => {
             { name: 'location', label: 'Location' },
             
         ];
-
         const [cards, setCards] = useState<LogicCard[]>([
             {
                 conditions: [
                     {
-                        field: fields[0], 
+                        field: { name: '', label: '' }, // Setting field to an empty object
                         operator: 'contains', 
                         value: ''
                     }
                 ],
-                logic: 'AND'
+                logic: 'AND',
+                selectedSavedParameter: ''
             }
         ]);
         
+        async function saveParameters(name: string, encodedQuery: string) {
+            const url = `http://localhost:8000/querier/saved-search-parameters`;
+            const response = await fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Token ${token}`
+                },
+                body: JSON.stringify({
+                    name: name,
+                    query: encodedQuery 
+                })
+            });
+            if (response.ok) {
+                onRefresh();
+            }
 
-        // async function saveParameters(name: string, encodedQuery: string) {
-        //     const url = `http://localhost:8000/querier/saved-search-parameters`;
-        //     const response = await fetch(url, {
-        //         method: "POST",
-        //         headers: {
-        //             "Content-Type": "application/json",
-        //             "Authorization": `Token ${token}`
-        //         },
-        //         body: JSON.stringify({
-        //             name: name,
-        //             query: encodedQuery 
-        //         })
-        //     });
-        //     if (response.ok) {
-        //         onRefresh();
-        //     }
-
-        // }
+        }
 
         const handleSaveSearch = () => {
             saveParameters(savedSearchName, query);
@@ -76,11 +85,26 @@ const customEncodeURIComponent = (str: string): string => {
                         value: ''
                     }
                 ],
-                logic: 'AND'
+                logic: 'AND',
+                selectedSavedParameters: []
             };
             setCards(prevCards => [...prevCards, newCard]);
         };
-        
+
+        const handleAddSavedSearch = (cardIndex: number) => {
+            const newCards = [...cards];
+            if (!newCards[cardIndex].selectedSavedParameters) {
+                newCards[cardIndex].selectedSavedParameters = [];
+            }
+            newCards[cardIndex].selectedSavedParameters.push('');
+            setCards(newCards);
+        };
+
+        const handleRemoveSavedSearch = (cardIndex: number, paramIndex: number) => {
+            const newCards = [...cards];
+            newCards[cardIndex].selectedSavedParameters.splice(paramIndex, 1);
+            setCards(newCards);
+        };
     
         const removeCard = (index) => {
             const newCards = [...cards];
@@ -116,12 +140,13 @@ const customEncodeURIComponent = (str: string): string => {
         }
         const generateQuery = () => {
             let cardQueries = cards.map((card, cardIdx) => {
+                
                 // Construct the conditions inside each card
                 let cardQuery = card.conditions.map((condition, conditionIdx) => {
                     const baseCondition = condition.operator === 'does not contain' 
                         ? `~${condition.field.name}='${condition.value}'`
                         : `${condition.field.name}='${condition.value}'`;
-            
+                
                     // If this condition has a subsequent condition, add the logic operator
                     if (conditionIdx < card.conditions.length - 1) {
                         const logicSymbol = condition.logic === 'OR' ? '|' : '&';
@@ -129,8 +154,26 @@ const customEncodeURIComponent = (str: string): string => {
                     }
                     return baseCondition;
                 }).join('');
-        
-                // Wrap each card's query in parentheses
+
+                
+                if (card.selectedSavedParameters) {
+                    card.selectedSavedParameters.forEach((selectedParamId) => {
+                        const selectedParam = savedParameters.find(p => p.id.toString() === selectedParamId);
+                        if (selectedParam) {
+                            cardQuery = `${cardQuery} & (${selectedParam.query})`;
+                        }
+                    });
+                }
+                
+                // If a saved parameter is selected, incorporate its logic within each card
+                if (selectedSavedParameter) {
+                    const selectedParam = savedParameters.find(p => p.id.toString() === selectedSavedParameter);
+                    if (selectedParam) {
+                        cardQuery = `${cardQuery} & (${selectedParam.query})`;
+                    }
+                }
+                
+                // Wrap each modified card's query in parentheses
                 return '(' + cardQuery + ')';
             });
         
@@ -140,7 +183,7 @@ const customEncodeURIComponent = (str: string): string => {
                 const joinLogic = cards[idx - 1].cardLogic || 'AND'; // Use the previous card's cardLogic
                 return acc + (joinLogic === 'AND' ? ' & ' : ' | ') + curr;
             }, '');
-        
+            
             // Update the local state and propagate the generated query
             console.log(queryString);
             setQuery(queryString);
@@ -148,10 +191,6 @@ const customEncodeURIComponent = (str: string): string => {
         };
         
         
-        
-        
-        
-
         return (
             <div>
                 <div className="mt-2">
@@ -169,22 +208,28 @@ const customEncodeURIComponent = (str: string): string => {
                         {card.conditions.map((condition, conditionIndex) => (
                             <div key={conditionIndex}>
                                 <div className="flex items-center mb-2">
-                                    <select 
-                                        className="mr-2" 
-                                        value={condition.field.name}  // Using 'name' for the value makes more sense
-                                        onChange={(e) => {
-                                            const selectedField = fields.find(f => f.name === e.target.value);
-                                            if (selectedField) {
-                                                const newCards = [...cards];
-                                                newCards[cardIndex].conditions[conditionIndex].field = selectedField;
-                                                setCards(newCards);
-                                            }
-                                        }}                                        
-                                    >
-                                        {fields.map(f => (
-                                            <option key={f.name} value={f.name}>{f.label}</option>
-                                        ))}
-                                    </select>
+                                <button onClick={() => addConditionToCard(cardIndex)}>+</button>
+                                {conditionIndex !== 0 && 
+                                <button onClick={() => removeConditionFromCard(cardIndex, conditionIndex)}>-</button>
+                                }
+                                <select 
+                                    className="ml-2 mr-2" 
+                                    value={condition.field.name} 
+                                    onChange={(e) => {
+                                        const selectedField = fields.find(f => f.name === e.target.value);
+                                        if (selectedField) {
+                                            const newCards = [...cards];
+                                            newCards[cardIndex].conditions[conditionIndex].field = selectedField;
+                                            setCards(newCards);
+                                        }
+                                    }}                                        
+                                >
+                                    <option value="" disabled>Select Field</option>
+                                    {fields.map(f => (
+                                        <option key={f.name} value={f.name}>{f.label}</option>
+                                    ))}
+                                </select>
+
 
                                     <select 
                                         className="mr-2"
@@ -209,63 +254,57 @@ const customEncodeURIComponent = (str: string): string => {
                                             setCards(newCards);
                                         }}
                                     />
-                                    <button onClick={() => addConditionToCard(cardIndex)}>+</button>
-                                    {conditionIndex !== 0 && <button onClick={() => removeConditionFromCard(cardIndex, conditionIndex)}>-</button>}
                                 </div>
                                 {conditionIndex !== card.conditions.length - 1 && (
                                     <div className="flex justify-between my-2">
-                                        <button 
-                                            style={{backgroundColor: condition.logic === 'AND' ? 'green' : 'initial'}}
-                                            onClick={() => {
+                                        <select 
+                                            value={condition.logic}
+                                            onChange={(e) => {
                                                 const newCards = [...cards];
-                                                newCards[cardIndex].conditions[conditionIndex].logic = 'AND';
+                                                newCards[cardIndex].conditions[conditionIndex].logic = e.target.value as 'AND' | 'OR';
                                                 setCards(newCards);
                                             }}
                                         >
-                                            AND
-                                        </button>
-                                        <button 
-                                            style={{backgroundColor: condition.logic === 'OR' ? 'green' : 'initial'}}
-                                            onClick={() => {
-                                                const newCards = [...cards];
-                                                newCards[cardIndex].conditions[conditionIndex].logic = 'OR';
-                                                setCards(newCards);
-                                            }}
-                                        >
-                                            OR
-                                        </button>
+                                            <option value="AND">AND</option>
+                                            <option value="OR">OR</option>
+                                        </select>
+
                                     </div>
                                 )}
                             </div>
                         ))}
-                        <button className='ml-2 mr-2 bg-gray-500' onClick={() => removeCard(cardIndex)}>Remove Card</button>
-                        <select 
-                            value={card.cardLogic || 'AND'}
-                            onChange={(e) => {
-                                const newCards = [...cards];
-                                newCards[cardIndex].cardLogic = e.target.value as 'AND' | 'OR';
-                                setCards(newCards);
-                            }}
-                        >
-                            <option value="AND">AND</option>
-                            <option value="OR">OR</option>
-                        </select>
-                        {/* Implement logic to select from saved parameters */}
-                        <select 
-                            value={selectedSavedParameter}
-                            onChange={(e) => setSelectedSavedParameter(e.target.value)}
-                        >
-                            <option value="" disabled>Select a saved parameter</option>
-                            {savedParameters.map((param) => (
-                                <option key={param.id} value={param.query}>
-                                    {param.name}
-                                </option>
-                            ))}
-                        </select>
-
+                        
+                        {cards[cardIndex].selectedSavedParameters?.map((selectedParameter, index) => ( // Change here
+                            <div className='ml-5' key={index}>
+                            <button className='mr-2' onClick={() => handleRemoveSavedSearch(cardIndex, index)}>-</button>
+                            <select 
+                                value={selectedParameter}
+                                onChange={(e) => {
+                                    const newCards = [...cards];
+                                    newCards[cardIndex].selectedSavedParameters[index] = e.target.value;
+                                    setCards(newCards);
+                                }}
+                                >
+                                <option value="">Your saved searches...</option>
+                                {savedParameters.map((param) => (
+                                    <option key={param.id} value={param.id}>
+                                        {param.name}
+                                    </option>
+                                ))}
+                                </select>
+                            </div>
+                        
+                    ))}
+                        <div>
+                            <button onClick={() => handleAddSavedSearch(cardIndex)}>+ Add saved search</button>
+                        </div>
+                        <div className='mt-5'>
+                            <button className='ml-2 mr-2 bg-gray-500' onClick={() => removeCard(cardIndex)}>Remove Card</button>
+                        </div>
                         
 
                     </div>
+                    
                 ))}
                 <button onClick={addCard}>+ Add Card</button>
                 <div className='mt-2'>
@@ -318,8 +357,6 @@ const SearchForm = ({ onSearch, onRefresh, refreshKey }: SearchFormProps & { onR
         </div>
     );
 }
-
-
 
 
 export default SearchForm;

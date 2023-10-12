@@ -18,6 +18,7 @@ export type LogicCard = {
     conditions: Condition[];
     logic: 'AND' | 'OR';
     cardLogic?: 'AND' | 'OR';  // This specifies the logic with the next card.
+    selectedSavedParameters: string[];
 }
 
 

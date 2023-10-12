@@ -48,22 +48,8 @@ const Dashboard = () => {
 
   return (
     <div>
-      <h1>Dashboard</h1>
-      {isAuthenticated && <h2>Welcome, {username}</h2>}
-      <div>
-      <SearchForm onSearch={handleSearch} onRefresh={refreshSavedParameters} refreshKey={refreshKey} />
+      <h1>Saved Parameters</h1>
 
-      </div>
-      <div>
-        {searchUrl && <SearchResults encodedQuery={searchUrl} />}
-      </div>
-
-      {showModal && 
-        <div style={{backgroundColor: modalColor, position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', padding: '20px', borderRadius: '10px', zIndex: 1000 }}>
-            {modalMessage}
-            <button onClick={handleCloseModal}>Close</button>
-        </div>
-      }
     </div>
   );
 };
