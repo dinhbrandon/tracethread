@@ -1,34 +1,20 @@
 
-//SearchForm types
-
-// Search parameters have the following format:
-// user = models.ForeignKey(User, on_delete=models.CASCADE)
-// job_listing = models.ForeignKey(JobListing, on_delete=models.CASCADE)
-// date_saved = models.DateTimeField(auto_now_add=True)
-
 export type Condition = {
     field: { name: string, label: string } | null;
     operator: 'contains' | 'does not contain';
     value: string;
-    logic?: 'AND' | 'OR' | 'AND NOT' | 'OR NOT';  // This is the new addition
+    logic?: 'AND' | 'OR' | 'ANDNOT' | 'ORNOT';  // This is the new addition
 };
 
 
 export type LogicCard = {
     conditions: Condition[];
     logic: 'AND' | 'OR';
-    cardLogic?: 'AND' | 'OR';
+    cardLogic?: 'AND' | 'OR' | 'ANDNOT' | 'ORNOT';
     savedSearch?: string; 
     showSavedSearch: boolean;
     selectedSavedParameter?: string;
     logicBeforeSavedParam?: 'AND' | 'OR' | 'ANDNOT' | 'ORNOT';
-};
-
-
-export type SearchCard = {
-    lines: Line[];
-    selectedOperator: Operator; 
-    operatorBetweenCards?: Operator; 
 };
 
 
@@ -58,6 +44,7 @@ export interface SearchFormProps {
 export interface SavedParametersProps {
     refreshKey: boolean;
     onSearch: (query: string) => void;
+    isVisible: boolean;
     savedParameters: SavedSearchParameters[];  // Add this line
 }
 

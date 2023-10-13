@@ -1,6 +1,7 @@
 import { RootState } from '../redux/store';
 import { useSelector, useDispatch } from 'react-redux';
 import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import SearchForm from "./SearchForm";
 import SearchResults from "./SearchResults";
 import { resetJobAdditionStatus } from '../redux/jobSlice';

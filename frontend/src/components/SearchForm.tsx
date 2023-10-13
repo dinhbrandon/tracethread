@@ -39,6 +39,7 @@ const customEncodeURIComponent = (str: string): string => {
                     },
                 ],
                 logic: 'AND',
+                cardLogic: 'AND',
                 selectedSavedParameter: '',
                 showSavedSearch: false, // Add this property to fix the error
             },
@@ -163,9 +164,28 @@ const customEncodeURIComponent = (str: string): string => {
 
             let queryString = cardQueries.reduce((acc, curr, idx) => {
                 if (idx === 0) return curr;
-                const joinLogic = cards[idx - 1].cardLogic || 'AND';
-                return acc + (joinLogic === 'AND' ? ' & ' : ' | ') + curr;
+                const joinLogic = cards[idx].cardLogic || 'AND';
+                let logicSymbol = '';
+                switch (joinLogic) {
+                    case 'AND':
+                        logicSymbol = ' & ';
+                        break;
+                    case 'OR':
+                        logicSymbol = ' | ';
+                        break;
+                    case 'ANDNOT':
+                        logicSymbol = ' & ~ ';
+                        break;
+                    case 'ORNOT':
+                        logicSymbol = ' | ~ ';
+                        break;
+                    default:
+                        logicSymbol = ' & ';
+                        break;
+                }
+                return acc + logicSymbol + curr;
             }, '');
+            
             
 
             console.log(queryString);
@@ -204,7 +224,7 @@ const customEncodeURIComponent = (str: string): string => {
         return (
             <div>
                 <div className="mt-2">
-                    <label>Save Search As: </label>
+                    <label>Save search: </label>
                     <input 
                         type="text" 
                         value={savedSearchName} 
@@ -213,8 +233,34 @@ const customEncodeURIComponent = (str: string): string => {
                     />
                     <button className='ml-2 mr-2 bg-gray-500' onClick={handleSaveSearch}>Save</button>
                 </div>
+                <div className='mt-4'>
+                    <button className='bg-gray-500'>
+                        <a href="http://localhost:3000/saved">View all saved searches</a>
+                    </button>
+                </div>
                 {cards.map((card, cardIndex) => (
                     <div key={cardIndex} className="border p-4 m-2">
+
+                {cardIndex !== 0 && (
+                            <div className="mb-3">
+                                <label>Logical Operator: </label>
+                                <select 
+                                    value={card.cardLogic} 
+                                    onChange={(e) => {
+                                        const newCards = [...cards];
+                                        newCards[cardIndex].cardLogic = e.target.value as 'AND' | 'OR' | 'ANDNOT' | 'ORNOT';
+                                        setCards(newCards);
+                                    }}
+                                >
+                                    <option value="AND">AND</option>
+                                    <option value="OR">OR</option>
+                                    <option value="ANDNOT">AND NOT</option>
+                                    <option value="ORNOT">OR NOT</option>
+                                </select>
+                            </div>
+                        )}
+
+
                         {card.conditions.map((condition, conditionIndex) => (
                             <div key={conditionIndex}>
                                 <div className="flex items-center mb-2">
@@ -268,10 +314,10 @@ const customEncodeURIComponent = (str: string): string => {
                                         setCards(newCards);
                                     }}
                                 />
-                                    </div>
+
+                                </div>
                                 )
                                 }
-
 
                                 </div>
                                 {conditionIndex !== card.conditions.length - 1 && (
@@ -311,8 +357,8 @@ const customEncodeURIComponent = (str: string): string => {
                                 >
                                     <option value="AND">AND</option>
                                     <option value="OR">OR</option>
-                                    <option value="AND NOT">AND NOT</option>
-                                    <option value="OR NOT">OR NOT</option>
+                                    <option value="ANDNOT">AND NOT</option>
+                                    <option value="ORNOT">OR NOT</option>
                                 </select>
                             )}
 
@@ -335,14 +381,15 @@ const customEncodeURIComponent = (str: string): string => {
                         )}
 
                         <div className='mt-5'>
-                            <button className='ml-2 mr-2 bg-gray-500' onClick={() => removeCard(cardIndex)}>Remove Card</button>
+                            <button className='ml-2 mr-2 bg-gray-500' onClick={() => removeCard(cardIndex)}>Remove Group</button>
                         </div>
                         
 
                     </div>
                     
+                    
                 ))}
-                <button onClick={addCard}>+ Add Card</button>
+                <button onClick={addCard}>+ Add Group</button>
                 <div className='mt-2'>
                     <button className='ml-2 mr-2 bg-gray-500' onClick={generateQuery}>Search</button>
                 </div>
@@ -386,7 +433,7 @@ const SearchForm = ({ onSearch, onRefresh, refreshKey }: SearchFormProps & { onR
     return (
         <div>
             <CustomQueryBuilder onSearch={handleSearch} onRefresh={onRefresh} savedParameters={savedParameters} />
-            <SavedParameters onSearch={handleSearch} refreshKey={refreshKey} savedParameters={savedParameters} />
+            <SavedParameters isVisible={false} onSearch={handleSearch} refreshKey={refreshKey} savedParameters={savedParameters} />
         </div>
     );
 }

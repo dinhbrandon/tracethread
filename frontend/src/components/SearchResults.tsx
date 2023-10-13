@@ -79,7 +79,6 @@ const SearchResults = ({ encodedQuery }: SearchResultsProps) => {
 
     return (
         <div>
-            <h1>Search Results</h1>
             <table>
             <thead className="bg-gray-700">
                 <tr>
