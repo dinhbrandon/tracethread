@@ -7,7 +7,7 @@
 // date_saved = models.DateTimeField(auto_now_add=True)
 
 export type Condition = {
-    field: { name: string, label: string };
+    field: { name: string, label: string } | null;
     operator: 'contains' | 'does not contain';
     value: string;
     logic?: 'AND' | 'OR' | 'AND NOT' | 'OR NOT';  // This is the new addition
@@ -17,11 +17,12 @@ export type Condition = {
 export type LogicCard = {
     conditions: Condition[];
     logic: 'AND' | 'OR';
-    cardLogic?: 'AND' | 'OR';  // This specifies the logic with the next card.
-    selectedSavedParameters: string[];
-    logicBeforeSavedParam: string[];
-}
-
+    cardLogic?: 'AND' | 'OR';
+    savedSearch?: string; 
+    showSavedSearch: boolean;
+    selectedSavedParameter?: string;
+    logicBeforeSavedParam?: 'AND' | 'OR' | 'ANDNOT' | 'ORNOT';
+};
 
 
 export type SearchCard = {
@@ -128,6 +129,7 @@ export interface QueryComponent {
 export interface CustomQueryBuilderProps {
     onSearch: (query: string) => void;
     onRefresh: () => void; 
+    savedParameters: SavedSearchParameters[];
 }
 
 export enum Operator {
