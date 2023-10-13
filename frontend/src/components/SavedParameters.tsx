@@ -23,7 +23,7 @@ const SavedParameters = ({ refreshKey, onSearch, savedParameters } : SavedParame
         });
         if (response.ok){
             const fetchedData = await response.json();
-            setSavedParameters(fetchedData);
+            // setSavedParameters(fetchedData);
         }
 
 }

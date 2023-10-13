@@ -95,8 +95,10 @@ const customEncodeURIComponent = (str: string): string => {
             const newCards = [...cards];
             if (!newCards[cardIndex].selectedSavedParameters) {
                 newCards[cardIndex].selectedSavedParameters = [];
+                newCards[cardIndex].logicBeforeSavedParam = [];
             }
             newCards[cardIndex].selectedSavedParameters.push('');
+            newCards[cardIndex].logicBeforeSavedParam.push('AND');
             setCards(newCards);
         };
 
@@ -157,13 +159,20 @@ const customEncodeURIComponent = (str: string): string => {
 
                 
                 if (card.selectedSavedParameters) {
-                    card.selectedSavedParameters.forEach((selectedParamId) => {
+                    card.selectedSavedParameters.forEach((selectedParamId, index) => {
                         const selectedParam = savedParameters.find(p => p.id.toString() === selectedParamId);
                         if (selectedParam) {
-                            cardQuery = `${cardQuery} & (${selectedParam.query})`;
+                            const logicBefore = card.logicBeforeSavedParam[index].replace(' ', ''); // Remove spaces
+                            const logicSymbol = logicBefore === 'OR' ? '|' 
+                                              : logicBefore === 'AND' ? '&' 
+                                              : logicBefore === 'ORNOT' ? '| ~'
+                                              : logicBefore === 'ANDNOT' ? '& ~' 
+                                              : '& ~'; // Default to 'AND NOT' if something goes wrong
+                            cardQuery = `${cardQuery} ${logicSymbol} (${selectedParam.query})`;
                         }
                     });
                 }
+                
                 
                 // If a saved parameter is selected, incorporate its logic within each card
                 if (selectedSavedParameter) {
@@ -277,6 +286,19 @@ const customEncodeURIComponent = (str: string): string => {
                         {cards[cardIndex].selectedSavedParameters?.map((selectedParameter, index) => ( // Change here
                             <div className='ml-5' key={index}>
                             <button className='mr-2' onClick={() => handleRemoveSavedSearch(cardIndex, index)}>-</button>
+                            <select 
+                                value={cards[cardIndex].logicBeforeSavedParam[index]} // Use the value from state
+                                onChange={(e) => {
+                                    const newCards = [...cards];
+                                    newCards[cardIndex].logicBeforeSavedParam[index] = e.target.value;
+                                    setCards(newCards);
+                                }}
+                            >
+                                <option value="AND">AND</option>
+                                <option value="OR">OR</option>
+                                <option value="AND NOT">AND NOT</option>
+                                <option value="OR NOT">OR NOT</option>
+                            </select>
                             <select 
                                 value={selectedParameter}
                                 onChange={(e) => {

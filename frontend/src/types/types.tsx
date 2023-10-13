@@ -10,7 +10,7 @@ export type Condition = {
     field: { name: string, label: string };
     operator: 'contains' | 'does not contain';
     value: string;
-    logic?: 'AND' | 'OR';  // This is the new addition
+    logic?: 'AND' | 'OR' | 'AND NOT' | 'OR NOT';  // This is the new addition
 };
 
 
@@ -19,6 +19,7 @@ export type LogicCard = {
     logic: 'AND' | 'OR';
     cardLogic?: 'AND' | 'OR';  // This specifies the logic with the next card.
     selectedSavedParameters: string[];
+    logicBeforeSavedParam: string[];
 }
 
 
