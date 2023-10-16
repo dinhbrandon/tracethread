@@ -37,10 +37,18 @@ export interface JobListing {
 //JobNotebook types
 export interface Card {
     id: number;
-    job_saved: JobSaved;
+    job_saved?: JobSaved;
     notes: string;
     column: number;
+    order: number;
     timestamp: string;
+    job_title?: string;
+    company_name?: string;
+    company_logo?: string;
+    listing_details?: string;
+    description?: string;
+    location?: string;
+    url?: string;
 }
   
 export interface Columns {

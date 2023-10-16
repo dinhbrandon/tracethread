@@ -25,6 +25,13 @@ class Card(models.Model):
     column = models.ForeignKey(Column, on_delete=models.CASCADE, related_name='cards')
     order = models.PositiveIntegerField(default=0)
     timestamp = models.DateTimeField(default=timezone.now)
+    job_title = models.CharField(max_length=100, null=True)
+    company_name = models.CharField(max_length=100, null=True)
+    company_logo = models.URLField(max_length=2000, null=True, blank=True)
+    listing_details = models.CharField(max_length=500, null=True)
+    description = models.TextField(null=True)
+    location = models.CharField(max_length=100, null=True)
+    url = models.URLField(max_length=2000, null=True)
 
     def __str__(self):
         if self.job_saved and self.job_saved.job_listing:

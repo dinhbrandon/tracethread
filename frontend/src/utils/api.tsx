@@ -146,4 +146,26 @@ export async function getCards(token: string, columnId?: number) {
     }
   }
   
+  //function to create cards
+  export async function createCard(token: string, cardData: object) {
+    const url = `http://localhost:8000/jobnotebook/cards`;
   
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Token ${token}`
+        },
+        body: JSON.stringify(cardData)
+      });
+      if (!response.ok) {
+        throw new Error(`Failed to create card: ${response.statusText}`);
+      }
+      const createdData = await response.json();
+      return { data: createdData, error: null };
+    } catch (error: any) {
+        console.error(error);
+        return { data: null, error: error.message };
+    }
+}

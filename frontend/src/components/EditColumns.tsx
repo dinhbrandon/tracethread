@@ -42,11 +42,6 @@ const EditColumns = () => {
         }
     };
 
-    const handleAddColumnClick = (e: React.FormEvent) => {
-        e.preventDefault();
-        setIsAddingColumn(true);
-    };
-
     const handleNewColumnNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setNewColumnName(e.target.value);
     };
@@ -213,20 +208,22 @@ const EditColumns = () => {
               ))}
                 {/* Adding column form */}
                 <form 
-                    className="bg-black-200 p-4 rounded-lg border-2 md:min-w-80 md:w-80 md:min-h-[700px] flex items-center"
+                    className="bg-black-200 p-4 rounded-lg border-2 md:min-w-80 md:w-80 md:min-h-[700px]  items-center"
                     onSubmit={handleAddColumnSubmit}
                 >
-                    <input 
-                        type="text" 
-                        value={newColumnName} 
-                        onChange={handleNewColumnNameChange}
-                        placeholder="New Column Name"
-                        className="mb-4 p-2 border rounded"
-                        required  // Require a value before submission
-                    />
-                    <button type="submit" className='p-2 bg-green-500 rounded-xl'>
-                        +
-                    </button>
+                    <div className='flex'>
+                        <input 
+                            type="text" 
+                            value={newColumnName} 
+                            onChange={handleNewColumnNameChange}
+                            placeholder="New Column Name"
+                            className="m-1 p-1 border rounded"
+                            required
+                        />
+                        <button type="submit" className='p-1 m-1 w-8 bg-green-500 rounded-xl'>
+                            +
+                        </button>
+                    </div>
                 </form>
               {provided.placeholder}
             </div>

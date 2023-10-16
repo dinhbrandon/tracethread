@@ -73,12 +73,15 @@ class CardList(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         # Assuming the JobSaved ID is sent in the request data
         job_saved_id = self.request.data.get('job_saved')
-        job_saved = get_object_or_404(JobSaved, id=job_saved_id)
-        if self.request.user == job_saved.user:
-            serializer.save(job_saved=job_saved)
+        if job_saved_id is not None:
+            job_saved = get_object_or_404(JobSaved, id=job_saved_id)
+            if self.request.user == job_saved.user:
+                serializer.save(job_saved=job_saved)
+            else:
+                # Handle the case where the user is not authorized to create a card for this JobSaved instance
+                raise PermissionDenied("You do not have permission to create a card for this job listing.")
         else:
-            # Handle the case where the user is not authorized to create a card for this JobSaved instance
-            raise PermissionDenied("You do not have permission to create a card for this job listing.")
+            serializer.save()
 
 
 class CardDetail(generics.RetrieveUpdateDestroyAPIView):
