@@ -1,71 +1,72 @@
-import { RootState } from '../redux/store';
-import { useSelector, useDispatch } from 'react-redux';
-import { useState, useEffect } from 'react';
-import SearchForm from "./SearchForm";
-import SearchResults from "./SearchResults";
-import SavedParameters from './SavedParameters';
-import { resetJobAdditionStatus } from '../redux/jobSlice';
+import React, { useEffect, useState } from 'react';
+import { SavedSearchParameters } from '../types/types';
+import { useToken } from '../hooks/useToken';
 
-const Dashboard = () => {
-  const dispatch = useDispatch();
+const Dashboard: React.FC = () => {
+    const [savedParameters, setSavedParameters] = useState<SavedSearchParameters[]>([]);
+    const token = useToken();
 
-  // Retrieve data from the Redux store
-  const isAuthenticated = useSelector((state: RootState) => state.auth.loggedIn);
-  const username = useSelector((state: RootState) => state.auth.username);
-  const jobAdditionStatus = useSelector((state: RootState) => state.job.jobAdditionStatus);
-
-  const [searchUrl, setSearchUrl] = useState<string | null>(null);
-  const [showModal, setShowModal] = useState(false);
-  const [modalMessage, setModalMessage] = useState('');
-  const [modalColor, setModalColor] = useState('green');
-  const [refreshKey, setRefreshKey] = useState(false);
-
-  const refreshSavedParameters = () => {
-    setRefreshKey(!refreshKey);
-  }
-
-
-  const handleSearch = (url: string) => {
-    setSearchUrl(url);
-  }
-
-  const handleCloseModal = () => {
-    setShowModal(false);
-    dispatch(resetJobAdditionStatus());
-  };
-
-  useEffect(() => {
-    if (jobAdditionStatus === 'added') {
-      setShowModal(true);
-      setModalMessage('Job was added successfully!');
-      setModalColor('green');
-    } else if (jobAdditionStatus === 'duplicate') {
-      setShowModal(true);
-      setModalMessage('Job already exists in the notebook!');
-      setModalColor('red');
+    async function getParametersFromUser() {
+        const url = `http://localhost:8000/querier/saved-search-parameters`;
+        const response = await fetch(url, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Token ${token}`
+            },
+        });
+        if (response.ok){
+            const fetchedData = await response.json();
+            setSavedParameters(fetchedData);
+        }
     }
-  }, [jobAdditionStatus]);
 
-  return (
-    <div>
-      <h1>Dashboard</h1>
-      {isAuthenticated && <h2>Welcome, {username}</h2>}
-      <div>
-      <SearchForm onSearch={handleSearch} onRefresh={refreshSavedParameters} refreshKey={refreshKey} />
+    async function deleteParameter(id: number) {
+      const url = `http://localhost:8000/querier/saved-search-parameters/${id}`;
+      const response = await fetch(url, {
+          method: "DELETE",
+          headers: {
+              "Authorization": `Token ${token}`
+          },
+      });
 
-      </div>
-      <div>
-        {searchUrl && <SearchResults encodedQuery={searchUrl} />}
-      </div>
-
-      {showModal && 
-        <div style={{backgroundColor: modalColor, position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', padding: '20px', borderRadius: '10px', zIndex: 1000 }}>
-            {modalMessage}
-            <button onClick={handleCloseModal}>Close</button>
-        </div>
+      if (response.ok) {
+          setSavedParameters(prevParams => prevParams.filter(param => param.id !== id));
+          getParametersFromUser();
+      } else {
+          console.error('Failed to delete the parameter');
       }
-    </div>
+  }
+
+    useEffect(() => {
+        getParametersFromUser();   
+    }, []); 
+
+    return (
+      <div>
+          <h1>Saved Searches</h1>
+          <table>
+              <thead>
+                  <tr>
+                      <th className='text-left'>Name</th>
+                      <th className='text-left'>Query</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  {savedParameters.map((param) => (
+                      <tr key={param.id}>
+                          <td className='text-left'>{param.name}</td>
+                          <td className='text-left'>{param.query}</td>
+                          <td className='text-center'>
+                                <button onClick={() => deleteParameter(param.id)}>Delete</button>
+                          </td>
+                      </tr>
+                  ))}
+              </tbody>
+          </table>
+      </div>
   );
-};
+  
+}
 
 export default Dashboard;

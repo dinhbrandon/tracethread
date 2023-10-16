@@ -24,6 +24,7 @@ const SearchResults = ({ encodedQuery }: SearchResultsProps) => {
     const [expandedJobId, setExpandedJobId] = useState<number | null>(null);
     
     async function getQueryFromURL(encodedQuery: string) {
+        console.log(encodedQuery)
         const headers: Record<string, string> = {
             "Content-Type": "application/json",
         };
@@ -80,7 +81,6 @@ const SearchResults = ({ encodedQuery }: SearchResultsProps) => {
 
     return (
         <div>
-            <h1>Search Results</h1>
             <table>
             <thead className="bg-gray-700">
                 <tr>
