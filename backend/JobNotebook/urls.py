@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import ColumnList, ColumnDetail, CardList, CardDetail, ChangeCardColumnView
+from .views import ColumnList, ColumnDetail, CardList, CardDetail, ChangeCardColumnView, ColumnBatchUpdate
 
 urlpatterns = [
     path('columns', ColumnList.as_view(), name='column-list'),
@@ -7,4 +7,5 @@ urlpatterns = [
     path('cards', CardList.as_view(), name='card-list'),
     path('cards/<int:pk>', CardDetail.as_view(), name='card-detail'),
     path('cards/<int:pk>/change-column', ChangeCardColumnView.as_view(), name='change-card-column'),
+    path('columns/batch_update', ColumnBatchUpdate.as_view(), name='column-batch-update'),
 ]

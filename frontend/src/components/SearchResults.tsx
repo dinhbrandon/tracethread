@@ -66,6 +66,8 @@ const SearchResults = ({ encodedQuery }: SearchResultsProps) => {
             setIsModalVisible(true);
             // Refresh the job listings to reflect the saved job
             getQueryFromURL(encodedQuery);
+        } else {
+            console.error('Error saving job');
         }
     }
 
