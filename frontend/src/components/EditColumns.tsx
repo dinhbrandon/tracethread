@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, Columns } from '../types/types';
 import { useToken } from '../hooks/useToken';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
@@ -25,6 +26,7 @@ const EditColumns = () => {
     const [columnToDelete, setColumnToDelete] = useState<number | null>(null);
     const [isAddingColumn, setIsAddingColumn] = useState(false);
     const [newColumnName, setNewColumnName] = useState('');
+    const navigate = useNavigate();
 
     const handleDeleteClick = async (id: number) => {
         if (!token) {
@@ -78,11 +80,14 @@ const EditColumns = () => {
         }));
         const result = await saveColumnOrder(updatedColumns, token);
         if (result.success) {
-            alert('Order saved successfully!');
+            // navigate to the job notebook page at http://localhost:3000/jobnotebook
+            navigate('/jobnotebook');
+            
         } else {
             console.error('Error saving order:', result.error);
         }
     };
+    
 
     //Function to handle adding a column
     const handleAddColumnSubmit = async () => {

@@ -91,33 +91,42 @@ export async function checkForAssociatedCards(columnId: number, token: string): 
 
 //function to save column order when editing columns
 export async function saveColumnOrder(columns: Array<{ id: number; order: number }>, token: string): Promise<{ success: boolean, error: string | null }> {
-    const updatedColumns = columns.map((column, index) => ({
+  const updatedColumns = columns.map((column, index) => ({
       id: column.id,
       order: index
-    }));
+  }));
 
-    const url = `http://localhost:8000/jobnotebook/columns/batch_update`;
-    try {
-        const response = await fetch(url, {
-            method: 'PATCH',
-            headers: {
+  const url = `http://localhost:8000/jobnotebook/columns/batch_update`;
+  try {
+      const response = await fetch(url, {
+          method: 'PATCH',
+          headers: {
               'Content-Type': 'application/json',
               'Authorization': `Token ${token}`
-            },
-            body: JSON.stringify(updatedColumns)
-        });
-        const data = await response.json()
-        console.log(data)
-        if (!response.ok) {
-            throw new Error(`Failed to save order: ${response.statusText}`);
-        }
+          },
+          body: JSON.stringify(updatedColumns)
+      });
 
-        return { success: true, error: null };
-    } catch (error: any) {
-        console.error('Error saving order:', error);
-        return { success: false, error: error.message || String(error) };
-    }
+      if (!response.ok) {
+          throw new Error(`Failed to save order: ${response.statusText}`);
+      }
+
+      const responseBody = await response.text();
+      if (!responseBody) {
+          console.warn('Empty response body');
+          return { success: false, error: 'Empty response body' };
+      }
+
+      const data = JSON.parse(responseBody);
+      console.log(data);
+      
+      return { success: true, error: null };
+  } catch (error: any) {
+      console.error('Error saving order:', error);
+      return { success: false, error: error.message || String(error) };
+  }
 }
+
 
 //card api calls
 

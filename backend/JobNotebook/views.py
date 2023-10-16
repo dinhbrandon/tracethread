@@ -29,28 +29,30 @@ class ColumnDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 #This is the view for the batch update of columns
+from rest_framework.response import Response
+
+
 class ColumnBatchUpdate(APIView):
     permission_classes = [IsAuthenticated]
 
     def patch(self, request, *args, **kwargs):
         updated_columns = request.data
-
-        # First, assign temporary order values to avoid unique constraint violations
+ 
         with transaction.atomic():
             for index, column_data in enumerate(updated_columns):
                 column = get_object_or_404(Column, id=column_data['id'])
-                # Assign temporary order values (e.g., negative values)
+                
                 column.order = -1 - index
                 column.save()
 
-        # Now, assign the final order values
         with transaction.atomic():
             for column_data in updated_columns:
                 column = get_object_or_404(Column, id=column_data['id'])
                 column.order = column_data['order']
                 column.save()
 
-        return Response(status=status.HTTP_200_OK)
+        return Response({"success": True, "message": "Order saved successfully"}, status=200)
+
 
 #Rename CardList to account for creating functionality
 class CardList(generics.ListCreateAPIView):

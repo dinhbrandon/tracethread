@@ -22,12 +22,9 @@ const JobNotebook: React.FC = () => {
   const modalRef = useRef<HTMLDivElement>(null);
 
   // This function is called when a card is dragged and dropped
-  // It updates the column and order of the card
   const onDragEnd = async (result, columnsArray, setColumns) => {
     // This condition prevents the app from crashing if the card is dropped outside of a droppable area
     if (!result.destination) return;
-    // source is the original location of the card
-    // destination is the new location of the card
     const { source, destination } = result;
     // This column is different from the 'columns' state variable
     // because it contains the 'items' array, which is the array of cards
@@ -64,11 +61,12 @@ const JobNotebook: React.FC = () => {
 
     // Convert back to array
     const updatedColumnsArray = Object.values(columns).map(column => {
-        const { items, ...rest } = column;  // Remove the 'items' since they're not part of the original structure
+        const { items, ...rest } = column;
         return rest;
     });
 
     setColumns(updatedColumnsArray);
+    getColumns();
   };
 
   function openCardModal(card: Card) {
