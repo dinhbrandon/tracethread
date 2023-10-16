@@ -1,15 +1,53 @@
 
-//SearchForm types
+export type Condition = {
+    field: { name: string, label: string } | null;
+    operator: 'contains' | 'does not contain';
+    value: string;
+    logic?: 'AND' | 'OR' | 'ANDNOT' | 'ORNOT';  // This is the new addition
+};
 
-// Search parameters have the following format:
-// user = models.ForeignKey(User, on_delete=models.CASCADE)
-// job_listing = models.ForeignKey(JobListing, on_delete=models.CASCADE)
-// date_saved = models.DateTimeField(auto_now_add=True)
+
+export type LogicCard = {
+    conditions: Condition[];
+    logic: 'AND' | 'OR';
+    cardLogic?: 'AND' | 'OR' | 'ANDNOT' | 'ORNOT';
+    savedSearch?: string; 
+    showSavedSearch: boolean;
+    selectedSavedParameter?: string;
+    logicBeforeSavedParam?: 'AND' | 'OR' | 'ANDNOT' | 'ORNOT';
+};
+
+
+
+export type InputType = 'field' | 'operator' | 'value';
+
+export interface LogicCardProps {
+    onAdd: () => void;
+    onRemove: (index: number) => void;
+    fields: { name: string, label: string }[];
+    onLineChange: (lines: Line[], operator: Operator | null) => void;  // Updated this line
+}
+
+
+
+export type Line = {
+    field: string;
+    operator: string;
+    value: string;
+};
+
+export interface SearchFormProps {
+    onSearch: (query: string) => void;
+    refreshKey: boolean;  // Add this line
+}
 
 export interface SavedParametersProps {
     refreshKey: boolean;
     onSearch: (query: string) => void;
+    isVisible: boolean;
+    savedParameters: SavedSearchParameters[];  // Add this line
 }
+
 
 export interface SavedSearchParameters {
     id: number;
@@ -86,6 +124,7 @@ export interface QueryComponent {
 export interface CustomQueryBuilderProps {
     onSearch: (query: string) => void;
     onRefresh: () => void; 
+    savedParameters: SavedSearchParameters[];
 }
 
 export enum Operator {
