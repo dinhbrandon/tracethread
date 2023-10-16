@@ -106,7 +106,8 @@ export async function saveColumnOrder(columns: Array<{ id: number; order: number
             },
             body: JSON.stringify(updatedColumns)
         });
-
+        const data = await response.json()
+        console.log(data)
         if (!response.ok) {
             throw new Error(`Failed to save order: ${response.statusText}`);
         }

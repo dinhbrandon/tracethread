@@ -61,12 +61,13 @@ class CardList(generics.ListCreateAPIView):
         column_id = self.request.query_params.get('column_id', None)
         if user.is_authenticated:
             # Get JobSaved instances for the logged-in user
-            job_saved_ids = JobSaved.objects.filter(user=user).values_list('id', flat=True)
+            # job_saved_ids = JobSaved.objects.filter(user=user).values_list('id', flat=True)
+            column_owner = Column.objects.filter(owner=user)
             # Filter cards based on the JobSaved instances
-            queryset = Card.objects.filter(job_saved__id__in=job_saved_ids).order_by('column', 'order')
-            if column_id is not None:
-                # Filter cards by column_id if provided
-                queryset = queryset.filter(column__id=column_id)
+            queryset = Card.objects.filter(column__in=column_owner).order_by('column', 'order')
+            # if column_id is not None:
+            #     # Filter cards by column_id if provided
+            #     queryset = queryset.filter(column__id=column_id)
             return queryset
         return Card.objects.none()  # Return an empty queryset if the user is not authenticated
 
