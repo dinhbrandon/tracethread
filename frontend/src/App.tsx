@@ -12,7 +12,7 @@ import EditColumns from './components/EditColumns';
 import JobSearch from './components/JobSearch';
 import SavedParameters from './components/SavedParameters';
 import Home from './components/Home';
-import ('preline')
+
 
 function App() {
 
