@@ -15,7 +15,7 @@ const Nav = () => {
   };
 
   return (
-    <nav className="bg-blue-500 h-12">
+    <nav className="bg-white h-12">
       <ul className="flex gap-4">
         <li>
             <span>[{username}]</span>
