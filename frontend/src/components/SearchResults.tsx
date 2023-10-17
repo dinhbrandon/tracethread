@@ -86,7 +86,7 @@ const SearchResults = ({ encodedQuery }: SearchResultsProps) => {
                 <tr>
                     <th>    </th>
                     <th>Job Title</th>
-                    <th>Company Name</th>
+                    <th className="w-32 truncate ...">Company Name</th>
                     <th>Location</th>
                     <th>Date Posted</th>
                     {expandedJobId !== null && (
@@ -95,8 +95,8 @@ const SearchResults = ({ encodedQuery }: SearchResultsProps) => {
                         <th>Description</th>
                     </>
                 )}
-                <th>Action</th>
-                <th></th>
+                    <th>Action</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>

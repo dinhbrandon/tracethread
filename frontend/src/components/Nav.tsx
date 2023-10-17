@@ -18,9 +18,6 @@ const Nav = () => {
     <nav className="bg-white h-12">
       <ul className="flex gap-4">
         <li>
-            <span>[{username}]</span>
-        </li>
-        <li>
           <a href="http://localhost:3000">Home</a>
         </li>
         <li>
@@ -40,11 +37,6 @@ const Nav = () => {
           </>
         ) : (
           <>
-            <li>
-              <a href="http://localhost:3000/signup">
-                Sign up
-              </a>
-            </li>
             <li>
               <a href="http://localhost:3000/login">
                 Login

@@ -2,8 +2,13 @@ import { useState, ChangeEvent, FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FormData } from '../types/types'
 
-const SignUpForm = () => {
+const SignUpForm = ({ toggleSignUpModal, toggleLoginModal }): any => {
     const navigate = useNavigate();
+
+    const switchToLogin = () => {
+      toggleSignUpModal();
+      toggleLoginModal();
+  }
 
     const [formData, setFormData] = useState<FormData>({
         first_name: '',
@@ -94,7 +99,7 @@ const SignUpForm = () => {
             });
 
             if (response.ok) {
-                navigate('/');
+                navigate('/dashboard');
             } else {
                 console.error('Error:', response.statusText);
             }
@@ -114,12 +119,13 @@ const SignUpForm = () => {
                   </h1>
                   <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
                     Already have an account?{" "}
-                    <a
+                    <button
                       className="text-black decoration-2 hover:underline font-medium"
-                      href="../examples/html/signin.html"
+                      type='button'
+                      onClick={switchToLogin}
                     >
                      Login here
-                    </a>
+                    </button>
                   </p>
                 </div>
 

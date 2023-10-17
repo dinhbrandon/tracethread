@@ -4,7 +4,7 @@ import { loginUser, getUserDetails } from '../redux/authActions';
 import { RootState, AppDispatch } from '../redux/store';
 import { useNavigate } from 'react-router-dom';
 
-const LoginForm: React.FC = () => {
+const LoginForm: React.FC = ({ toggleSignUpModal, toggleLoginModal }): any => {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const loggedIn = useSelector((state: RootState) => state.auth.loggedIn);
@@ -12,6 +12,12 @@ const LoginForm: React.FC = () => {
   const error = useSelector((state: RootState) => state.auth.error);
 
   const [loading, setLoading] = useState(false);
+
+  const toggleModals = () => {
+    toggleLoginModal();
+    toggleSignUpModal();
+}
+
 
   const [formData, setFormData] = useState({
     email: '',
@@ -51,19 +57,19 @@ const LoginForm: React.FC = () => {
   }, [dispatch, loggedIn]);
 
   return (
-    <div className="h-full dark:bg-slate-900 flex items-center py-16">
+    <div className="h-full flex items-center py-16">
         <main className="w-full max-w-md mx-auto p-6">
-            <div className="mt-7 bg-white border border-gray-200 rounded-xl shadow-sm dark:bg-gray-800 dark:border-gray-700">
+            <div className="mt-7 bg-white border border-gray-200 rounded-xl shadow-sm">
                 <div className="p-4 sm:p-7">
                     <div className="text-center">
-                        <h1 className="block text-2xl font-bold text-gray-800 dark:text-white">
+                        <h1 className="block text-2xl font-bold text-gray-800">
                             Login
                         </h1>
-                        <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                        <p className="mt-2 text-sm text-gray-600">
                             Don't have an account?{" "}
-                            <a className="text-blue-600 decoration-2 hover:underline font-medium" href="../examples/html/signup.html">
+                            <button onClick={toggleModals} className="decoration-2 hover:underline font-medium">
                                 Sign up here
-                            </a>
+                            </button>
                         </p>
                     </div>
 
@@ -78,7 +84,7 @@ const LoginForm: React.FC = () => {
 
                                     {/* Email input box */}
                                     <div>
-                                        <label htmlFor="email" className="block text-sm mb-2 dark:text-white">
+                                        <label htmlFor="email" className="block text-sm mb-2">
                                             Email address:
                                         </label>
                                         <div className="relative">
@@ -133,9 +139,9 @@ const LoginForm: React.FC = () => {
 
                                 <button
                                     type="submit"
-                                    className="mt-4 py-3 px-4 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm"
+                                    className="mt-4 py-3 px-4 inline-flex justify-center items-center gap-2 rounded-md border w-full font-semibold text-sm"
                                 >
-                                    Log In
+                                    Login
                                 </button>
                                 {error && <div className="text-xs text-red-600 mt-2">{error}</div>}
                             </form>

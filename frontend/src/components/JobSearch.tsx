@@ -51,7 +51,7 @@ const JobSearch = () => {
         <h1>Search Tool</h1>
         <SearchForm onSearch={handleSearch} onRefresh={refreshSavedParameters} refreshKey={refreshKey} />
       </div>
-      <div className="w-3/5 p-4 overflow-y-auto">
+      <div>
         {searchUrl && <SearchResults encodedQuery={searchUrl} />}
       </div>
 

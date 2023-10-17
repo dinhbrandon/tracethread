@@ -1,10 +1,20 @@
 import { useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux';
 import SignUpForm  from './SignUpForm'
 import LoginForm from './LoginForm'
+import { RootState } from '../redux/store';
 
 const Home = () => {
     const [signUpModal, setSignUpModal] = useState(false)
     const [loginModal, setLoginModal] = useState(false)
+    const loggedIn = useSelector((state: RootState) => state.auth.loggedIn);
+
+    const switchToLogin = () => {
+        setSignUpModal(false);
+        setLoginModal(true);
+    };
+    
+
 
     const toggleSignUpModal = () => {
         setSignUpModal(prev => !prev);
@@ -20,17 +30,17 @@ const Home = () => {
 
 <div className="max-w-[85rem] mx-auto px-4 sm:px-6 lg:px-8">
     {signUpModal && (
-                <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
-                    <div className="rounded-lg p-8 shadow-lg">
+                <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="w-[600px] relative rounded-lg  shadow-lg">
                         <button 
                             onClick={toggleSignUpModal} 
-                            className=" absolute top-4 right-4 text-red-500 hover:text-gray-900 transition"
+                            className="absolute md:top-[123px] md:right-[110px] top-[123px] right-[50px] text-red-500 hover:text-gray-900 transition"
                         >
                             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                             </svg>
                         </button>
-                        <SignUpForm />
+                        <SignUpForm toggleSignUpModal={toggleSignUpModal} toggleLoginModal={toggleLoginModal} />
                     </div>
                 </div>
             )}
@@ -45,7 +55,7 @@ const Home = () => {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                             </svg>
                         </button>
-                        <LoginForm />
+                        <LoginForm toggleSignUpModal={toggleSignUpModal} toggleLoginModal={toggleLoginModal} />
                     </div>
                 </div>
             )}
@@ -54,8 +64,8 @@ const Home = () => {
       <h1 className="block text-3xl font-bold sm:text-4xl lg:text-6xl lg:leading-tight ">Start your journey with <span className="text-black">Tracethread</span></h1>
       <p className="mt-3 text-lg">Hand-picked professionals and expertly crafted components, designed for any kind of entrepreneur.</p>
 
-
-      <div className="mt-7 grid gap-3 w-full sm:inline-flex md:flex md:flex-col">
+    { loggedIn ? <></> : (
+        <div className="mt-7 grid gap-3 w-full sm:inline-flex md:flex md:flex-col">
         <div className="flex">
         <button
         onClick={toggleSignUpModal}
@@ -69,14 +79,16 @@ const Home = () => {
 
         <div className="flex">
         <p className="mt-2 text-sm">
-              Already have an account?&nbsp;
-              <button className="text-black decoration-2 hover:underline font-medium" onClick={toggleLoginModal}>
+            Already have an account?&nbsp;
+            <button className="text-black decoration-2 hover:underline font-medium" onClick={toggleLoginModal}>
             Login here
-              </button>
+            </button>
             </p>
         </div>
         
-      </div>
+    </div>
+    )}
+        
 
     </div>
 
