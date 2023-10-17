@@ -86,7 +86,7 @@ const LoginForm: React.FC = () => {
                                                 type="email"
                                                 id="email"
                                                 name="email"
-                                                className="border py-3 px-4 block w-full border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+                                                className="border py-3 px-4 block w-full border-gray-200 rounded-md text-sm"
                                                 value={formData.email}
                                                 onChange={handleFormData}
                                                 required
@@ -96,7 +96,7 @@ const LoginForm: React.FC = () => {
 
                                     {/* Password input box */}
                                     <div>
-                                        <label htmlFor="password" className="block text-sm mb-2 dark:text-white">
+                                        <label htmlFor="password" className="block text-sm mb-2">
                                             Password:
                                         </label>
                                         <div className="relative">
@@ -104,19 +104,36 @@ const LoginForm: React.FC = () => {
                                                 type="password"
                                                 id="password"
                                                 name="password"
-                                                className="border py-3 px-4 block w-full border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+                                                className="border py-3 px-4 block border-gray-300 w-full rounded-md text-sm"
                                                 value={formData.password}
                                                 onChange={handleFormData}
                                                 required
+                                                aria-describedby="password-error"
                                             />
+                                            <div className="hidden absolute inset-y-0 right-0 flex items-center pointer-events-none pr-3">
+                                                <svg
+                                                    className="h-5 w-5 text-red-500"
+                                                    width="16"
+                                                    height="16"
+                                                    fill="currentColor"
+                                                    viewBox="0 0 16 16"
+                                                    aria-hidden="true"
+                                                >
+                                                    <path
+                                                        fillRule="evenodd"
+                                                        d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"
+                                                    />
+                                                </svg>
+                                            </div>
                                         </div>
+                                        
                                     </div>
 
                                 </div>
 
                                 <button
                                     type="submit"
-                                    className="mt-4 py-3 px-4 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800"
+                                    className="mt-4 py-3 px-4 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm"
                                 >
                                     Log In
                                 </button>
@@ -129,6 +146,7 @@ const LoginForm: React.FC = () => {
         </main>
     </div>
 );
+
 
 };
 
