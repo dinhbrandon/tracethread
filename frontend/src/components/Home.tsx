@@ -1,19 +1,65 @@
+import { useState } from 'react'
+import SignUpForm  from './SignUpForm'
+import LoginForm from './LoginForm'
 
 const Home = () => {
+    const [signUpModal, setSignUpModal] = useState(false)
+    const [loginModal, setLoginModal] = useState(false)
+
+    const toggleSignUpModal = () => {
+        setSignUpModal(prev => !prev);
+    };
+
+    const toggleLoginModal = () => {
+        setLoginModal(prev => !prev);
+    };
+    
+
   return (
 
 
 <div className="max-w-[85rem] mx-auto px-4 sm:px-6 lg:px-8">
-
+    {signUpModal && (
+                <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-lg p-8 shadow-lg">
+                        <button 
+                            onClick={toggleSignUpModal} 
+                            className="absolute top-4 right-4 text-gray-700 hover:text-gray-900 transition"
+                        >
+                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                        <SignUpForm />
+                    </div>
+                </div>
+            )}
+            {loginModal && (
+                <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-lg p-8 shadow-lg">
+                        <button 
+                            onClick={toggleLoginModal} 
+                            className="absolute top-4 right-4 text-gray-700 hover:text-gray-900 transition"
+                        >
+                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                        <LoginForm />
+                    </div>
+                </div>
+            )}
   <div className="grid md:grid-cols-2 gap-4 md:gap-8 xl:gap-20 md:items-center">
     <div>
-      <h1 className="block text-3xl font-bold text-gray-800 sm:text-4xl lg:text-6xl lg:leading-tight dark:text-white">Start your journey with <span className="text-blue-600">Preline</span></h1>
+      <h1 className="block text-3xl font-bold text-gray-800 sm:text-4xl lg:text-6xl lg:leading-tight dark:text-white">Start your journey with <span className="text-blue-600">Tracethread</span></h1>
       <p className="mt-3 text-lg text-gray-800 dark:text-gray-400">Hand-picked professionals and expertly crafted components, designed for any kind of entrepreneur.</p>
 
 
       <div className="mt-7 grid gap-3 w-full sm:inline-flex md:flex md:flex-col">
         <div className="flex">
-        <button className="inline-flex justify-center items-center gap-x-3 text-center bg-blue-600 hover:bg-blue-700 border border-transparent text-sm lg:text-base text-white font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 focus:ring-offset-white transition py-3 px-4 dark:focus:ring-offset-gray-800">
+        <button
+        onClick={toggleSignUpModal}
+        className="inline-flex justify-center items-center gap-x-3 text-center bg-blue-600 hover:bg-blue-700 border border-transparent text-sm lg:text-base text-white font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 focus:ring-offset-white transition py-3 px-4 dark:focus:ring-offset-gray-800">
             Sign up
             <svg className="w-2.5 h-2.5" width="16" height="16" viewBox="0 0 16 16" fill="none">
                 <path d="M5.27921 2L10.9257 7.64645C11.1209 7.84171 11.1209 8.15829 10.9257 8.35355L5.27921 14" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
@@ -23,10 +69,10 @@ const Home = () => {
 
         <div className="flex">
         <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-              Don't have an account yet?
-              <a className="text-blue-600 decoration-2 hover:underline font-medium" href="../examples/html/signup.html">
-                Sign up here
-              </a>
+              Already have an account?&nbsp;
+              <button className="text-blue-600 decoration-2 hover:underline font-medium" onClick={toggleLoginModal}>
+            Login here
+              </button>
             </p>
         </div>
         
