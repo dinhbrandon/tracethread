@@ -12,7 +12,7 @@ import EditColumns from './components/EditColumns';
 import JobSearch from './components/JobSearch';
 import SavedParameters from './components/SavedParameters';
 import Home from './components/Home';
-
+import UserNav from './components/UserNav';
 
 function App() {
 
@@ -21,10 +21,10 @@ function App() {
       <PersistGate loading={null} persistor={persistor}>
         <div>
           <BrowserRouter>
-            <Nav />
+            <UserNav />
             <Routes>
               <Route path="/" element={<Home />} />
-              <Route path="/signup" element={<SignUpForm />} />
+              <Route path="/signup" element={<SignUpForm  />} />
               <Route path="/login" element={<LoginForm />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/jobnotebook" element={<JobNotebook />} />
