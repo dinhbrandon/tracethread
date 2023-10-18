@@ -1,9 +1,17 @@
-import { useState, ChangeEvent, FormEvent } from 'react';
+import { useState, ChangeEvent, FormEvent, forwardRef, Ref } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FormData } from '../types/types'
 
-const SignUpForm = ({ toggleSignUpModal, toggleLoginModal }): any => {
-    const navigate = useNavigate();
+interface Props {
+  toggleSignUpModal: () => void;
+  toggleLoginModal: () => void;
+}
+
+const SignUpForm = forwardRef<HTMLDivElement, Props>((props: Props, ref: Ref<HTMLDivElement>) => {
+  const { toggleSignUpModal, toggleLoginModal } = props;
+
+  const navigate = useNavigate();
+
 
     const switchToLogin = () => {
       toggleSignUpModal();
@@ -109,7 +117,7 @@ const SignUpForm = ({ toggleSignUpModal, toggleLoginModal }): any => {
     };
 
       return (
-        <div className="h-full flex items-center py-16">
+        <div ref={ref} className="h-full flex items-center py-16">
           <main className="w-full max-w-md mx-auto p-6">
             <div className="mt-7 bg-white border border-gray-200 rounded-xl shadow-sm ">
               <div className="p-4 sm:p-7">
@@ -117,7 +125,7 @@ const SignUpForm = ({ toggleSignUpModal, toggleLoginModal }): any => {
                   <h1 className="block text-2xl font-bold text-gray-800 ">
                     Sign up
                   </h1>
-                  <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                  <p className="mt-2 text-sm text-gray-600">
                     Already have an account?{" "}
                     <button
                       className="text-black decoration-2 hover:underline font-medium"
@@ -389,6 +397,6 @@ const SignUpForm = ({ toggleSignUpModal, toggleLoginModal }): any => {
           </main>
         </div>
       );
-};
+});
 
 export default SignUpForm;

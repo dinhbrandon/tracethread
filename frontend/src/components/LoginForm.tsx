@@ -1,22 +1,29 @@
-import { useState, useEffect, ChangeEvent, FormEvent } from 'react';
+import { useState, useEffect, ChangeEvent, FormEvent, forwardRef, Ref } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { loginUser, getUserDetails } from '../redux/authActions';
 import { RootState, AppDispatch } from '../redux/store';
 import { useNavigate } from 'react-router-dom';
 
-const LoginForm: React.FC = ({ toggleSignUpModal, toggleLoginModal }): any => {
-  const navigate = useNavigate();
-  const dispatch = useDispatch<AppDispatch>();
-  const loggedIn = useSelector((state: RootState) => state.auth.loggedIn);
-  const username = useSelector((state: RootState) => state.auth.username);
-  const error = useSelector((state: RootState) => state.auth.error);
-
-  const [loading, setLoading] = useState(false);
-
-  const toggleModals = () => {
-    toggleLoginModal();
-    toggleSignUpModal();
+interface LoginFormProps {
+    toggleSignUpModal: () => void;
+    toggleLoginModal: () => void;
 }
+
+const LoginForm = forwardRef<HTMLDivElement, LoginFormProps>((props: LoginFormProps, ref: Ref<HTMLDivElement>) => {
+    const { toggleSignUpModal, toggleLoginModal } = props;
+
+    const navigate = useNavigate();
+    const dispatch = useDispatch<AppDispatch>();
+    const loggedIn = useSelector((state: RootState) => state.auth.loggedIn);
+    const username = useSelector((state: RootState) => state.auth.username);
+    const error = useSelector((state: RootState) => state.auth.error);
+
+    const [loading, setLoading] = useState(false);
+
+    const toggleModals = () => {
+        toggleLoginModal();
+        toggleSignUpModal();
+    };
 
 
   const [formData, setFormData] = useState({
@@ -57,7 +64,7 @@ const LoginForm: React.FC = ({ toggleSignUpModal, toggleLoginModal }): any => {
   }, [dispatch, loggedIn]);
 
   return (
-    <div className="h-full flex items-center py-16">
+    <div ref={ref} className="h-full flex items-center py-16">
         <main className="w-full max-w-md mx-auto p-6">
             <div className="mt-7 bg-white border border-gray-200 rounded-xl shadow-sm">
                 <div className="p-4 sm:p-7">
@@ -80,7 +87,7 @@ const LoginForm: React.FC = ({ toggleSignUpModal, toggleLoginModal }): any => {
                             <p>You are logged in, {username}.</p>
                         ) : (
                             <form onSubmit={handleSubmit}>
-                                <div className="grid gap-y-4">
+                                <div className="flex flex-col w-80 gap-6">
 
                                     {/* Email input box */}
                                     <div>
@@ -139,7 +146,7 @@ const LoginForm: React.FC = ({ toggleSignUpModal, toggleLoginModal }): any => {
 
                                 <button
                                     type="submit"
-                                    className="mt-4 py-3 px-4 inline-flex justify-center items-center gap-2 rounded-md border w-full font-semibold text-sm"
+                                    className="bg-white text-black border-gray-300 border mt-5 py-3 px-4 inline-flex justify-center items-center gap-2 rounded-md font-semibol text-sm w-full"
                                 >
                                     Login
                                 </button>
@@ -154,6 +161,6 @@ const LoginForm: React.FC = ({ toggleSignUpModal, toggleLoginModal }): any => {
 );
 
 
-};
+});
 
 export default LoginForm;

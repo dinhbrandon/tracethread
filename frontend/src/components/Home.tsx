@@ -1,61 +1,56 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import SignUpForm  from './SignUpForm'
 import LoginForm from './LoginForm'
 import { RootState } from '../redux/store';
 
+type ModalState = 'signup' | 'login' | null;
+
 const Home = () => {
-    const [signUpModal, setSignUpModal] = useState(false)
-    const [loginModal, setLoginModal] = useState(false)
+    const [activeModal, setActiveModal] = useState<ModalState>(null);
     const loggedIn = useSelector((state: RootState) => state.auth.loggedIn);
+    const modalRef = useRef(null);
 
     const switchToLogin = () => {
-        setSignUpModal(false);
-        setLoginModal(true);
+        setActiveModal('login');
     };
-    
-
 
     const toggleSignUpModal = () => {
-        setSignUpModal(prev => !prev);
+        setActiveModal(prev => prev === 'signup' ? null : 'signup');
     };
 
     const toggleLoginModal = () => {
-        setLoginModal(prev => !prev);
+            setActiveModal(prev => prev === 'login' ? null : 'login');
     };
+    
+    useEffect(() => {
+            const clickOutside = (e: MouseEvent) => {
+                if (activeModal && modalRef.current && !(modalRef.current as any).contains(e.target as Node)) {
+                    setActiveModal(null);
+                }
+            };
+            document.addEventListener('mousedown', clickOutside);
+            return () => {
+                document.removeEventListener('mousedown', clickOutside);
+            };
+    }, [activeModal]);
     
 
   return (
 
 
 <div className="max-w-[85rem] mx-auto px-4 sm:px-6 lg:px-8">
-    {signUpModal && (
+    {activeModal === 'signup' && (
                 <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex items-center justify-center z-50">
                     <div className="w-[600px] relative rounded-lg  shadow-lg">
-                        <button 
-                            onClick={toggleSignUpModal} 
-                            className="absolute md:top-[123px] md:right-[110px] top-[123px] right-[50px] text-red-500 hover:text-gray-900 transition"
-                        >
-                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                        </button>
-                        <SignUpForm toggleSignUpModal={toggleSignUpModal} toggleLoginModal={toggleLoginModal} />
+                        <SignUpForm ref={modalRef} toggleSignUpModal={toggleSignUpModal} toggleLoginModal={toggleLoginModal} />
                     </div>
                 </div>
             )}
-            {loginModal && (
-                <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-lg p-8 shadow-lg">
-                        <button 
-                            onClick={toggleLoginModal} 
-                            className="absolute top-4 right-4 text-gray-700 hover:text-gray-900 transition"
-                        >
-                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                        </button>
-                        <LoginForm toggleSignUpModal={toggleSignUpModal} toggleLoginModal={toggleLoginModal} />
+            {activeModal === 'login' && (
+                <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="rounded-lg p-8 shadow-lg">
+                        <LoginForm ref={modalRef} toggleSignUpModal={toggleSignUpModal} toggleLoginModal={toggleLoginModal} />
                     </div>
                 </div>
             )}
