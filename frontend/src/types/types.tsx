@@ -103,7 +103,7 @@ export interface JobSaved {
     date_saved: string;
 }
 
-//SignUpForm types
+//SignUpForm & LoginForm types
 export interface FormData {
     first_name: string;
     last_name: string;
@@ -112,6 +112,11 @@ export interface FormData {
     password: string;
     password2: string;
 }
+
+export interface SignupLoginProps {
+    toggleSignUpModal: () => void;
+    toggleLoginModal: () => void;
+  }
 
 //SearchForm types
 export interface QueryComponent {

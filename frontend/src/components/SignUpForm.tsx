@@ -1,13 +1,9 @@
 import { useState, ChangeEvent, FormEvent, forwardRef, Ref } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FormData } from '../types/types'
+import { FormData, SignupLoginProps } from '../types/types'
 
-interface Props {
-  toggleSignUpModal: () => void;
-  toggleLoginModal: () => void;
-}
 
-const SignUpForm = forwardRef<HTMLDivElement, Props>((props: Props, ref: Ref<HTMLDivElement>) => {
+const SignUpForm = forwardRef<HTMLDivElement, SignupLoginProps>((props: SignupLoginProps, ref: Ref<HTMLDivElement>) => {
   const { toggleSignUpModal, toggleLoginModal } = props;
 
   const navigate = useNavigate();

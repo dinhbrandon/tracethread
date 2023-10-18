@@ -3,13 +3,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { loginUser, getUserDetails } from '../redux/authActions';
 import { RootState, AppDispatch } from '../redux/store';
 import { useNavigate } from 'react-router-dom';
+import { SignupLoginProps } from '../types/types';
 
-interface LoginFormProps {
-    toggleSignUpModal: () => void;
-    toggleLoginModal: () => void;
-}
-
-const LoginForm = forwardRef<HTMLDivElement, LoginFormProps>((props: LoginFormProps, ref: Ref<HTMLDivElement>) => {
+const LoginForm = forwardRef<HTMLDivElement, SignupLoginProps>((props: SignupLoginProps, ref: Ref<HTMLDivElement>) => {
     const { toggleSignUpModal, toggleLoginModal } = props;
 
     const navigate = useNavigate();
