@@ -20,6 +20,7 @@ const customEncodeURIComponent = (str: string): string => {
         const [query, setQuery] = useState<string>('');
         const [savedSearchName, setSavedSearchName] = useState<string>('');
         const [selectedSavedParameter, setSelectedSavedParameter] = useState('');
+        const [successMessage, setSuccessMessage] = useState('');
         const token = useToken();
         const fields = [
             { name: 'job_title', label: 'Job Title' },
@@ -217,34 +218,23 @@ const customEncodeURIComponent = (str: string): string => {
 
         const handleSaveSearch = () => {
             saveParameters(savedSearchName, query);
+            setSuccessMessage('Saved successfully!');
+            setSavedSearchName('');
         }
+
 
         // BELOW IS THE JSX (UI DISPLAY) FOR THE CUSTOM QUERY BUILDER
         
         return (
+            
             <div>
-                <div className="mt-2">
-                    <label>Save search: </label>
-                    <input 
-                        type="text" 
-                        value={savedSearchName} 
-                        onChange={(e) => setSavedSearchName(e.target.value)} 
-                        placeholder="Name your search" 
-                    />
-                    <button className='ml-2 mr-2 bg-gray-500' onClick={handleSaveSearch}>Save</button>
-                </div>
-                <div className='mt-4'>
-                    <button className='bg-gray-500'>
-                        <a href="http://localhost:3000/saved">View all saved searches</a>
-                    </button>
-                </div>
                 {cards.map((card, cardIndex) => (
                     <div key={cardIndex} className="border p-4 m-2">
 
                 {cardIndex !== 0 && (
                             <div className="mb-3">
-                                <label>Logical Operator: </label>
-                                <select 
+                                <select
+                                    className='text-sm text-gray-600'
                                     value={card.cardLogic} 
                                     onChange={(e) => {
                                         const newCards = [...cards];
@@ -252,10 +242,10 @@ const customEncodeURIComponent = (str: string): string => {
                                         setCards(newCards);
                                     }}
                                 >
-                                    <option value="AND">AND</option>
-                                    <option value="OR">OR</option>
-                                    <option value="ANDNOT">AND NOT</option>
-                                    <option value="ORNOT">OR NOT</option>
+                                    <option value="AND">and</option>
+                                    <option value="OR">or</option>
+                                    <option value="ANDNOT">and not</option>
+                                    <option value="ORNOT">or not</option>
                                 </select>
                             </div>
                         )}
@@ -264,12 +254,12 @@ const customEncodeURIComponent = (str: string): string => {
                         {card.conditions.map((condition, conditionIndex) => (
                             <div key={conditionIndex}>
                                 <div className="flex items-center mb-2">
-                                <button onClick={() => addConditionToCard(cardIndex)}>+</button>
+                                <button className="text-sm text-gray-600" onClick={() => addConditionToCard(cardIndex)}>+</button>
                                 {conditionIndex !== 0 && 
-                                <button onClick={() => removeConditionFromCard(cardIndex, conditionIndex)}>-</button>
+                                <button className="text-gray-600 ml-1 mr-1" onClick={() => removeConditionFromCard(cardIndex, conditionIndex)}>-</button>
                                 }
                                 <select 
-                                    className="ml-2 mr-2" 
+                                    className="text-sm text-gray-600" 
                                     value={condition.field ? condition.field.name : ''} 
                                     onChange={(e) => {
                                         const selectedField = fields.find(f => f.name === e.target.value);
@@ -283,7 +273,7 @@ const customEncodeURIComponent = (str: string): string => {
                                         setCards(newCards);
                                     }}                                        
                                 >
-                                    <option value="">Select Field</option>
+                                    <option value="">Select field</option>
                                     {fields.map(f => (
                                         <option key={f.name} value={f.name}>{f.label}</option>
                                     ))}
@@ -292,7 +282,7 @@ const customEncodeURIComponent = (str: string): string => {
                                 {condition?.field?.name && (
                                     <div>
                                     <select 
-                                    className="mr-2"
+                                    className="text-sm text-gray-600 m-1"
                                     value={condition.operator}
                                     onChange={(e) => {
                                         const newCards = [...cards];
@@ -305,8 +295,8 @@ const customEncodeURIComponent = (str: string): string => {
                                 </select>
                                 <input 
                                     type="text" 
-                                    className="mr-2" 
-                                    placeholder="Value" 
+                                    className="text-sm text-gray-600 text-left border-b border-gray-200" 
+                                    placeholder=" value" 
                                     value={condition.value}
                                     onChange={(e) => {
                                         const newCards = [...cards];
@@ -322,7 +312,8 @@ const customEncodeURIComponent = (str: string): string => {
                                 </div>
                                 {conditionIndex !== card.conditions.length - 1 && (
                                     <div className="flex justify-between my-2">
-                                        <select 
+                                        <select
+                                            className='text-sm text-gray-600' 
                                             value={condition.logic}
                                             onChange={(e) => {
                                                 const newCards = [...cards];
@@ -330,8 +321,8 @@ const customEncodeURIComponent = (str: string): string => {
                                                 setCards(newCards);
                                             }}
                                         >
-                                            <option value="AND">AND</option>
-                                            <option value="OR">OR</option>
+                                            <option value="AND">and</option>
+                                            <option value="OR">or</option>
                                         </select>
 
                                     </div>
@@ -340,14 +331,15 @@ const customEncodeURIComponent = (str: string): string => {
                         ))}
                         
                         <div>
-                            <button onClick={() => handleToggleSavedSearch(cardIndex)}>
-                                {card.showSavedSearch ? "- Remove Saved Search" : "+ Add Saved Search"}
+                            <button className="text-sm text-gray-600" onClick={() => handleToggleSavedSearch(cardIndex)}>
+                                {card.showSavedSearch ? "- Remove saved filter" : "+ Add saved filter"}
                             </button>
                         </div>
                         {card.showSavedSearch && (
-                            <div>
+                            <div className='flex items-center space-x-4'>
                             {cards[cardIndex].conditions[0]?.field?.name && (
-                                <select 
+                                <select
+                                    className='text-sm text-gray-600'
                                     value={card.logicBeforeSavedParam} 
                                     onChange={(e) => {
                                         const newCards = [...cards];
@@ -355,14 +347,16 @@ const customEncodeURIComponent = (str: string): string => {
                                         setCards(newCards);
                                     }}
                                 >
-                                    <option value="AND">AND</option>
-                                    <option value="OR">OR</option>
-                                    <option value="ANDNOT">AND NOT</option>
-                                    <option value="ORNOT">OR NOT</option>
+                                    <option value="AND">and</option>
+                                    <option value="OR">or</option>
+                                    <option value="ANDNOT">and not</option>
+                                    <option value="ORNOT">or not</option>
                                 </select>
                             )}
 
-                                <select 
+                                <div className="px-6 py-4 grid gap-3 md:flex md:justify-between md:items-center border-b border-gray-200">
+                                <select
+                                    className="text-sm text-gray-600" 
                                     value={card.savedSearch}
                                     onChange={(e) => {
                                         const newCards = [...cards];
@@ -370,18 +364,19 @@ const customEncodeURIComponent = (str: string): string => {
                                         setCards(newCards);
                                     }}
                                 >
-                                    <option value="">Your saved searches...</option>
+                                    <option value="">Your saved filters...</option>
                                     {savedParameters.map((param) => (
                                         <option key={param.id} value={param.id}>
                                             {param.name}
                                         </option>
                                     ))}
                                 </select>
+                                </div>
                             </div>
                         )}
 
                         <div className='mt-5'>
-                            <button className='ml-2 mr-2 bg-gray-500' onClick={() => removeCard(cardIndex)}>Remove Group</button>
+                            <button className="py-1 px-3 rounded-md border font-medium bg-white text-gray-700 align-middle hover:bg-gray-50 transition-all text-sm" onClick={() => removeCard(cardIndex)}>Remove Group</button>
                         </div>
                         
 
@@ -389,9 +384,32 @@ const customEncodeURIComponent = (str: string): string => {
                     
                     
                 ))}
-                <button onClick={addCard}>+ Add Group</button>
+                <button className='text-sm text-gray-600' onClick={addCard}>+ Add Group</button>
                 <div className='mt-2'>
-                    <button className='ml-2 mr-2 bg-gray-500' onClick={generateQuery}>Search</button>
+                    <button className="py-2 px-3 rounded-md border font-medium bg-white text-gray-700 align-middle hover:bg-gray-50 transition-all text-sm" onClick={generateQuery}>Search</button>
+                </div>
+
+
+
+
+
+
+            
+                <div className="mt-2 text-sm text-gray-600">
+                    <input
+                        className='border-b border-gray-200 m-1'
+                        type="text" 
+                        value={savedSearchName} 
+                        onChange={(e) => setSavedSearchName(e.target.value)} 
+                        placeholder="Name" 
+                    />
+                    <button className=" px-3 rounded-md border font-medium bg-white text-gray-700 align-middle hover:bg-gray-50 transition-all text-sm" onClick={handleSaveSearch}>Save filter</button>
+                    {successMessage && <p className="text-green-500 text-sm mt-2">{successMessage}</p>}
+                </div>
+                <div className='mt-4'>
+                    <button className="py-2 px-3 rounded-md border font-medium bg-white text-gray-700 align-middle hover:bg-gray-50 transition-all text-sm">
+                        <a href="http://localhost:3000/saved">View all saved searches</a>
+                    </button>
                 </div>
             </div>
         );
