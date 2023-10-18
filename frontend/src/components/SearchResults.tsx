@@ -22,6 +22,9 @@ const SearchResults = ({ encodedQuery }: SearchResultsProps) => {
     const [status, setStatus] = useState<string>("not saved");
     const [results, setResults] = useState<JobListing[]>([]);
     const [expandedJobId, setExpandedJobId] = useState<number | null>(null);
+    const [hasResults, setHasResults] = useState<boolean>(true);
+
+    console.log(hasResults)
     
     async function getQueryFromURL(encodedQuery: string) {
         console.log(encodedQuery)
@@ -45,6 +48,7 @@ const SearchResults = ({ encodedQuery }: SearchResultsProps) => {
 
             const fetchedData = await response.json();
             setResults(fetchedData);
+            setHasResults(fetchedData.length > 0);
         } catch (error) {
             console.error((error as Error).message);
         }
@@ -81,62 +85,61 @@ const SearchResults = ({ encodedQuery }: SearchResultsProps) => {
 
     return (
         <div>
-            <table>
-            <thead className="bg-gray-700">
+          
+
+          {hasResults ? (
+            <table className="min-w-full divide-y divide-gray-200 ">
+            <thead>
                 <tr>
-                    <th>    </th>
-                    <th>Job Title</th>
-                    <th className="w-32 truncate ...">Company Name</th>
-                    <th>Location</th>
-                    <th>Date Posted</th>
-                    {expandedJobId !== null && (
-                    <>
-                        <th>Listing Details</th>
-                        <th>Description</th>
-                    </>
-                )}
-                    <th>Action</th>
-                    <th></th>
+                    <th className="w-10"></th>
+                    <th className="w-32 text-left font-semibold text-gray-700">Job Title</th>
+                    <th className="w-10 text-left font-semibold text-gray-700">Company Name</th>
+                    <th className="w-32 text-left font-semibold text-gray-700">Location</th>
+                    <th className="w-16 text-left font-semibold text-gray-700">Date Posted</th>
+                    <th className="w-32"></th>
                 </tr>
             </thead>
-            <tbody>
-                {results.map(job => (
-                    <tr 
-                    className="bg-gray-800 hover:bg-gray-700 border-b"
-                    key={job.id}>
-                        <td><img src={job.company_logo} alt="Company Logo" /></td>
-                        <td className="text-center">{job.job_title}</td>
-                        <td className="text-center">{job.company_name}</td>
-                        <td className="text-center">{job.location}</td>
-                        <td className="text-center">
-                            <TimeSince date={job.date}/>
-                        </td>
-                        {expandedJobId === job.id && (
-                            <>
-                                <td>{job.listing_details}</td>
-                                <td>{job.description}</td>
-                            </>
-                        )}
-                        <td>
-                            {expandedJobId !== job.id ? (
-                                <button className="bg-orange-500 rounded-xl m-1 p-1" onClick={() => setExpandedJobId(job.id)}>See More</button>
-                            ) : (
-                                <button className="bg-purple-500 rounded-xl m-1 p-1" onClick={() => setExpandedJobId(null)}>See Less</button>
-                            )}
-                            <button 
-                                className="rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 m-1 p-1"
-                                onClick={() => saveJob(job.id).catch(error => console.log(error))}
-                            >
-                                Save Job
-                            </button>
-                        </td>
-                    </tr>
-                ))}
-            </tbody>
-        </table>
-        <Modal isVisible={isModalVisible} onClose={closeModal} status={status} />
+                <tbody className="divide-y divide-gray-200 ">
+                    {results.map(job => (
+                        <tr 
+                        className="bg-white hover:bg-gray-50 border-b"
+                        key={job.id}>
+                            <td className="pr-4">
+                                <img src={job.company_logo} alt="Company Logo" className="object-cover mx-auto"/>
+                            </td>
+                            <td className="text-sm text-gray-600">{job.job_title}</td>
+                            <td className="text-sm text-gray-600">{job.company_name}</td>
+                            <td className="text-sm text-gray-600">{job.location}</td>
+                            <td className="text-sm text-gray-600"><TimeSince date={job.date}/></td>
+                            <td>
+                                {expandedJobId !== job.id ? (
+                                    <button className="py-2 px-3 rounded-md border font-medium bg-white text-gray-700 align-middle hover:bg-gray-50 transition-all text-sm" onClick={() => setExpandedJobId(job.id)}>See More</button>
+                                ) : (
+                                    <button className="py-2 px-3 rounded-md border font-medium bg-white text-gray-700 align-middle hover:bg-gray-50 transition-all text-sm" onClick={() => setExpandedJobId(null)}>See Less</button>
+                                )}
+                                <button 
+                                    className="m-1 py-2 px-3 rounded-md border font-medium bg-white text-gray-700 align-middle hover:bg-gray-50 transition-all text-sm"
+                                    onClick={() => saveJob(job.id).catch(error => console.log(error))}
+                                >
+                                    Save Job
+                                </button>
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+            ) : (
+                <div className="flex justify-center items-center h-32">
+                    <p className="text-2xl text-gray-400">No results found.</p>
+                </div>
+            )
+            
+          }
+            
+            <Modal isVisible={isModalVisible} onClose={closeModal} status={status} />
         </div>
     );
+        
 }
 
 export default SearchResults;

@@ -138,14 +138,14 @@ const LoginForm = forwardRef<HTMLDivElement, SignupLoginProps>((props: SignupLog
                                         
                                     </div>
 
-                                </div>
-
                                 <button
                                     type="submit"
-                                    className="bg-white text-black border-gray-300 border mt-5 py-3 px-4 inline-flex justify-center items-center gap-2 rounded-md font-semibol text-sm w-full"
+                                    className="bg-white text-black border-gray-300 border mt-3 py-3 inline-flex justify-center items-center gap-2 rounded-md font-semibol text-sm w-full"
                                 >
                                     Login
                                 </button>
+                                </div>
+
                                 {error && <div className="text-xs text-red-600 mt-2">{error}</div>}
                             </form>
                         )}
