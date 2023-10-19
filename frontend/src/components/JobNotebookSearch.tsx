@@ -7,7 +7,7 @@ const JobNotebookSearch: React.FC<JobNotebookSearchProps> = ({ searchTerm, onSea
                 type="search"
                 value={searchTerm}
                 onChange={e => onSearchTermChange(e.target.value)}
-                className='rounded-xl p-2'
+                className='rounded-xl p-2 border'
                 placeholder='Search for a job...'
             />
         </div>

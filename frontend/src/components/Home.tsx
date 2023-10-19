@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import SignUpForm  from './SignUpForm'
 import LoginForm from './LoginForm'
 import { RootState } from '../redux/store';
@@ -11,9 +11,6 @@ const Home = () => {
     const loggedIn = useSelector((state: RootState) => state.auth.loggedIn);
     const modalRef = useRef(null);
 
-    const switchToLogin = () => {
-        setActiveModal('login');
-    };
 
     const toggleSignUpModal = () => {
         setActiveModal(prev => prev === 'signup' ? null : 'signup');

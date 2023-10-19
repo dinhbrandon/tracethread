@@ -21,7 +21,7 @@ function App() {
       <PersistGate loading={null} persistor={persistor}>
         <div>
           <BrowserRouter>
-            <UserNav />
+            <Nav />
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/signup" element={<SignUpForm  />} />

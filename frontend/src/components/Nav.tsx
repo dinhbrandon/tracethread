@@ -17,10 +17,10 @@ const Nav = () => {
   };
 
   return (
-    <header className="flex flex-wrap sm:justify-start sm:flex-nowrap z-50 w-full border-b border-white/[.5] text-sm py-3 sm:py-0">
+    <header className="border-b flex flex-wrap sm:justify-start sm:flex-nowrap z-50 w-full text-sm py-3 sm:py-0">
       <nav className="relative max-w-[85rem] w-full mx-auto px-4 sm:flex sm:items-center sm:justify-between sm:px-6 lg:px-8" aria-label="Global">
         <div className="flex items-center justify-between">
-          <a className="flex-none text-xl font-semibold" href="#" aria-label="Brand">Tracethread</a>
+          <a className="flex-none text-xl font-semibold" href="http://localhost:3000" aria-label="Tracethread">Tracethread</a>
           <div className="sm:hidden">
             <button onClick={() => toggleMenu(!isMenuOpen)} type="button" className="p-2 inline-flex justify-center items-center gap-2 rounded-md border font-medium shadow-sm align-middle focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all text-sm" aria-controls="navbar-collapse-with-animation" aria-label="Toggle navigation">
                 <svg className="w-4 h-4" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
@@ -51,11 +51,11 @@ const Nav = () => {
             </div>
   
             {loggedIn ? (
-              <li>
-                <button onClick={handleLogout} className="flex items-center gap-x-2 font-medium sm:border-l sm:border-white/[.3] sm:my-6 sm:pl-6">
-                  Logout
+                <button onClick={handleLogout} className="flex items-center gap-x-2 font-medium sm:border-l sm:my-6 sm:pl-6">
+                <svg className="w-4 h-4" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                  <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z"/>
+                </svg>Logout
                 </button>
-              </li>
             ) : (
               <a className="flex items-center gap-x-2 font-medium sm:border-l sm:my-6 sm:pl-6" href="http://localhost:3000/login">
                 <svg className="w-4 h-4" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
