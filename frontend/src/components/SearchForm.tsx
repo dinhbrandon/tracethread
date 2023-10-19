@@ -273,7 +273,7 @@ const customEncodeURIComponent = (str: string): string => {
                                         setCards(newCards);
                                     }}                                        
                                 >
-                                    <option value="">Select field</option>
+                                    <option value="">Select job field</option>
                                     {fields.map(f => (
                                         <option key={f.name} value={f.name}>{f.label}</option>
                                     ))}
@@ -330,7 +330,7 @@ const customEncodeURIComponent = (str: string): string => {
                             </div>
                         ))}
                         
-                        <div>
+                        <div className='mt-5'>
                             <button className="text-sm text-gray-600" onClick={() => handleToggleSavedSearch(cardIndex)}>
                                 {card.showSavedSearch ? "- Remove saved filter" : "+ Add saved filter"}
                             </button>

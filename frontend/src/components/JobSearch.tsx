@@ -75,25 +75,25 @@ const handleSearchButtonClick = () => {
   }, [jobAdditionStatus]);
 
   return (
-    <div className={`flex h-screen ${showAdvancedSearch ? '' : 'justify-center'}`}>
-      {showAdvancedSearch &&
-        <div className="w-21/3 border-r p-4 transition-transform duration-500 ease-in-out translate-x-0">
-          <h1 className="text-xl font-semibold text-gray-700">Advanced Search Tool</h1>
-          <SearchForm onSearch={handleSearch} onRefresh={refreshSavedParameters} refreshKey={refreshKey} />
+
+    <div className='flex h-screen relative'>
+
+      <div className={`absolute top-0 left-0 h-full transition-transform duration-300 ease-in-out ${showAdvancedSearch ? 'translate-x-0' : '-translate-x-full'}`}>
+        <div className="h-full border-r p-4 w-auto">
+            <h1 className="text-xl font-semibold text-gray-700">Advanced Search Tool</h1>
+            <SearchForm onSearch={handleSearch} onRefresh={refreshSavedParameters} refreshKey={refreshKey} />
         </div>
-      }
+      </div>
 
 
-        <div className={`${showAdvancedSearch ? 'w-2/3' : 'w-full'} p-4`}>
+
+
+      <div className={`flex-grow p-4 transition-all duration-300 ease-in-out`} style={{ marginLeft: showAdvancedSearch ? '480px' : '0' }}>
             <div className="bg-white rounded-xl shadow-sm overflow-hidden ">
                 <div className="px-6 py-4">
-
                 <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
-
-
                     <div className="px-6 py-4 grid gap-3 md:flex md:justify-between md:items-center border-b border-gray-200 ">
                       <div className="sm:col-span-1">
-                        {/* <label htmlFor="hs-as-table-product-review-search" className="sr-only">Search</label> */}
                         <div className="relative">
                           <input
                             type="text"
@@ -145,16 +145,6 @@ const handleSearchButtonClick = () => {
                     {searchUrl && <SearchResults encodedQuery={searchUrl} />}
                 </div>
 
-                <div className="px-6 py-4 grid gap-3 md:flex md:justify-between md:items-center">
-                    <div className="inline-flex gap-x-2">
-                        <button className="py-2 px-3 rounded-md border font-medium bg-white text-gray-700 align-middle hover:bg-gray-50 transition-all text-sm">
-                            Prev
-                        </button>
-                        <button className="py-2 px-3 rounded-md border font-medium bg-white text-gray-700 align-middle hover:bg-gray-50 transition-all text-sm">
-                            Next
-                        </button>
-                    </div>
-                </div>
             </div>
         </div>
 
@@ -162,12 +152,12 @@ const handleSearchButtonClick = () => {
 
 
 
-      {showModal && 
+      {/* {showModal && 
         <div className="bg-green-500 fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-5 rounded-lg z-10">
             {modalMessage}
             <button onClick={handleCloseModal} className="mt-2 px-4 py-2 bg-white rounded">Close</button>
         </div>
-      }
+      } */}
     </div>
 
 
