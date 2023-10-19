@@ -34,6 +34,8 @@ const EditColumns = () => {
             return;
         }
         const result = await checkForAssociatedCards(id, token);
+        console.log(id)
+        console.log(result)
         if (result.error) {
             console.error('Error checking for associated cards:', result.error);
         } else if (result.hasCards) {
@@ -60,8 +62,6 @@ const EditColumns = () => {
                 setColumns(prevColumns => prevColumns.filter(column => column.id !== columnToDelete));
             } else {
                 console.error('Error deleting column:', result.error);
-                // Show error modal
-                // ...
             }
             setIsModalOpen(false);
             setColumnToDelete(null);
@@ -80,7 +80,6 @@ const EditColumns = () => {
         }));
         const result = await saveColumnOrder(updatedColumns, token);
         if (result.success) {
-            // navigate to the job notebook page at http://localhost:3000/jobnotebook
             navigate('/jobnotebook');
             
         } else {
