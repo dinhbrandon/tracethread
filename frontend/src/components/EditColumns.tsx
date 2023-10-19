@@ -41,6 +41,8 @@ const EditColumns = () => {
             return;
         }
         const result = await checkForAssociatedCards(id, token);
+        console.log(result)
+        
         if (result.error) {
             console.error('Error checking for associated cards:', result.error);
         } else if (result.hasCards) {
