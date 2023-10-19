@@ -35,7 +35,6 @@ const Nav = () => {
         </div>
         <div id="navbar-collapse-with-animation" className={`${isMenuOpen ? '' : 'hidden'} overflow-hidden transition-all duration-300 basis-full grow sm:block`}>
           <div className="flex flex-col gap-y-4 gap-x-0 mt-5 sm:flex-row sm:items-center sm:justify-end sm:gap-y-0 sm:gap-x-7 sm:mt-0 sm:pl-7">
-            <a className="font-medium " href="http://localhost:3000">Home</a>
             <a className="font-medium sm:py-6" href="http://localhost:3000/dashboard">Dashboard</a>
   
             {loggedIn ? (

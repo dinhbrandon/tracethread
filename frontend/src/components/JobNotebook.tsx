@@ -300,10 +300,14 @@ useEffect(() => {
   }, [isModalOpen]);
 
   return (
-    <div className="flex gap-4 flex-col">
+    <div className="flex flex-col">
       <div className='flex justify-between'>
         <JobNotebookSearch searchTerm={searchTerm} onSearchTermChange={setSearchTerm} />
-        <button className='rounded-xl bg-orange-500 m-4 p-2'><a href='http://localhost:3000/editcolumns'>Edit Columns</a></button>
+        <button>
+          <a className="m-1 py-2 px-3 rounded-md border font-medium bg-white text-gray-700 align-middle hover:bg-gray-50 transition-all text-sm" href='http://localhost:3000/editcolumns'>
+          Edit Columns
+          </a>
+          </button>
       </div>
       {/* justify center to make card modal center*/}
       <div className='flex justify-center'>
@@ -319,7 +323,7 @@ useEffect(() => {
                   className="bg-black-200 p-4 rounded-lg border-2 md:min-w-80 md:w-80 md:min-h-[700px]"
                 >
                   <h2 className="text-xl font-bold mb-4 text-center border-b">{column.name}</h2>
-                  <button onClick={() => openNewCardModal(column.id)} className='p-2 bg-green-500 rounded-xl'>
+                  <button className="m-1 py-2 px-3 rounded-md border font-medium bg-white text-gray-700 align-middle hover:bg-gray-50 transition-all text-sm">
                       + Add Card
                   </button>
 
