@@ -17,8 +17,8 @@ const Nav = () => {
   };
 
   return (
-      <header className="border-b flex flex-wrap sm:justify-start sm:flex-nowrap z-50 w-full text-sm py-3 sm:py-0">
-      <nav className="relative max-w-[85rem] w-full mx-auto px-4 sm:flex sm:items-center sm:justify-between sm:px-6 lg:px-8" aria-label="Global">
+      <header className="border-b flex flex-wrap sm:justify-start sm:flex-nowrap z-50 w-full py-3 sm:py-0">
+      <nav className="relative w-full mx-auto px-4 sm:flex sm:items-center sm:justify-between sm:px-6 lg:px-8" aria-label="Global">
         <div className="flex items-center justify-between">
           <a className="flex-none text-xl font-semibold" href="http://localhost:3000" aria-label="Tracethread">Tracethread</a>
           <div className="sm:hidden">

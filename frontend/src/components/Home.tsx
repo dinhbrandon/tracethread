@@ -54,7 +54,7 @@ const Home = () => {
   <div className="grid md:grid-cols-2 gap-4 md:gap-8 xl:gap-20 md:items-center">
     <div>
       <h1 className="block text-3xl font-bold sm:text-4xl lg:text-6xl lg:leading-tight ">Start your journey with <span className="text-black">Tracethread</span></h1>
-      <p className="mt-3 text-lg">Hand-picked professionals and expertly crafted components, designed for any kind of entrepreneur.</p>
+      <p className="mt-3 text-lg">Tired of searching through hundreds of unrelated jobs? Use Tracethread to streamline your job search.</p>
 
     { loggedIn ? <></> : (
         <div className="mt-7 grid gap-3 w-full sm:inline-flex md:flex md:flex-col">

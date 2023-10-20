@@ -20,11 +20,7 @@ function App() {
       <PersistGate loading={null} persistor={persistor}>
         <div>
           <BrowserRouter>
-          <div className='flex flex-col'>
-              <div className='flex'>
                 <Nav />
-              </div>
-              <div className='w-auto h-auto'> 
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/signup" element={<SignUpForm  />} />
@@ -35,8 +31,6 @@ function App() {
                 <Route path="/search" element={<JobSearch />} />
                 <Route path="/saved" element={<SavedParameters isVisible={true} />} />
               </Routes>
-            </div>
-            </div>
           </BrowserRouter>
         </div>
       </PersistGate>
