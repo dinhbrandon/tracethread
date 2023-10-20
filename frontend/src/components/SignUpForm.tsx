@@ -1,10 +1,14 @@
-import { useState, ChangeEvent, FormEvent, forwardRef, Ref } from 'react';
+import { useState, useEffect, ChangeEvent, FormEvent, forwardRef, Ref } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FormData, SignupLoginProps } from '../types/types'
-
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../redux/store';
+import { loginUser } from '../redux/authActions';
 
 const SignUpForm = forwardRef<HTMLDivElement, SignupLoginProps>((props: SignupLoginProps, ref: Ref<HTMLDivElement>) => {
   const { toggleSignUpModal, toggleLoginModal } = props;
+  const dispatch = useDispatch<AppDispatch>();
+  const loggedIn = useSelector((state: RootState) => state.auth.loggedIn);
 
   const navigate = useNavigate();
 
@@ -103,14 +107,26 @@ const SignUpForm = forwardRef<HTMLDivElement, SignupLoginProps>((props: SignupLo
             });
 
             if (response.ok) {
-                navigate('/dashboard');
-            } else {
-                console.error('Error:', response.statusText);
-            }
+              try {
+                  await dispatch(loginUser(formData.email, formData.password));
+                  navigate('/dashboard');
+              } catch (error) {
+                  console.error('Login Error:', error);
+              }
+          } else {
+              console.error('Registration Error:', response.statusText);
+          }
         } catch (error) {
             console.error('Network error:', error);
         }
     };
+
+    useEffect(() => {
+      if (loggedIn) {
+        navigate('/dashboard');
+      }
+    }, [loggedIn, navigate]);
+  
 
       return (
         <div ref={ref} className="h-full flex items-center py-16">

@@ -1,5 +1,5 @@
 import { useDispatch } from 'react-redux';
-import { RootState, AppDispatch } from '../redux/store';
+import { AppDispatch } from '../redux/store';
 import { loginUser } from '../redux/authActions';
 import { useNavigate } from 'react-router-dom';
 
@@ -24,7 +24,7 @@ const GuestLoginButton = () => {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            first_name: '',
+            first_name: 'Guest',
             last_name: '',
             email: email,
             username: email,
@@ -52,7 +52,7 @@ const GuestLoginButton = () => {
     <button
       type="button"
       onClick={handleGuestLogin}
-      className="w-full py-3 px-4 inline-flex justify-center items-center gap-2 rounded-md border font-medium bg-white text-black shadow-sm align-middle hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white transition-all text-sm "
+      className="bg-blue-600 py-3 px-4 inline-flex justify-center ml-8 items-center gap-2 rounded-md border font-medium text-white shadow-sm align-middle hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white transition-all text-sm "
     >
       Guest Login
     </button>
