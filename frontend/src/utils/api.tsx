@@ -1,6 +1,3 @@
-//column api calls
-
-//function to get columns
 export async function getColumns(token: string) {
     const url = `http://localhost:8000/jobnotebook/columns`;
     try {
@@ -77,8 +74,6 @@ export async function deleteColumn(id: number, token: string): Promise<{ success
 //function to check for associated cards
 export async function checkForAssociatedCards(columnId: number, token: string): Promise<{ hasCards: boolean | null, error: string | null }> {
     const url = `http://localhost:8000/jobnotebook/cards`;
-    //?column_id=${columnId}
-    console.log(url)
     try {
       const response = await fetch(url, {
         method: "GET",

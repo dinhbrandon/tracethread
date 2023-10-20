@@ -29,7 +29,6 @@ class ColumnDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 #This is the view for the batch update of columns
-from rest_framework.response import Response
 
 
 class ColumnBatchUpdate(APIView):
@@ -92,6 +91,18 @@ class CardDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = CardSerializer
     permission_classes = [IsAuthenticated]
 
+    def destroy(self, request, *args, **kwargs):
+        # Retrieve the card to be deleted
+        instance = self.get_object()
+
+        # Check if the card is owned by the authenticated user
+        if instance.column.owner != self.request.user:
+            raise PermissionDenied("You do not have permission to delete this card.")
+
+        # Delete the card
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 class ChangeCardColumnView(generics.UpdateAPIView):
     queryset = Card.objects.all()
@@ -130,3 +141,6 @@ class ChangeCardColumnView(generics.UpdateAPIView):
         # Serialize and return the updated card
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
+    
+    # delete Card function
+

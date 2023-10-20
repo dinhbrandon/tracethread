@@ -11,24 +11,44 @@ const JobNotebook: React.FC = () => {
   const [columns, setColumns] = useState<Columns[]>([]);
   const [cards, setCards] = useState<Card[]>([]);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [currentCardId, setCurrentCardId] = useState<number | null>(null);
-  const [currentNotes, setCurrentNotes] = useState<string>("");
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [selectedCard, setSelectedCard] = useState<Card | null>(null);
-  const [isNotesModalOpen, setIsNotesModalOpen] = useState<boolean>(false);
   const [isAddCardModalOpen, setIsAddCardModalOpen] = useState<boolean>(false);
   const [newCardData, setNewCardData] = useState<Card | null>(null);
-
   const modalRef = useRef<HTMLDivElement>(null);
 
-  // This function is called when a card is dragged and dropped
+
+  // const [isNotesModalOpen, setIsNotesModalOpen] = useState<boolean>(false);
+  const [isEditingNotes, setIsEditingNotes] = useState<boolean>(false);
+  const [currentNotes, setCurrentNotes] = useState<string>("");
+  const [currentCardId, setCurrentCardId] = useState<number | null>(null);
+
+  function handleNotesChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
+    setCurrentNotes(e.target.value);
+  }
+
+  function startEditingNotes(cardId: number, notes: string) {
+  setCurrentCardId(cardId);
+  setCurrentNotes(cardId ? notes : '');
+  setIsEditingNotes(true);
+  }
+
+  async function saveEditedNotes() {
+    setIsEditingNotes(false);
+    await saveNotes();
+  }
+
+  function cancelEditingNotes() {
+    setIsEditingNotes(false);
+    setCurrentCardId(null);
+    setCurrentNotes('');
+  }
+  
+
   const onDragEnd = async (result, columnsArray, setColumns) => {
-    // This condition prevents the app from crashing if the card is dropped outside of a droppable area
+
     if (!result.destination) return;
     const { source, destination } = result;
-    // This column is different from the 'columns' state variable
-    // because it contains the 'items' array, which is the array of cards
-    // while the 'columns' state variable does not contain the 'items' array and is just an array of columns
     const columns = columnsArray.reduce((acc, column) => {
         acc[column.id] = {
             ...column,
@@ -36,20 +56,17 @@ const JobNotebook: React.FC = () => {
         };
         return acc;
     }, {});
-    // sourceColumn is the original column of the card
+
     const sourceColumn = columns[source.droppableId];
-    // destColumn is the new column of the card
+
     const destColumn = columns[destination.droppableId];
-    // This condition checks if the card is being moved to a new column
-    // If it is, then it removes the card from the original column and adds it to the new column
-    // If it is not, then it just moves the card to a new position in the same column
     if (!sourceColumn || !sourceColumn.items || !destColumn || !destColumn.items) {
         console.error("Invalid column structure or missing items array");
         return;
     }
     if (source.droppableId !== destination.droppableId) {
       const [removed] = sourceColumn.items.splice(source.index, 1);
-      removed.timestamp = new Date().toISOString(); // update the timestamp
+      removed.timestamp = new Date().toISOString();
       destColumn.items.splice(destination.index, 0, removed);
       await editCardColumn(removed.id, parseInt(destination.droppableId), destination.index, removed.timestamp);
   } else {
@@ -59,7 +76,7 @@ const JobNotebook: React.FC = () => {
   }
   
 
-    // Convert back to array
+
     const updatedColumnsArray = Object.values(columns).map(column => {
         const { items, ...rest } = column;
         return rest;
@@ -79,21 +96,13 @@ const JobNotebook: React.FC = () => {
     setSelectedCard(null);
   }
 
-  function openEditModal(cardId: number, notes: string) {
-    setCurrentCardId(cardId);
-    setCurrentNotes(notes);
-    setIsNotesModalOpen(true);
-  }
 
-  function closeEditModal() {
-    setIsNotesModalOpen(false);
-    setCurrentCardId(null);
-    setCurrentNotes("");
-  }
+  // function closeEditModal() {
+  //   setIsNotesModalOpen(false);
+  //   setCurrentCardId(null);
+  //   setCurrentNotes("");
+  // }
 
-  function handleNotesChange(e: React.ChangeEvent<HTMLInputElement>) {
-    setCurrentNotes(e.target.value);
-  }
 
   async function getColumns() {
     const url = `http://localhost:8000/jobnotebook/columns`;
@@ -121,21 +130,46 @@ const JobNotebook: React.FC = () => {
     setCards(fetchedData);
   }
 
-  async function deleteCard(e: React.FormEvent, jobId: number) {
+  async function deleteCard(e: React.FormEvent, cardId: number, jobId?: number) {
     e.preventDefault();
-    const url = `http://localhost:8000/querier/delete-jobsaved/${jobId}`;
-    const response = await fetch(url, {
+  
+    // URL to delete the card
+    const cardUrl = `http://localhost:8000/jobnotebook/delete-card/${cardId}`;
+  
+    // Deleting the card
+    let response = await fetch(cardUrl, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Token ${token}`
       },
     });
+  
+    // If card deletion is successful and jobId exists, proceed to delete the job
+    if (response.ok && jobId) {
+      // URL to delete the job
+      const jobUrl = `http://localhost:8000/querier/delete-jobsaved/${jobId}`;
+  
+      // Deleting the job
+      response = await fetch(jobUrl, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Token ${token}`
+        },
+      });
+    }
+  
+    // If the final response is successful, refresh the UI
     if (response.ok) {
       closeCardModal();
       getCards();
+    } else {
+      // Handle errors as needed
+      console.error('An error occurred while deleting the card or job.');
     }
-  };
+  }
+  
 
   async function saveNotes() {
     if (currentCardId !== null) {
@@ -146,12 +180,10 @@ const JobNotebook: React.FC = () => {
           "Content-Type": "application/json",
           "Authorization": `Token ${token}`
         },
-        body: JSON.stringify({ notes: currentNotes })  // <-- Send the updated notes
+        body: JSON.stringify({ notes: currentNotes })
       });
       if(response.ok) {
-        closeEditModal();
-
-        //update the selectedCard state to show the new notes
+        // closeEditModal();
         setSelectedCard(prevState => {
           if (prevState) {
             return {
@@ -313,8 +345,12 @@ useEffect(() => {
       <div className='flex justify-center'>
         <DragDropContext onDragEnd={(result) => onDragEnd(result, columns, setColumns)}>
 
-          {/* Map through each column */}
-          {columns.map((column) => (
+          {columns.map((column) => {
+            //get number of cards in each column
+            const cardsInColumn = cards.filter(card => card.column === column.id);
+            
+            return(
+            
             <Droppable droppableId={String(column.id)} key={column.id}>
               {(provided) => (
                 <div 
@@ -322,7 +358,11 @@ useEffect(() => {
                   ref={provided.innerRef}
                   className="bg-black-200 p-4 rounded-lg border-2 md:min-w-80 md:w-80 md:min-h-[700px]"
                 >
-                  <h2 className="text-xl font-bold mb-4 text-center border-b">{column.name}</h2>
+                  <div className="border-b">
+                  <h2 className="text-xl font-bold text-center">{column.name}</h2>
+                  <p className='text-center text-gray-700 text-sm'>{cardsInColumn.length} job{cardsInColumn.length === 1 ? '' : 's'} </p>
+                  </div>
+                  
                   <button className="m-1 py-2 px-3 rounded-md border font-medium bg-white text-gray-700 align-middle hover:bg-gray-50 transition-all text-sm" onClick={() => openNewCardModal(column.id)}>
                       + Add Card
                   </button>
@@ -344,18 +384,26 @@ useEffect(() => {
                               {...provided.dragHandleProps}
                               className="relative bg-white p-2 rounded-lg border border-gray-300"
                             >
-                              <div className='flex flex-row items-center'> 
+                              <button
+                                  onClick={(e) => deleteCard(e, filteredCard.id, filteredCard.job_saved?.id)}
+                                  className="absolute top-1 right-1 rounded-full text-white"
+                                >
+                                  <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20" height="20" viewBox="0 0 24 24">
+                                      <path d="M 10 2 L 9 3 L 4 3 L 4 5 L 5 5 L 5 20 C 5 20.522222 5.1913289 21.05461 5.5683594 21.431641 C 5.9453899 21.808671 6.4777778 22 7 22 L 17 22 C 17.522222 22 18.05461 21.808671 18.431641 21.431641 C 18.808671 21.05461 19 20.522222 19 20 L 19 5 L 20 5 L 20 3 L 15 3 L 14 2 L 10 2 z M 7 5 L 17 5 L 17 20 L 7 20 L 7 5 z M 9 7 L 9 18 L 11 18 L 11 7 L 9 7 z M 13 7 L 13 18 L 15 18 L 15 7 L 13 7 z"></path>
+                                  </svg>
+                              </button>
+                              <div className='mt-2 flex flex-row items-center'> 
                                 <div>
                                   <img className='inline-block h-[2.875rem] w-[2.875rem] rounded-full ring-2 ring-white dark:ring-gray-800' src={filteredCard.job_saved?.job_listing?.company_logo} alt="Company Logo" />
                                 </div>
                                 <div className='ml-2'>
-                                  <p className='font-semibold'>{filteredCard.job_saved?.job_listing?.job_title}</p>
-                                  <p className="text-gray-600">{filteredCard.job_saved?.job_listing?.company_name}</p>
+                                  <p className='font-semibold truncate w-full max-w-[10rem]'>{filteredCard.job_saved?.job_listing?.job_title}</p>
+                                  <p className="text-gray-600 truncate w-full max-w-[10rem]">{filteredCard.job_saved?.job_listing?.company_name}</p>
                                 </div>
                               </div>
                       
                               <div className='mt-3'>
-                                <p className="text-sm text-gray-600">Added to this column: <TimeSince date={filteredCard.timestamp} /></p>               
+                                <p className="text-xs text-gray-600">Added to this column <TimeSince date={filteredCard.timestamp} /></p>               
                               </div>
                               <div className="absolute bottom-2 right-2">
                                 <button onClick={() => openCardModal(filteredCard)} className="bg-gray-300 text-white w-4 h-4 rounded-full flex items-center justify-center">
@@ -375,7 +423,8 @@ useEffect(() => {
                 </div>
               )}
             </Droppable>
-          ))}
+            )
+})}
 
           {/* Modal for editing notes on a card */}
           {isModalOpen && selectedCard && (
@@ -396,30 +445,69 @@ useEffect(() => {
       
       <div><strong>Location:</strong> {selectedCard.job_saved?.job_listing?.location}</div>
       <div><strong>Description:</strong> {selectedCard.job_saved?.job_listing?.description}</div>
-      <div className='mt-5'><strong>Notes:</strong> {selectedCard.notes}</div>
       
-      <button
-        className="m-2 py-2 px-3 rounded-md border font-medium text-gray-700 bg-white align-middle hover:bg-gray-50 transition-all text-sm"
-        onClick={() => openEditModal(selectedCard.id, selectedCard.notes)}
-      >
-        Edit Notes
-      </button>
+      <div className='mt-5'>
+  <strong>Notes:</strong>
+  {isEditingNotes ? (
+    <div>
+      <textarea
+        value={currentNotes}
+        onChange={handleNotesChange}
+        className="w-full h-20 p-2 mt-2 border rounded-md"
+      ></textarea>
+      <div className="flex flex-col mt-2">
+        <button
+          className="mb-2 py-2 px-3 rounded-md border font-medium text-gray-700 bg-white align-middle hover:bg-gray-50 transition-all text-sm"
+          onClick={saveEditedNotes}
+        >
+          Save
+        </button>
+        <button
+          className="mb-2 py-2 px-3 rounded-md border font-medium text-gray-700 bg-white align-middle hover:bg-gray-50 transition-all text-sm"
+          onClick={cancelEditingNotes}
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  ) : (
+    <div>
+      {selectedCard.notes}
+      <div className="flex flex-col mt-2">
+        <button
+          className="mb-2 py-2 px-3 w-full rounded-md border font-medium text-gray-700 bg-white align-middle hover:bg-gray-50 transition-all text-sm"
+          onClick={() => startEditingNotes(selectedCard.id, selectedCard.notes)}
+        >
+          Edit Notes
+        </button>
+        <button className="mb-2 py-2 px-3 w-full rounded-md border font-medium bg-white text-gray-700 align-middle hover:bg-gray-50 transition-all text-sm">
+          <a
+            href={selectedCard.job_saved?.job_listing?.url}
+            target="_blank"
+            rel="noopener noreferrer">
+            Visit site
+          </a>
+        </button>
+        <button
+  onClick={(e) => deleteCard(e, selectedCard.id, selectedCard.job_saved?.id)}
+  className="mb-2 py-2 px-3 w-full rounded-md border border-red-400 font-medium bg-white text-red-700 align-middle hover:bg-gray-50 transition-all text-sm"
+>
+  Delete
+</button>
+
+      </div>
+    </div>
+  )}
+</div>
+
+
       
-      <button className="m-2 py-2 px-3 rounded-md border font-medium bg-white text-gray-700 align-middle hover:bg-gray-50 transition-all text-sm">
-      <a
-        href={selectedCard.job_saved?.job_listing?.url}
-        target="_blank"
-        rel="noopener noreferrer">
-        Visit site
-      </a>
-      </button>
-      
-      <button
+      {/* <button
         onClick={(e) => deleteCard(e, selectedCard.job_saved?.id || 0)}
         className="m-2 py-2 px-3 rounded-md border border-red-400 font-medium bg-white text-red-700 align-middle hover:bg-gray-50 transition-all text-sm"
       >
         Delete
-      </button>
+      </button> */}
       
     </div>
   </div>
@@ -427,26 +515,7 @@ useEffect(() => {
 
 
         </DragDropContext>
-        {/* Modal for editing notes on a card */}
-        {isNotesModalOpen && currentCardId && (
-          <div className="fixed inset-0 flex items-center justify-center z-50">
-            <div className="bg-white p-4 rounded-lg shadow-md">
-              <h3 className="text-xl font-bold mb-4">Edit Notes</h3>
-              <input
-                type="text"
-                value={currentNotes}
-                onChange={handleNotesChange}
-                className="border p-2 rounded-lg w-full mb-4"
-              />
-              <button onClick={saveNotes} className="bg-blue-500 text-white px-4 py-2 rounded-lg mr-2">
-                Save
-              </button>
-              <button onClick={closeEditModal} className="bg-red-500 text-white px-4 py-2 rounded-lg">
-                Cancel
-              </button>
-            </div>
-          </div>
-        )}
+
 
 {isAddCardModalOpen && (
     <div className="fixed flex items-center justify-center">
