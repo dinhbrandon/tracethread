@@ -5,6 +5,7 @@ import { useToken } from '../hooks/useToken';
 const Dashboard: React.FC = () => {
     const [savedParameters, setSavedParameters] = useState<SavedSearchParameters[]>([]);
     const token = useToken();
+    console.log(token)
 
     async function getParametersFromUser() {
         const url = `http://localhost:8000/querier/saved-search-parameters`;

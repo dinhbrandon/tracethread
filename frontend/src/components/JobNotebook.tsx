@@ -230,11 +230,15 @@ const JobNotebook: React.FC = () => {
 
     //create an array of fields to search
     const fieldsToSearch = [
+      card.job_title,
+      card.company_name,
+      card.location,
+      card.description,
+      card.notes,
       card.job_saved?.job_listing?.job_title,
       card.job_saved?.job_listing?.company_name,
       card.job_saved?.job_listing?.location,
       card.job_saved?.job_listing?.description,
-      card.notes,
     ];
 
     //use .some to check if any of the fields contain the search term
@@ -247,17 +251,17 @@ const JobNotebook: React.FC = () => {
     e.preventDefault();
     const cardData = {
       job_saved: null,  // Set to null as per the working JSON
-      notes: newCardData?.notes || '',
+      notes: newCardData?.notes ?? '',
       column: newCardData?.column,
       order: newCardData?.order,
       timestamp: newCardData?.timestamp || new Date().toISOString(),
       job_title: newCardData?.job_title,
       company_name: newCardData?.company_name,
       company_logo: newCardData?.company_logo,  // Add the company_logo property to the Card type
-      listing_details: newCardData?.listing_details || '',
-      description: newCardData?.description || '',
+      listing_details: newCardData?.listing_details ?? '',
+      description: newCardData?.description ?? '',
       location: newCardData?.location,
-      url: newCardData?.url
+      url: newCardData?.url ?? '',
     };
 
     if (token) {
@@ -265,6 +269,7 @@ const JobNotebook: React.FC = () => {
         if (result.data) {
             setCards(prevCards => [...prevCards, result.data]);
             setIsAddCardModalOpen(false);
+            setNewCardData(null);
         } else {
             console.error('Failed to create card:', result.error);
         }
@@ -348,6 +353,7 @@ useEffect(() => {
           {columns.map((column) => {
             //get number of cards in each column
             const cardsInColumn = cards.filter(card => card.column === column.id);
+            // console.log(cardsInColumn)
             
             return(
             
@@ -371,11 +377,15 @@ useEffect(() => {
                   <div className="flex flex-col gap-1">
                 
                 {/* Filter cards by search term */}
-                  {cards
-                    .filter(card => isSearchTermPresent(card))
-                    .filter(card => card.column === column.id)
+                  {cardsInColumn
+                    .filter(card => {
+                      const isPresent = isSearchTermPresent(card);
+                      console.log(card);
+                      return isPresent;
+                    })
                     .map((filteredCard, index) => {
                       return (
+                        
                         <Draggable key={filteredCard.id} draggableId={String(filteredCard.id)} index={index}>
                           {(provided) => (
                             <div
@@ -394,11 +404,12 @@ useEffect(() => {
                               </button>
                               <div className='mt-2 flex flex-row items-center'> 
                                 <div>
-                                  <img className='inline-block min-h-[2.875rem] min-w-[2.875rem] w-[2.875rem] h-[2.875rem] rounded-full ring-2 ring-white dark:ring-gray-800' src={filteredCard.job_saved?.job_listing?.company_logo} alt="Company Logo" />
+                                  <img className={ filteredCard.job_saved && filteredCard.job_saved.job_listing.company_logo ? 'inline-block min-h-[2.875rem] min-w-[2.875rem] w-[2.875rem] h-[2.875rem] rounded-full' : 'inline-block min-h-[2.875rem] min-w-[2.875rem] w-[2.875rem] h-[2.875rem] rounded-full bg-gray-400'}
+                                  src={filteredCard.job_saved && filteredCard.job_saved.job_listing.company_logo ? filteredCard.job_saved.job_listing.company_logo : "https://img.icons8.com/?size=128&id=6LvtpL48Lmmx&format=png&color=FFFFFF"} alt="Company Logo" />
                                 </div>
                                 <div className='ml-2'>
-                                  <p className='font-semibold truncate w-full max-w-[10rem]'>{filteredCard.job_saved?.job_listing?.job_title}</p>
-                                  <p className="text-gray-600 truncate w-full max-w-[10rem]">{filteredCard.job_saved?.job_listing?.company_name}</p>
+                                  <p className='font-semibold truncate w-full max-w-[10rem]'>{filteredCard.job_saved ? filteredCard.job_saved.job_listing.job_title : filteredCard.job_title}</p>
+                                  <p className="text-gray-600 truncate w-full max-w-[10rem]">{filteredCard.job_saved ? filteredCard.job_saved.job_listing.company_name : filteredCard.company_name}</p>
                                 </div>
                               </div>
                       
@@ -519,7 +530,7 @@ useEffect(() => {
 
 {isAddCardModalOpen && (
     <div className="fixed flex items-center justify-center">
-        <div className="md:max-w-[800px] md:max-h-[600px] overflow-auto bg-black p-4 flex flex-col rounded-lg shadow-md">
+        <div className="md:max-w-[800px] md:max-h-[600px] overflow-auto bg-white p-4 flex flex-col rounded-lg shadow-md">
             <h3 className="text-xl font-bold mb-4">Add New Card</h3>
             <form onSubmit={handleAddCardSubmit}>
               <div>
@@ -546,7 +557,7 @@ useEffect(() => {
                       value={newCardData?.url || ''}
                       onChange={(e) => setNewCardData({...newCardData, url: e.target.value})}
                       className="border p-2 rounded-lg w-full mb-4"
-                      required
+                      
                   />
 
                   {/* New Fields */}
@@ -588,9 +599,10 @@ useEffect(() => {
               <button type="submit" className="bg-green-500 text-white px-4 py-2 rounded-lg mt-4">
                   Save
               </button>
-              <button onClick={() => setIsAddCardModalOpen(false)} className="bg-red-500 text-white px-4 py-2 rounded-lg mt-4">
+              <button onClick={() => {setIsAddCardModalOpen(false); setNewCardData(null);}} className="bg-red-500 text-white px-4 py-2 rounded-lg mt-4">
                   Cancel
               </button>
+
             </form>
         </div>
     </div>
