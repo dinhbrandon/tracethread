@@ -300,10 +300,14 @@ useEffect(() => {
   }, [isModalOpen]);
 
   return (
-    <div className="flex gap-4 flex-col">
+    <div className="flex flex-col">
       <div className='flex justify-between'>
         <JobNotebookSearch searchTerm={searchTerm} onSearchTermChange={setSearchTerm} />
-        <button className='rounded-xl bg-orange-500 m-4 p-2'><a href='http://localhost:3000/editcolumns'>Edit Columns</a></button>
+        <button>
+          <a className="m-1 py-2 px-3 rounded-md border font-medium bg-white text-gray-700 align-middle hover:bg-gray-50 transition-all text-sm" href='http://localhost:3000/editcolumns'>
+          Edit Columns
+          </a>
+          </button>
       </div>
       {/* justify center to make card modal center*/}
       <div className='flex justify-center'>
@@ -319,52 +323,51 @@ useEffect(() => {
                   className="bg-black-200 p-4 rounded-lg border-2 md:min-w-80 md:w-80 md:min-h-[700px]"
                 >
                   <h2 className="text-xl font-bold mb-4 text-center border-b">{column.name}</h2>
-                  <button onClick={() => openNewCardModal(column.id)} className='p-2 bg-green-500 rounded-xl'>
+                  <button className="m-1 py-2 px-3 rounded-md border font-medium bg-white text-gray-700 align-middle hover:bg-gray-50 transition-all text-sm" onClick={() => openNewCardModal(column.id)}>
                       + Add Card
                   </button>
 
 
-                  <div className="flex flex-col gap-2">
+                  <div className="flex flex-col gap-1">
                 
                 {/* Filter cards by search term */}
                   {cards
                     .filter(card => isSearchTermPresent(card))
                     .filter(card => card.column === column.id)
                     .map((filteredCard, index) => {
-                      return(
+                      return (
                         <Draggable key={filteredCard.id} draggableId={String(filteredCard.id)} index={index}>
-                        {(provided) => (
-                          <div 
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                            {...provided.dragHandleProps}
-                            className="bg-black p-4 rounded-lg border border-gray-300"
-                          >
-                            <div>
-                              {/* job_listing.company_logo rounded */}
-                              <img src={filteredCard.job_saved?.job_listing?.company_logo} alt="Company Logo" />
-                            </div>
-                            <div className="mb-2">
-                              <strong>Job Title:</strong> {filteredCard.job_saved?.job_listing?.job_title}
-                            </div>
-                            <div className="mb-2">
-                              <strong>Company:</strong> {filteredCard.job_saved?.job_listing?.company_name}
-                            </div>
-                            <div>
-                              <strong>Time in this column: </strong>
-                              <TimeSince date={filteredCard.timestamp} />
-                            </div>
-                            {/* New See More button */}
-                            <button
-                              className="rounded-xl p-2 bg-blue-500"
-                              onClick={() => openCardModal(filteredCard)}
+                          {(provided) => (
+                            <div
+                              ref={provided.innerRef}
+                              {...provided.draggableProps}
+                              {...provided.dragHandleProps}
+                              className="relative bg-white p-2 rounded-lg border border-gray-300"
                             >
-                              See More
-                            </button>
-                          </div>
-                        )}
-                      </Draggable>
+                              <div className='flex flex-row items-center'> 
+                                <div>
+                                  <img className='inline-block h-[2.875rem] w-[2.875rem] rounded-full ring-2 ring-white dark:ring-gray-800' src={filteredCard.job_saved?.job_listing?.company_logo} alt="Company Logo" />
+                                </div>
+                                <div className='ml-2'>
+                                  <p className='font-semibold'>{filteredCard.job_saved?.job_listing?.job_title}</p>
+                                  <p className="text-gray-600">{filteredCard.job_saved?.job_listing?.company_name}</p>
+                                </div>
+                              </div>
+                      
+                              <div className='mt-3'>
+                                <p className="text-sm text-gray-600">Added to this column: <TimeSince date={filteredCard.timestamp} /></p>               
+                              </div>
+                              <div className="absolute bottom-2 right-2">
+                                <button onClick={() => openCardModal(filteredCard)} className="bg-gray-300 text-white w-4 h-4 rounded-full flex items-center justify-center">
+                                  +
+                                </button>
+                              </div>
+                            </div>
+                          )}
+                        </Draggable>
                       )
+                      
+                      
 
                     })}
                     {provided.placeholder}
@@ -376,39 +379,53 @@ useEffect(() => {
 
           {/* Modal for editing notes on a card */}
           {isModalOpen && selectedCard && (
-            <div ref={modalRef} className="fixed flex items-center justify-center">
-              <div className="md: max-w-[800px] md:max-h-[600px] overflow-auto bg-black p-4 flex flex-col rounded-lg shadow-md">
-                <h3 className="text-xl font-bold mb-4">{selectedCard.job_saved?.job_listing?.job_title}</h3>
-                <div><strong>Company:</strong> {selectedCard.job_saved?.job_listing?.company_name}</div>
-                <div><strong>Location:</strong> {selectedCard.job_saved?.job_listing?.location}</div>
-                <div><strong>Description:</strong> {selectedCard.job_saved?.job_listing?.description}</div>
-                <div><strong>Notes:</strong> {selectedCard.notes}</div>
-                <button
-                  className="bg-green-500 text-white px-4 py-2 rounded-lg mt-4"
-                  onClick={() => openEditModal(selectedCard.id, selectedCard.notes)}
-                >
-                  Edit Notes
-                </button>
-                <a
-                  href={selectedCard.job_saved?.job_listing?.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                    className="text-blue-500 hover:underline block mt-2"
-                  >
-                    Application Link
-                  </a>
-                  <button onClick={closeCardModal} className="bg-red-500 text-white px-4 py-2 rounded-lg mt-4">
-                    Close
-                  </button>
-                  <button
-                    onClick={(e) => deleteCard(e, selectedCard.job_saved?.id || 0)}
-                  className="bg-red-500 text-white px-4 py-2 rounded-lg mt-4"
-                >
-                  Delete
-                </button>
-              </div>
-            </div>
-          )}
+  <div ref={modalRef} className="fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex items-center justify-center">
+    <div className="relative md:max-w-[1000px] md:max-h-[800px] overflow-auto bg-white p-4 flex flex-col rounded-lg shadow-md">
+      
+      <button onClick={closeCardModal} className="absolute top-0 right-0 m-4 m-1 py-1 px-3 rounded-md border text-gray-700 font-medium bg-white align-middle hover:bg-gray-50 transition-all text-sm">
+        Close
+      </button>
+      
+      <div className='flex flex-row items-center p-5 mb-5'>
+        <img className='inline-block h-[2.875rem] w-[2.875rem] rounded-full ring-2 ring-white dark:ring-gray-800' src={selectedCard.job_saved?.job_listing?.company_logo} alt="Company Logo" />
+        <div className='ml-4'>
+          <h3 className="text-xl font-bold">{selectedCard.job_saved?.job_listing?.job_title}</h3>
+          <div className='text-gray-600'>{selectedCard.job_saved?.job_listing?.company_name}</div>
+        </div>
+      </div>
+      
+      <div><strong>Location:</strong> {selectedCard.job_saved?.job_listing?.location}</div>
+      <div><strong>Description:</strong> {selectedCard.job_saved?.job_listing?.description}</div>
+      <div className='mt-5'><strong>Notes:</strong> {selectedCard.notes}</div>
+      
+      <button
+        className="m-2 py-2 px-3 rounded-md border font-medium text-gray-700 bg-white align-middle hover:bg-gray-50 transition-all text-sm"
+        onClick={() => openEditModal(selectedCard.id, selectedCard.notes)}
+      >
+        Edit Notes
+      </button>
+      
+      <button className="m-2 py-2 px-3 rounded-md border font-medium bg-white text-gray-700 align-middle hover:bg-gray-50 transition-all text-sm">
+      <a
+        href={selectedCard.job_saved?.job_listing?.url}
+        target="_blank"
+        rel="noopener noreferrer">
+        Visit site
+      </a>
+      </button>
+      
+      <button
+        onClick={(e) => deleteCard(e, selectedCard.job_saved?.id || 0)}
+        className="m-2 py-2 px-3 rounded-md border border-red-400 font-medium bg-white text-red-700 align-middle hover:bg-gray-50 transition-all text-sm"
+      >
+        Delete
+      </button>
+      
+    </div>
+  </div>
+)}
+
+
         </DragDropContext>
         {/* Modal for editing notes on a card */}
         {isNotesModalOpen && currentCardId && (

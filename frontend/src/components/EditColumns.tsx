@@ -7,16 +7,23 @@ import { getCards, getColumns, deleteColumn, createColumn, checkForAssociatedCar
 
 const ConfirmationModal = ({ onCancel, onConfirm }: { onCancel: () => void; onConfirm: () => void; }) => {
     return (
-        <div className="rounded-xl bg-red-800 w-48">
-            <div className="modal-content">
-                <span className="close" onClick={onCancel}>&times;</span>
-                <p><strong>Are you sure you want to delete this column and its associated jobs?</strong></p>
-                <button className='m-4 border-2 p-2 rounded-xl bg-red-600' onClick={onConfirm}>Confirm</button>
-                <button className='m-4 border-2 p-2 rounded-xl bg-green-600' onClick={onCancel}>Cancel</button>
+        <div className="fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex">
+            <div className="relative p-4 mx-auto my-auto max-w-md w-full">
+                <div className="bg-white rounded-xl shadow-lg p-5">
+                    <h2 className="text-2xl font-semibold mb-4 text-gray-800">Confirm Deletion</h2>
+                    <p className="mb-4 text-gray-500">Are you sure you want to delete this column and its associated jobs?</p>
+                    <div className="flex justify-end">
+                        <button className="py-2 px-4 rounded-md text-gray-700 border border-gray-300 bg-white hover:bg-gray-50 mr-2" onClick={onCancel}>Cancel</button>
+                        <button className="py-2 px-4 rounded-md text-white bg-red-500 hover:bg-red-600" onClick={onConfirm}>Delete</button>
+                    </div>
+                </div>
             </div>
         </div>
     );
 };
+
+
+
 
 const EditColumns = () => {
     const token = useToken();
@@ -34,8 +41,8 @@ const EditColumns = () => {
             return;
         }
         const result = await checkForAssociatedCards(id, token);
-        console.log(id)
         console.log(result)
+        
         if (result.error) {
             console.error('Error checking for associated cards:', result.error);
         } else if (result.hasCards) {
@@ -184,7 +191,9 @@ const EditColumns = () => {
         }}
         onConfirm={handleConfirmDelete}
       />}
-      <button className='m-4 p-1 bg-orange-500 rounded-xl' onClick={handleSaveOrder}>Save Order</button>
+
+      
+      <button className="m-1 py-2 px-3 rounded-md border font-medium bg-white text-gray-700 align-middle hover:bg-gray-50 transition-all text-sm" onClick={handleSaveOrder}>Save Order</button>
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="droppableId" direction="horizontal" type="COLUMN">
           {(provided) => (
@@ -205,7 +214,7 @@ const EditColumns = () => {
                         <h1 className="text-xl font-bold mb-4 text-center border-b">
                             {column.name} ({countCardsForColumn(column)} {getCardLabel(countCardsForColumn(column))})
                         </h1>
-                        <button onClick={() => handleDeleteClick(column.id)} className='m-4 p-1 bg-red-500 rounded-xl'>Delete</button>
+                        <button onClick={() => handleDeleteClick(column.id)} className="m-1 py-1 px-3 rounded-md border border-red-400 font-medium bg-white text-red-700 align-middle hover:bg-gray-50 transition-all text-sm">Delete column</button>
                     </div>
                   )}
                 </Draggable>

@@ -25,6 +25,13 @@ export async function getColumns(token: string) {
 //function to add new columns
 export async function createColumn(name: string, order: string, token: string): Promise<{ success: boolean, error: string | null }> {
   const url = `http://localhost:8000/jobnotebook/columns`;
+
+  const orderInt = parseInt(order);
+  const newOrder = orderInt + 1;
+  order = newOrder.toString();
+
+ 
+
   try {
       const response = await fetch(url, {
           method: "POST",
@@ -69,7 +76,9 @@ export async function deleteColumn(id: number, token: string): Promise<{ success
 
 //function to check for associated cards
 export async function checkForAssociatedCards(columnId: number, token: string): Promise<{ hasCards: boolean | null, error: string | null }> {
-    const url = `http://localhost:8000/jobnotebook/cards?column_id=${columnId}`;
+    const url = `http://localhost:8000/jobnotebook/cards`;
+    //?column_id=${columnId}
+    console.log(url)
     try {
       const response = await fetch(url, {
         method: "GET",
@@ -82,7 +91,19 @@ export async function checkForAssociatedCards(columnId: number, token: string): 
         throw new Error(`Failed to check for associated cards: ${response.statusText}`);
       }
       const data = await response.json();
-      return { hasCards: data.length > 0, error: null };
+      
+      // iterate through each card in data and check if the column_id matches the columnId passed in
+      // if it does, return true
+      // if it doesn't, return false
+      if (data.length > 0) {
+        for (let i = 0; i < data.length; i++) {
+          if (data[i].column === columnId) {
+            return { hasCards: true, error: null };
+          }
+        }
+        return { hasCards: false, error: null };
+      }
+
     } catch (error: any) {
       console.error(error);
       return { hasCards: null, error: error.message || String(error) };

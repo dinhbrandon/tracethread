@@ -295,7 +295,7 @@ const customEncodeURIComponent = (str: string): string => {
                                 </select>
                                 <input 
                                     type="text" 
-                                    className="text-sm text-gray-600 text-left border-b border-gray-200" 
+                                    className="w-full text-sm text-gray-600 text-left border-b border-gray-200" 
                                     placeholder=" value" 
                                     value={condition.value}
                                     onChange={(e) => {
