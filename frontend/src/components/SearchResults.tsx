@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useToken } from '../hooks/useToken';
 import { JobListing, SearchResultsProps } from '../types/types';
 import TimeSince from "./TimeSince";
+import * as React from "react";
 
 
 const Modal = ({ isVisible, onClose, status }: { 
@@ -142,11 +143,10 @@ const SearchResults = ({ encodedQuery }: SearchResultsProps) => {
                 <tbody className="divide-y divide-gray-200 ">
                     {currentItems.map(job => (
                         
-                        <>
+                        <React.Fragment key={job.id}>
                         <tr 
                         className={`cursor-pointer border-b 
                         ${expandedJobId === job.id ? 'bg-gray-100' : 'bg-white hover:bg-gray-50'}`}
-                        key={job.id}
                         onClick={() => setExpandedJobId(expandedJobId === job.id ? null : job.id)} // Toggle the expanded job ID on row click
                     >
                         <td className="pr-0">
@@ -185,7 +185,7 @@ const SearchResults = ({ encodedQuery }: SearchResultsProps) => {
 
 
 
-                    </>
+                    </React.Fragment>
                     
                 ))}
             </tbody>
