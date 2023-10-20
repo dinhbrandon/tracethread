@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import SignUpForm  from './SignUpForm'
 import LoginForm from './LoginForm'
 import { RootState } from '../redux/store';
+import CreateGuest from './CreateGuest';
 
 type ModalState = 'signup' | 'login' | null;
 
@@ -58,8 +59,8 @@ const Home = () => {
 
     { loggedIn ? <></> : (
         <div className="mt-7 grid gap-3 w-full sm:inline-flex md:flex md:flex-col">
-        <div className="flex">
-        <button
+          <div className="flex">
+            <button
         onClick={toggleSignUpModal}
         className="inline-flex justify-center items-center gap-x-3 text-center hover:bg-grey border-2 text-sm lg:text-base font-medium rounded-md transition py-3 px-4 ">
             Sign up
@@ -67,7 +68,8 @@ const Home = () => {
                 <path d="M5.27921 2L10.9257 7.64645C11.1209 7.84171 11.1209 8.15829 10.9257 8.35355L5.27921 14" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
             </svg>
             </button>
-        </div>
+          </div>
+          <CreateGuest />
 
         <div className="flex">
         <p className="mt-2 text-sm">
