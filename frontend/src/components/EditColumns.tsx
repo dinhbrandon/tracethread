@@ -35,6 +35,7 @@ const EditColumns = () => {
     const [newColumnName, setNewColumnName] = useState('');
     const navigate = useNavigate();
 
+
     const handleDeleteClick = async (id: number) => {
         if (!token) {
             console.error('Token is null');
@@ -147,10 +148,16 @@ const EditColumns = () => {
     };
 
     const countCardsForColumn = (column: Columns) => {
-        return cards.filter((card: Card) => card.column === column.id).length;
+    
+        let count = 0;
+        for (let i = 0; i < cards.length; i++) {
+            if (cards[i].column === column.id) {
+                count++;
+            }
+        }
+        return count;
+        
     };
-
-    const getCardLabel = (count: number) => count === 1 ? 'job' : 'jobs';
     
     useEffect(() => {
         const fetchColumns = async () => {
@@ -211,10 +218,22 @@ const EditColumns = () => {
                         {...provided.dragHandleProps}
                         ref={provided.innerRef}
                     >
-                        <h1 className="text-xl font-bold mb-4 text-center border-b">
-                            {column.name} ({countCardsForColumn(column)} {getCardLabel(countCardsForColumn(column))})
-                        </h1>
-                        <button onClick={() => handleDeleteClick(column.id)} className="m-1 py-1 px-3 rounded-md border border-red-400 font-medium bg-white text-red-700 align-middle hover:bg-gray-50 transition-all text-sm">Delete column</button>
+                <div className="relative flex flex-col border-b">
+                    <button 
+                        onClick={() => handleDeleteClick(column.id)} 
+                        className="absolute top-0 right-0 rounded-full text-white"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20" height="20" viewBox="0 0 24 24">
+                            <path d="M 10 2 L 9 3 L 4 3 L 4 5 L 5 5 L 5 20 C 5 20.522222 5.1913289 21.05461 5.5683594 21.431641 C 5.9453899 21.808671 6.4777778 22 7 22 L 17 22 C 17.522222 22 18.05461 21.808671 18.431641 21.431641 C 18.808671 21.05461 19 20.522222 19 20 L 19 5 L 20 5 L 20 3 L 15 3 L 14 2 L 10 2 z M 7 5 L 17 5 L 17 20 L 7 20 L 7 5 z M 9 7 L 9 18 L 11 18 L 11 7 L 9 7 z M 13 7 L 13 18 L 15 18 L 15 7 L 13 7 z"></path>
+                        </svg>
+                    </button>
+                    <h1 className="text-xl font-bold text-center">
+                        {column.name}
+                    </h1>
+                    <p className="text-sm text-center text-gray-700">
+                        {countCardsForColumn(column)} job{countCardsForColumn(column) === 1 ? '' : 's'}
+                    </p>
+                </div>
                     </div>
                   )}
                 </Draggable>
@@ -229,11 +248,11 @@ const EditColumns = () => {
                             type="text" 
                             value={newColumnName} 
                             onChange={handleNewColumnNameChange}
-                            placeholder="New Column Name"
+                            placeholder="New column name"
                             className="m-1 p-1 border rounded"
                             required
                         />
-                        <button type="submit" className='p-1 m-1 w-8 bg-green-500 rounded-xl'>
+                        <button type="submit" className='text-gray-600'>
                             +
                         </button>
                     </div>
