@@ -332,7 +332,7 @@ useEffect(() => {
   }, [isModalOpen]);
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col overflow-x-auto">
       <div className='flex justify-between'>
         <JobNotebookSearch searchTerm={searchTerm} onSearchTermChange={setSearchTerm} />
         <button>
@@ -394,7 +394,7 @@ useEffect(() => {
                               </button>
                               <div className='mt-2 flex flex-row items-center'> 
                                 <div>
-                                  <img className='inline-block h-[2.875rem] w-[2.875rem] rounded-full ring-2 ring-white dark:ring-gray-800' src={filteredCard.job_saved?.job_listing?.company_logo} alt="Company Logo" />
+                                  <img className='inline-block min-h-[2.875rem] min-w-[2.875rem] w-[2.875rem] h-[2.875rem] rounded-full ring-2 ring-white dark:ring-gray-800' src={filteredCard.job_saved?.job_listing?.company_logo} alt="Company Logo" />
                                 </div>
                                 <div className='ml-2'>
                                   <p className='font-semibold truncate w-full max-w-[10rem]'>{filteredCard.job_saved?.job_listing?.job_title}</p>
