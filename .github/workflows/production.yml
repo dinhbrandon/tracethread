@@ -11,12 +11,18 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     
+    - name: Cache Node modules
+      uses: actions/cache@v2
+      with:
+        path: frontend/node_modules
+        key: ${{ runner.OS }}-node-${{ hashFiles('frontend/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.OS }}-node-
+          
     - name: Use Node.js 16.x
       uses: actions/setup-node@v2
       with:
         node-version: 16.x
-        cache: 'npm'
-        cache-dependency-path: frontend/package-lock.json
         
     - name: Install dependencies
       working-directory: frontend
