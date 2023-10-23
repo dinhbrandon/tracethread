@@ -1,0 +1,41 @@
+name: Build and Deploy to Netlify
+
+on:
+  push:
+    branches:
+      - main  # This workflow will only run when commits are pushed to main
+
+jobs:
+  build-project:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Setup Node.js environment
+      uses: actions/setup-node@v2
+      with:
+        node-version: 'lts'  # Using the latest LTS version
+
+    - name: Install dependencies and build
+      run: |
+        cd frontend  # Navigate to your frontend directory if it's a sub-directory
+        npm install  # Install dependencies
+        npm run dev  # Run development build
+
+  deploy-to-netlify:
+    needs: build-project  # This job depends on the 'build-project' job
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Deploy to Netlify
+      env:
+        NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+      run: |
+        npm install -g netlify-cli  # Install Netlify CLI
+        cd frontend/dist/  # Navigate to your build directory
+        netlify deploy --prod  # Deploy to Netlify
