@@ -23,7 +23,7 @@ function App() {
                 <Nav />
               <Routes>
                 <Route path="/" element={<Home />} />
-                <Route path="/signup" element={<SignUpForm  />} />
+                <Route path="/signup" element={<SignUpForm />} />
                 <Route path="/login" element={<LoginForm />} />
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/jobnotebook" element={<JobNotebook />} />
