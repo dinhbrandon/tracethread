@@ -36,6 +36,9 @@ jobs:
       working-directory: frontend
       run: npm run build
       
+    - name: List directories for debugging
+      run: ls -R frontend
+      
     - name: Deploy production to Netlify
       uses: South-Paw/action-netlify-deploy@v1.2.0
       with:
