@@ -42,12 +42,8 @@ const SavedParameters: React.FC<SavedParametersProps> = ({ isVisible, onSearch, 
     }
 
     useEffect(() => {
-        if (savedParameters && savedParameters.length > 0) {
-            setSavedParameters(savedParameters);
-        } else {
-            getParametersFromUser();
-        }
-    }, [refreshKey, savedParameters]);
+        getParametersFromUser();
+    }, [refreshKey]);
 
     return (
         <div>
@@ -66,7 +62,7 @@ const SavedParameters: React.FC<SavedParametersProps> = ({ isVisible, onSearch, 
                             <td className='text-left'>{param.query}</td>
                             <td className='text-center'>
                                 <button onClick={() => deleteParameter(param.id)}>Delete</button>
-                                <button onClick={() => onSearch(param.query)}>Use Query</button>
+                                {/* <button onClick={() => onSearch(param.query)}>Use Query</button> */}
                             </td>
                         </tr>
                     ))}

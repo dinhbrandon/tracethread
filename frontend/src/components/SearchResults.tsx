@@ -67,7 +67,7 @@ const SearchResults = ({ encodedQuery }: SearchResultsProps) => {
 
     
     async function getQueryFromURL(encodedQuery: string) {
-        // console.log(encodedQuery)
+        
         const headers: Record<string, string> = {
             "Content-Type": "application/json",
         };

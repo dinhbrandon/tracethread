@@ -1,12 +1,12 @@
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { logout } from '../redux/authActions';
-import { RootState } from '../redux/store';
+// import { RootState } from '../redux/store';
 import { useNavigate } from 'react-router-dom';
 
 const UserNav = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const loggedIn = useSelector((state: RootState) => state.auth.loggedIn);
+    // const loggedIn = useSelector((state: RootState) => state.auth.loggedIn);
 
     const handleLogout = () => {
         dispatch(logout());

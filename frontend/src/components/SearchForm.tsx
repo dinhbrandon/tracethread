@@ -217,10 +217,19 @@ const customEncodeURIComponent = (str: string): string => {
         }
 
         const handleSaveSearch = () => {
+            // Check if a name is provided for the saved search
+            if (savedSearchName.trim() === "") {
+                console.error("Please enter a name for the saved search.");
+                return;
+            }
+        
+            // Save the updated search query with the name
             saveParameters(savedSearchName, query);
+        
             setSuccessMessage('Saved successfully!');
             setSavedSearchName('');
-        }
+        };
+        
 
 
         // BELOW IS THE JSX (UI DISPLAY) FOR THE CUSTOM QUERY BUILDER
@@ -395,22 +404,30 @@ const customEncodeURIComponent = (str: string): string => {
 
 
             
+                {
+                (query && query.trim() !== "") &&
                 <div className="mt-2 text-sm text-gray-600">
                     <input
                         className='border-b border-gray-200 m-1'
                         type="text" 
                         value={savedSearchName} 
                         onChange={(e) => setSavedSearchName(e.target.value)} 
-                        placeholder="Name" 
+                        placeholder="Name"
                     />
-                    <button className=" px-3 rounded-md border font-medium bg-white text-gray-700 align-middle hover:bg-gray-50 transition-all text-sm" onClick={handleSaveSearch}>Save filter</button>
+
+                    <button className=" px-3 rounded-md border font-medium bg-white text-gray-700 align-middle hover:bg-gray-50 transition-all text-sm" 
+                            onClick={handleSaveSearch}>
+                        Save filter
+                    </button>
                     {successMessage && <p className="text-green-500 text-sm mt-2">{successMessage}</p>}
                 </div>
-                <div className='mt-4'>
+            }
+
+                {/* <div className='mt-4'>
                     <button className="py-2 px-3 rounded-md border font-medium bg-white text-gray-700 align-middle hover:bg-gray-50 transition-all text-sm">
                         <a href="http://localhost:3000/saved">View all saved searches</a>
                     </button>
-                </div>
+                </div> */}
             </div>
         );
         
@@ -425,7 +442,9 @@ const SearchForm = ({ onSearch, onRefresh, refreshKey }: SearchFormProps & { onR
     const token = useToken();
     const handleSearch = (query: string) => {
         const encodedQuery = customEncodeURIComponent(query);
+        
         const url = `${BASE_URL}?q=${encodedQuery}`;
+        // console.log(url);
         onSearch(url);
     };
 

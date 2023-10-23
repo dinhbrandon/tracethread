@@ -35,7 +35,7 @@ jobs:
     - name: Build file
       working-directory: frontend
       run: npm run build
-      continue-on-error: true
+      continue-on-error: false
       
     - name: Deploy production to Netlify
       uses: South-Paw/action-netlify-deploy@v1.2.0

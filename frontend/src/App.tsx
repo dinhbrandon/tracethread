@@ -14,6 +14,8 @@ import SavedParameters from './components/SavedParameters';
 import Home from './components/Home';
 import { useState } from 'react';
 
+
+
 function App() {
 
   const [loginModalVisible, setLoginModalVisible] = useState(false);
@@ -41,7 +43,7 @@ function App() {
                 <Route path="/jobnotebook" element={<JobNotebook />} />
                 <Route path="/editcolumns" element={<EditColumns />} />
                 <Route path="/search" element={<JobSearch />} />
-                <Route path="/saved" element={<SavedParameters isVisible={true} />} />
+                <Route path="/saved" element={<SavedParameters isVisible={true} refreshKey={true} onSearch={() => {}} savedParameters={[]} />} />
               </Routes>
           </BrowserRouter>
         </div>

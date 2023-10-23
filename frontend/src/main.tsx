@@ -1,6 +1,4 @@
-// tslint:disable
-/* eslint-disable */
-
+// @ts-ignore 
 import ReactDOM from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
