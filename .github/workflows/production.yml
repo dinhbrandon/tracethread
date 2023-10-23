@@ -36,14 +36,11 @@ jobs:
       working-directory: frontend
       run: npm run build
       
-    - name: List directories for debugging
-      run: ls -R frontend
-      
     - name: Deploy production to Netlify
       uses: South-Paw/action-netlify-deploy@v1.2.0
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         netlify-auth-token: ${{ secrets.NETLIFY_AUTH_TOKEN }}
         netlify-site-id: ${{ secrets.NETLIFY_SITE_ID }}
-        build-dir: 'frontend/build'
+        build-dir: 'frontend/dist'
         comment-on-commit: true
