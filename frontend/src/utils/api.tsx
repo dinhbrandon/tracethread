@@ -72,7 +72,7 @@ export async function deleteColumn(id: number, token: string): Promise<{ success
   }
 
 //function to check for associated cards
-export async function checkForAssociatedCards(columnId: number, token: string): Promise<{ hasCards: boolean | null, error: string | null }> {
+export async function checkForAssociatedCards(columnId: number, token: string) {
     const url = `http://localhost:8000/jobnotebook/cards`;
     try {
       const response = await fetch(url, {
@@ -133,8 +133,8 @@ export async function saveColumnOrder(columns: Array<{ id: number; order: number
           return { success: false, error: 'Empty response body' };
       }
 
-      const data = JSON.parse(responseBody);
-      console.log(data);
+      // const data = JSON.parse(responseBody);
+      // console.log(data);
       
       return { success: true, error: null };
   } catch (error: any) {

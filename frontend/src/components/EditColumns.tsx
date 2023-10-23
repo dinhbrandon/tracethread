@@ -31,7 +31,7 @@ const EditColumns = () => {
     const [columns, setColumns] = useState<Columns[]>([]);
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const [columnToDelete, setColumnToDelete] = useState<number | null>(null);
-    const [isAddingColumn, setIsAddingColumn] = useState(false);
+    const [_, setIsAddingColumn] = useState(false);
     const [newColumnName, setNewColumnName] = useState('');
     const navigate = useNavigate();
 
@@ -42,7 +42,7 @@ const EditColumns = () => {
             return;
         }
         const result = await checkForAssociatedCards(id, token);
-        console.log(result)
+        // console.log(result)
         
         if (result.error) {
             console.error('Error checking for associated cards:', result.error);

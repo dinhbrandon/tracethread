@@ -19,7 +19,7 @@ const customEncodeURIComponent = (str: string): string => {
     function CustomQueryBuilder({ onSearch, onRefresh, savedParameters }: CustomQueryBuilderProps) {
         const [query, setQuery] = useState<string>('');
         const [savedSearchName, setSavedSearchName] = useState<string>('');
-        const [selectedSavedParameter, setSelectedSavedParameter] = useState('');
+        const [selectedSavedParameter, _setSelectedSavedParameter] = useState('');
         const [successMessage, setSuccessMessage] = useState('');
         const token = useToken();
         const fields = [
@@ -62,7 +62,7 @@ const customEncodeURIComponent = (str: string): string => {
             setCards(prevCards => [...prevCards, newCard]);
         };        
     
-        const removeCard = (index) => {
+        const removeCard = (index: any) => {
             const newCards = [...cards];
             newCards.splice(index, 1);
             setCards(newCards);
@@ -70,7 +70,7 @@ const customEncodeURIComponent = (str: string): string => {
 
     
         // THE FOLLOWING ARE FOR ADDING AND REMOVING LINES OF LOGIC WITHIN EACH CARD
-        const addConditionToCard = (cardIndex) => {
+        const addConditionToCard = (cardIndex: any) => {
             const newCondition:  Condition = {
                 field: null, 
                 operator: 'contains', 
@@ -106,7 +106,7 @@ const customEncodeURIComponent = (str: string): string => {
 
         // THE FOLLOWING ARE FOR GENERATING THE SEARCH QUERY BASED ON THE CARDS AND LINES OF LOGIC
         const generateQuery = () => {
-            let cardQueries = cards.map((card, cardIdx) => {
+            let cardQueries = cards.map((card) => {
                 
                 let cardQuery = card.conditions
                 .filter(condition => condition.field && condition.field.name) // Filter out conditions without a field selected
@@ -189,7 +189,7 @@ const customEncodeURIComponent = (str: string): string => {
             
             
 
-            console.log(queryString);
+            // console.log(queryString);
             setQuery(queryString);
             onSearch(queryString);
         };
@@ -295,7 +295,7 @@ const customEncodeURIComponent = (str: string): string => {
                                 </select>
                                 <input 
                                     type="text" 
-                                    className="w-full text-sm text-gray-600 text-left border-b border-gray-200" 
+                                    className="w-50 text-sm text-gray-600 text-left border-b border-gray-200" 
                                     placeholder=" value" 
                                     value={condition.value}
                                     onChange={(e) => {

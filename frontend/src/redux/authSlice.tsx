@@ -31,7 +31,7 @@ const authSlice = createSlice({
     loginFailure: (state, action: PayloadAction<string>) => {
       state.error = action.payload;
     },
-    logout: (state) => {
+    logout: () => {
       // Resetting state upon logout
       return initialState;
     },

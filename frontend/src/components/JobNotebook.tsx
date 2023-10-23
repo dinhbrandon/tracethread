@@ -1,3 +1,6 @@
+/* eslint-disable */
+// tslint:disable
+
 import { useState, useEffect, useRef } from 'react';
 import { useToken } from '../hooks/useToken';
 import { Card, Columns} from '../types/types';
@@ -45,11 +48,11 @@ const JobNotebook: React.FC = () => {
   }
   
 
-  const onDragEnd = async (result, columnsArray, setColumns) => {
+  const onDragEnd = async (result: any, columnsArray: any, setColumns: any) => {
 
     if (!result.destination) return;
     const { source, destination } = result;
-    const columns = columnsArray.reduce((acc, column) => {
+    const columns = columnsArray.reduce((acc: any, column: any) => {
         acc[column.id] = {
             ...column,
             items: cards.filter(card => card.column === column.id)
@@ -77,10 +80,10 @@ const JobNotebook: React.FC = () => {
   
 
 
-    const updatedColumnsArray = Object.values(columns).map(column => {
-        const { items, ...rest } = column;
-        return rest;
-    });
+    const updatedColumnsArray = Object.values(columns).map((column: any) => {
+      const { items, ...rest } = column;
+      return rest;
+    }) as Columns[];
 
     setColumns(updatedColumnsArray);
     getColumns();
@@ -214,11 +217,11 @@ const JobNotebook: React.FC = () => {
             timestamp: timestamp
         })
     });
-    const requestBody = {
-        new_column_id: newColumnId,
-        order: newOrder,
-        timestamp: timestamp
-    };
+    // const requestBody = {
+    //     new_column_id: newColumnId,
+    //     order: newOrder,
+    //     timestamp: timestamp
+    // };
     if (response.ok) {
         getCards();
     } else {
@@ -276,7 +279,7 @@ const JobNotebook: React.FC = () => {
     } else {
         console.error('Token is null');
     }
-    console.log('Submitting card data:', cardData);
+    // console.log('Submitting card data:', cardData);
 };
 
 function openNewCardModal(columnId: number) {
@@ -380,7 +383,7 @@ useEffect(() => {
                   {cardsInColumn
                     .filter(card => {
                       const isPresent = isSearchTermPresent(card);
-                      console.log(card);
+                      // console.log(card);
                       return isPresent;
                     })
                     .map((filteredCard, index) => {

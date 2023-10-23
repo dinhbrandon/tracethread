@@ -79,9 +79,9 @@ const SignUpForm = forwardRef<HTMLDivElement, SignupLoginProps>((props: SignupLo
         }));
       };
 
-      const capitalizeName = (name: string): string => {
-        return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
-      };
+      // const capitalizeName = (name: string): string => {
+      //   return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
+      // };
 
       const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
