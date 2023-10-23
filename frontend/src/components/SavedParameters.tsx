@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useToken } from '../hooks/useToken';
 import { SavedSearchParameters, SavedParametersProps } from '../types/types';
-
+// @ts-ignore 
 const SavedParameters: React.FC<SavedParametersProps> = ({ isVisible, onSearch, refreshKey, savedParameters }) => {
     if (!isVisible) {
         return null;
