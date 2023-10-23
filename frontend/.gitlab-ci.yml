@@ -1,0 +1,28 @@
+stages:
+  - build
+  - deploy
+
+variables:
+  NODE_ENV: "development"
+
+build project:
+  stage: build
+  image: node:lts-bullseye
+  script:
+    - cd frontend  # Navigate to your frontend directory if it's a sub-directory
+    - npm install  # Install dependencies
+    - npm run dev  # Run development build
+  artifacts:
+    paths:
+      - frontend/dist/  # Adjust the path based on where your build artifacts are stored
+
+deploy to netlify:
+  stage: deploy
+  only:
+    - main  # This job will only be run when commits are pushed to main
+  image: node:lts-bullseye
+  script:
+    - npm install -g netlify-cli  # Install Netlify CLI
+    - cd frontend/dist/  # Navigate to your build directory
+    - netlify deploy --prod  # Deploy to Netlify
+

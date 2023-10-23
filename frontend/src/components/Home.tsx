@@ -74,7 +74,7 @@ const Home = () => {
         <div className="flex">
         <p className="mt-2 text-sm">
             Already have an account?&nbsp;
-            <button className="text-black decoration-2 hover:underline font-medium" onClick={toggleLoginModal}>
+            <button className="text-sky-800 decoration-2 hover:underline font-medium" onClick={toggleLoginModal}>
             Login here
             </button>
             </p>
