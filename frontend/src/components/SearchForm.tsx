@@ -4,7 +4,7 @@ import { useToken } from '../hooks/useToken';
 import SavedParameters from './SavedParameters';
 import { SavedSearchParameters } from '../types/types';
 
-const baseUrl = import.meta.env.VITE_BASE_URL;
+// const baseUrl = import.meta.env.VITE_BASE_URL;
 const baseUrlApi = import.meta.env.VITE_API_BASE_URL;
 const BASE_URL = `${baseUrlApi}/querier/search-job-listing/`;
 
