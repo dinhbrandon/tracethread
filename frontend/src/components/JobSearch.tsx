@@ -155,7 +155,7 @@ const handleSearchButtonClick = () => {
 )}
       </div>
 
-      <div>
+      <div className="overflow-y-auto max-h-[calc(100vh-200px)] mb-10">
           {searchUrl && <SearchResults encodedQuery={searchUrl} />}
       </div>
 

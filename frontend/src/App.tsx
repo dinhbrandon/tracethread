@@ -13,6 +13,10 @@ import Dashboard from './components/Dashboard';
 import JobNotebook from './components/JobNotebook';
 import EditColumns from './components/EditColumns';
 import JobSearch from './components/JobSearch';
+import Support from './components/Support';
+import Pricing from './components/Pricing';
+import ContactUs from './components/ContactUs';
+import Tutorial from './components/Tutorial';
 import SavedParameters from './components/SavedParameters';
 import Home from './components/Home';
 import { useState } from 'react';
@@ -48,6 +52,10 @@ function App() {
                 <Route path="/saved" element={<SavedParameters isVisible={true} refreshKey={true} onSearch={() => {}} savedParameters={[]} />} />
                 <Route path="/about" element={<AboutUs />} />
                 <Route path="/careers" element={<OpenRoles />} />
+                <Route path="/support" element={<Support />} />
+                <Route path="/pricing" element={<Pricing />} />
+                <Route path="/contact" element={<ContactUs />} />
+                <Route path="/tutorial" element={<Tutorial />} />
               </Routes>
             </div>
             <Footer />
