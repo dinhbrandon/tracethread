@@ -3,6 +3,8 @@ import { AppDispatch } from '../redux/store';
 import { loginUser } from '../redux/authActions';
 import { useNavigate } from 'react-router-dom';
 
+const baseUrlApi = import.meta.env.VITE_API_BASE_URL;
+
 const GuestLoginButton = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
@@ -18,7 +20,7 @@ const GuestLoginButton = () => {
     const guestPassword = 'thisisapassword';
 
     try {
-        const response = await fetch('http://localhost:8000/accounts/register', {
+        const response = await fetch(`${baseUrlApi}/accounts/register`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

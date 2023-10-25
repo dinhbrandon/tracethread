@@ -3,12 +3,14 @@
 // import { useToken } from '../hooks/useToken';
 
 const Dashboard: React.FC = () => {
+  // const baseUrlApi = import.meta.env.VITE_API_BASE_URL;
+  const baseUrl = import.meta.env.VITE_BASE_URL;
   //   const [savedParameters, setSavedParameters] = useState<SavedSearchParameters[]>([]);
   //   const token = useToken();
 
 
   //   async function getParametersFromUser() {
-  //       const url = `http://localhost:8000/querier/saved-search-parameters`;
+  //       const url = `${baseUrlApi}/querier/saved-search-parameters`;
   //       const response = await fetch(url, {
   //           method: "GET",
   //           headers: {
@@ -26,7 +28,7 @@ const Dashboard: React.FC = () => {
   //   }
 
   //   async function deleteParameter(id: number) {
-  //     const url = `http://localhost:8000/querier/saved-search-parameters/${id}`;
+  //     const url = `${baseUrlApi}/querier/saved-search-parameters/${id}`;
   //     const response = await fetch(url, {
   //         method: "DELETE",
   //         headers: {
@@ -57,7 +59,7 @@ const Dashboard: React.FC = () => {
               </h2>
               <p className="mt-3 text-gray-800">
               We assist tech professionals in securing their ideal roles by offering a comprehensive platform, enabling users to effectively track, organize, and manage their job applications, as well as discover new opportunities through advanced search and filtering options.</p>
-              <a href="http://localhost:3000/tutorial">
+              <a href={`${baseUrl}/tutorial`}>
               <p className="mt-5 inline-flex items-center gap-x-2 font-medium text-blue-600">
                 Learn more with our tutorial
                 <svg className="w-2.5 h-2.5 transition ease-in-out group-hover:translate-x-1" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">

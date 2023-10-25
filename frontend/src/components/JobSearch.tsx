@@ -5,6 +5,8 @@ import SearchForm from "./SearchForm";
 import SearchResults from "./SearchResults";
 // import { resetJobAdditionStatus } from '../redux/jobSlice';
 
+const baseUrlApi = import.meta.env.VITE_API_BASE_URL;
+
 const JobSearch = () => {
   // const dispatch = useDispatch();
 
@@ -30,11 +32,11 @@ const JobSearch = () => {
 const handleSearchButtonClick = () => {
   if (!searchText.trim()) {
     // setErrorMessage('Please enter a search query.');
-    setSearchUrl(`http://localhost:8000/querier/search-job-listing/?q=`);
+    setSearchUrl(`${baseUrlApi}/querier/search-job-listing/?q=`);
     setHasSearched(true);
   } else {
     // setErrorMessage('');
-    setSearchUrl(`http://localhost:8000/querier/search-job-listing/?q=%28job_title%3D'${searchText}'%20%7C%20company_name%3D'${searchText}'%29`);
+    setSearchUrl(`${baseUrlApi}/querier/search-job-listing/?q=%28job_title%3D'${searchText}'%20%7C%20company_name%3D'${searchText}'%29`);
     setHasSearched(true);
   }
 };

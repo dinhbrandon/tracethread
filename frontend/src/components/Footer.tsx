@@ -1,5 +1,7 @@
 import { useState } from 'react';
 
+const baseUrl = import.meta.env.VITE_BASE_URL;
+
 const Footer = () => {
 
     const [showModal, setShowModal] = useState(false);
@@ -39,27 +41,26 @@ const Footer = () => {
         <a className="flex-none text-xl font-semibold text-white" href="#" aria-label="Brand">Trace Thread</a>
       </div>
 
-
       <div className="col-span-1">
         <h4 className="font-semibold text-gray-100">Product</h4>
 
         <div className="mt-3 grid space-y-3">
-          <p><a className="inline-flex gap-x-2 text-gray-400 hover:text-gray-200" href="http://localhost:3000/pricing">Pricing</a></p>
-          <p><a className="inline-flex gap-x-2 text-gray-400 hover:text-gray-200" href="http://localhost:3000/tutorial">Tutorial</a></p>
-          <p><a className="inline-flex gap-x-2 text-gray-400 hover:text-gray-200" href="http://localhost:3000/support">Support</a></p>
-        </div>
-      </div>
+  <p><a className="inline-flex gap-x-2 text-gray-400 hover:text-gray-200" href={`${baseUrl}/pricing`}>Pricing</a></p>
+  <p><a className="inline-flex gap-x-2 text-gray-400 hover:text-gray-200" href={`${baseUrl}/tutorial`}>Tutorial</a></p>
+  <p><a className="inline-flex gap-x-2 text-gray-400 hover:text-gray-200" href={`${baseUrl}/support`}>Support</a></p>
+</div>
+</div>
 
 
-      <div className="col-span-1">
-        <h4 className="font-semibold text-gray-100">Company</h4>
+<div className="col-span-1">
+  <h4 className="font-semibold text-gray-100">Company</h4>
 
-        <div className="mt-3 grid space-y-3">
-          <p><a className="inline-flex gap-x-2 text-gray-400 hover:text-gray-200" href="http://localhost:3000/about">About us</a></p>
-          <p><a className="inline-flex gap-x-2 text-gray-400 hover:text-gray-200" href="http://localhost:3000/careers">Careers</a></p>
-          <p><a className="inline-flex gap-x-2 text-gray-400 hover:text-gray-200" href="http://localhost:3000/contact">Contact Us</a></p>
-        </div>
-      </div>
+  <div className="mt-3 grid space-y-3">
+    <p><a className="inline-flex gap-x-2 text-gray-400 hover:text-gray-200" href={`${baseUrl}/about`}>About us</a></p>
+    <p><a className="inline-flex gap-x-2 text-gray-400 hover:text-gray-200" href={`${baseUrl}/careers`}>Careers</a></p>
+    <p><a className="inline-flex gap-x-2 text-gray-400 hover:text-gray-200" href={`${baseUrl}/contact`}>Contact Us</a></p>
+  </div>
+</div>
 
 
       <div className="col-span-2">

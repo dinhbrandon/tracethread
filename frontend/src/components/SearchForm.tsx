@@ -4,8 +4,9 @@ import { useToken } from '../hooks/useToken';
 import SavedParameters from './SavedParameters';
 import { SavedSearchParameters } from '../types/types';
 
-
-const BASE_URL = "http://localhost:8000/querier/search-job-listing/";
+const baseUrl = import.meta.env.VITE_BASE_URL;
+const baseUrlApi = import.meta.env.VITE_API_BASE_URL;
+const BASE_URL = `${baseUrlApi}/querier/search-job-listing/`;
 
 const customEncodeURIComponent = (str: string): string => {
     return encodeURIComponent(str)
@@ -198,7 +199,7 @@ const customEncodeURIComponent = (str: string): string => {
 
         // FUNCTION FOR SAVING SEARCH QUERIES
         async function saveParameters(name: string, encodedQuery: string) {
-            const url = `http://localhost:8000/querier/saved-search-parameters`;
+            const url = `${baseUrlApi}/querier/saved-search-parameters`;
             const response = await fetch(url, {
                 method: "POST",
                 headers: {
@@ -425,7 +426,7 @@ const customEncodeURIComponent = (str: string): string => {
 
                 {/* <div className='mt-4'>
                     <button className="py-2 px-3 rounded-md border font-medium bg-white text-gray-700 align-middle hover:bg-gray-50 transition-all text-sm">
-                        <a href="http://localhost:3000/saved">View all saved searches</a>
+                        <a href={`${baseUrl}/saved`}>View all saved searches</a>
                     </button>
                 </div> */}
             </div>
@@ -449,7 +450,7 @@ const SearchForm = ({ onSearch, onRefresh, refreshKey }: SearchFormProps & { onR
     };
 
     async function getParametersFromUser() {
-        const url = `http://localhost:8000/querier/saved-search-parameters`;
+        const url = `${baseUrlApi}/querier/saved-search-parameters`;
         const response = await fetch(url, {
             method: "GET",
             headers: {

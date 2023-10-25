@@ -5,6 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { SubmitFeedbackProps } from '../types/types';
 
+const baseUrl = import.meta.env.VITE_BASE_URL;
+
 
 
 const SubmitFeedback = ({ isOpen, onClose, pageUrl }: SubmitFeedbackProps) => {
@@ -17,6 +19,8 @@ const SubmitFeedback = ({ isOpen, onClose, pageUrl }: SubmitFeedbackProps) => {
   };
 
   const handleSubmit = async () => {
+    const baseUrl = import.meta.env.VITE_API_BASE_URL;
+    console.log('baseUrl', baseUrl);
     const formData = new FormData();
     formData.append('url', pageUrl);
     formData.append('feedback', feedback);
@@ -25,7 +29,7 @@ const SubmitFeedback = ({ isOpen, onClose, pageUrl }: SubmitFeedbackProps) => {
     }
 
     try {
-      const response = await fetch('http://localhost:8000/api/submit-feedback/', {
+      const response = await fetch(`${baseUrl}/api/submit-feedback/`, {
         method: 'POST',
         body: formData,
       });
@@ -84,7 +88,7 @@ const Nav = () => {
 
       <div className="flex items-center">
     <div>
-        <a className="flex-none text-xl font-semibold whitespace-nowrap" href="http://localhost:3000" aria-label="Tracethread">Trace Thread BETA</a>
+        <a className="flex-none text-xl font-semibold whitespace-nowrap" href={baseUrl} aria-label="Tracethread">Trace Thread BETA</a>
     </div>
 
     <div className='ml-10 flex items-center'>
@@ -115,9 +119,9 @@ const Nav = () => {
           <div className="flex flex-col gap-y-4 gap-x-0 mt-5 sm:flex-row sm:items-center sm:justify-end sm:gap-y-0 sm:gap-x-7 sm:mt-0 sm:pl-7">
             { loggedIn ? (
               <>
-              <a className="font-medium" href="http://localhost:3000/dashboard">Dashboard</a>
-              <a className="font-medium" href="http://localhost:3000/search">Search</a>
-              <a className="font-medium" href="http://localhost:3000/jobnotebook">Job Notebook</a>
+              <a className="font-medium" href={`${baseUrl}/dashboard`}>Dashboard</a>
+              <a className="font-medium" href={`${baseUrl}/search`}>Search</a>
+              <a className="font-medium" href={`${baseUrl}/jobnotebook`}>Job Notebook</a>
               
               </>
             ) : <></>}
@@ -130,7 +134,7 @@ const Nav = () => {
                 Logout
               </button>
               ) : (
-              <a className="flex items-center gap-x-2 font-medium sm:border-l sm:my-6 sm:pl-6" href="http://localhost:3000/login">
+              <a className="flex items-center gap-x-2 font-medium sm:border-l sm:my-6 sm:pl-6" href={`${baseUrl}/login`}>
                 <svg className="w-4 h-4" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                   <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z"/>
                 </svg>

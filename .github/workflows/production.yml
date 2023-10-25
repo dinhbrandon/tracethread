@@ -35,6 +35,8 @@ jobs:
     - name: Build file
       working-directory: frontend
       run: npm run build
+      env:
+        VITE_BASE_URL: https://tracethread.com
       
     - name: Deploy production to Netlify
       uses: South-Paw/action-netlify-deploy@v1.2.0

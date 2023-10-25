@@ -9,6 +9,8 @@ import JobNotebookSearch from './JobNotebookSearch';
 import TimeSince from './TimeSince';
 import { createCard } from '../utils/api.tsx';
 
+const baseUrlApi = import.meta.env.VITE_API_BASE_URL;
+
 const JobNotebook: React.FC = () => {
   const token = useToken();
   const [columns, setColumns] = useState<Columns[]>([]);
@@ -108,7 +110,7 @@ const JobNotebook: React.FC = () => {
 
 
   async function getColumns() {
-    const url = `http://localhost:8000/jobnotebook/columns`;
+    const url = `${baseUrlApi}/jobnotebook/columns`;
     const response = await fetch(url, {
         method: "GET",
         headers: {
@@ -121,7 +123,7 @@ const JobNotebook: React.FC = () => {
   }
 
   async function getCards() {
-    const url = `http://localhost:8000/jobnotebook/cards`;
+    const url = `${baseUrlApi}/jobnotebook/cards`;
     const response = await fetch(url, {
       method: "GET",
       headers: {
@@ -137,7 +139,7 @@ const JobNotebook: React.FC = () => {
     e.preventDefault();
   
     // URL to delete the card
-    const cardUrl = `http://localhost:8000/jobnotebook/delete-card/${cardId}`;
+    const cardUrl = `${baseUrlApi}/jobnotebook/delete-card/${cardId}`;
   
     // Deleting the card
     let response = await fetch(cardUrl, {
@@ -151,7 +153,7 @@ const JobNotebook: React.FC = () => {
     // If card deletion is successful and jobId exists, proceed to delete the job
     if (response.ok && jobId) {
       // URL to delete the job
-      const jobUrl = `http://localhost:8000/querier/delete-jobsaved/${jobId}`;
+      const jobUrl = `${baseUrlApi}/querier/delete-jobsaved/${jobId}`;
   
       // Deleting the job
       response = await fetch(jobUrl, {
@@ -176,7 +178,7 @@ const JobNotebook: React.FC = () => {
 
   async function saveNotes() {
     if (currentCardId !== null) {
-      const url = `http://localhost:8000/jobnotebook/cards/${currentCardId}`;
+      const url = `${baseUrlApi}/jobnotebook/cards/${currentCardId}`;
       const response = await fetch(url, {
         method: "PATCH",
         headers: {
@@ -205,7 +207,7 @@ const JobNotebook: React.FC = () => {
   }
 
   async function editCardColumn(cardId: number, newColumnId: number, newOrder: number, timestamp: Date) {
-    const response = await fetch(`http://localhost:8000/jobnotebook/cards/${cardId}/change-column`, {
+    const response = await fetch(`${baseUrlApi}/jobnotebook/cards/${cardId}/change-column`, {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json',
@@ -339,12 +341,13 @@ useEffect(() => {
     };
   }, [isModalOpen]);
 
+  const baseUrl = import.meta.env.VITE_BASE_URL;
   return (
     <div className="flex flex-col overflow-x-auto">
       <div className='flex justify-between'>
         <JobNotebookSearch searchTerm={searchTerm} onSearchTermChange={setSearchTerm} />
         <button>
-          <a className="m-1 py-2 px-3 rounded-md border font-medium bg-white text-gray-700 align-middle hover:bg-gray-50 transition-all text-sm" href='http://localhost:3000/editcolumns'>
+          <a className="m-1 py-2 px-3 rounded-md border font-medium bg-white text-gray-700 align-middle hover:bg-gray-50 transition-all text-sm" href={`${baseUrl}/editcolumns`}>
           Edit Columns
           </a>
           </button>
@@ -607,10 +610,10 @@ useEffect(() => {
                       className="border p-2 rounded-lg w-full mb-4"
                   />
               </div>
-              <button type="submit" className="bg-green-500 text-white px-4 py-2 rounded-lg mt-4">
+              <button type="submit" className="mb-2 mr-2 py-2 px-3 rounded-md border font-medium text-gray-700 bg-white align-middle hover:bg-gray-50 transition-all text-sm">
                   Save
               </button>
-              <button onClick={() => {setIsAddCardModalOpen(false); setNewCardData(null);}} className="bg-red-500 text-white px-4 py-2 rounded-lg mt-4">
+              <button onClick={() => {setIsAddCardModalOpen(false); setNewCardData(null);}} className="mb-2 py-2 px-3 rounded-md border font-medium text-gray-700 bg-white align-middle hover:bg-gray-50 transition-all text-sm">
                   Cancel
               </button>
 

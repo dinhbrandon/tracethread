@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useToken } from '../hooks/useToken';
 import { SavedSearchParameters, SavedParametersProps } from '../types/types';
+const baseUrlApi = import.meta.env.VITE_API_BASE_URL;
 // @ts-ignore 
 const SavedParameters: React.FC<SavedParametersProps> = ({ isVisible, onSearch, refreshKey, savedParameters }) => {
     if (!isVisible) {
@@ -11,7 +12,7 @@ const SavedParameters: React.FC<SavedParametersProps> = ({ isVisible, onSearch, 
     const token = useToken();
 
     const getParametersFromUser = async () => {
-        const url = `http://localhost:8000/querier/saved-search-parameters`;
+        const url = `${baseUrlApi}/querier/saved-search-parameters`;
         const response = await fetch(url, {
             method: "GET",
             headers: {
@@ -26,7 +27,7 @@ const SavedParameters: React.FC<SavedParametersProps> = ({ isVisible, onSearch, 
     }
 
     const deleteParameter = async (id: number) => {
-        const url = `http://localhost:8000/querier/saved-search-parameters/${id}`;
+        const url = `${baseUrlApi}/querier/saved-search-parameters/${id}`;
         const response = await fetch(url, {
             method: "DELETE",
             headers: {

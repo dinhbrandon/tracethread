@@ -5,6 +5,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../redux/store';
 import { loginUser } from '../redux/authActions';
 
+const baseUrlApi = import.meta.env.VITE_API_BASE_URL;
+
 const SignUpForm = forwardRef<HTMLDivElement, SignupLoginProps>((props: SignupLoginProps, ref: Ref<HTMLDivElement>) => {
   const { toggleSignUpModal, toggleLoginModal } = props;
   const dispatch = useDispatch<AppDispatch>();
@@ -98,7 +100,7 @@ const SignUpForm = forwardRef<HTMLDivElement, SignupLoginProps>((props: SignupLo
         };
     
         try {
-            const response = await fetch('http://localhost:8000/accounts/register', {
+            const response = await fetch(`${baseUrlApi}/accounts/register`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

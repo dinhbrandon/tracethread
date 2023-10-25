@@ -6,11 +6,12 @@ export const loginSuccess = createAction<{username: string, token: string}>('aut
 export const loginFailure = createAction<string>('auth/loginFailure');
 export const logout = createAction('auth/logout');
 export const getUserDetailsSuccess = createAction<{ username: string }>('auth/getUserDetailsSuccess');
+const baseUrlApi = import.meta.env.VITE_API_BASE_URL;
 
 // Async action to handle user login
 export const loginUser = (email: string, password: string) => async (dispatch: any) => {
   try {
-    const response = await fetch('http://localhost:8000/accounts/login', {
+    const response = await fetch(`${baseUrlApi}/accounts/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -41,7 +42,7 @@ export const getUserDetails = () => async (dispatch: AppDispatch, getState: () =
   }
 
   try {
-    const response = await fetch('http://localhost:8000/accounts/user-details', {
+    const response = await fetch(`${baseUrlApi}/accounts/user-details`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
