@@ -8,6 +8,7 @@ import { SavedSearchParameters } from '../types/types';
 const baseUrlApi = import.meta.env.VITE_API_BASE_URL;
 const BASE_URL = `${baseUrlApi}/querier/search-job-listing/`;
 
+
 const customEncodeURIComponent = (str: string): string => {
     return encodeURIComponent(str)
         .replace(/\(/g, '%28')
@@ -23,6 +24,7 @@ const customEncodeURIComponent = (str: string): string => {
         const [selectedSavedParameter, _setSelectedSavedParameter] = useState('');
         const [successMessage, setSuccessMessage] = useState('');
         const token = useToken();
+        const [savedFilter, setSavedFilter] = useState(false)
         const fields = [
             { name: 'job_title', label: 'Job Title' },
             { name: 'company_name', label: 'Company Name' },
@@ -191,6 +193,7 @@ const customEncodeURIComponent = (str: string): string => {
             
 
             // console.log(queryString);
+            setSavedFilter(false);
             setQuery(queryString);
             onSearch(queryString);
         };
@@ -226,8 +229,12 @@ const customEncodeURIComponent = (str: string): string => {
         
             // Save the updated search query with the name
             saveParameters(savedSearchName, query);
-        
-            setSuccessMessage('Saved successfully!');
+            //Success message disappears after 3 seconds
+            setSuccessMessage('Saved search successfully!');
+            setTimeout(() => {
+                setSuccessMessage('');
+            }, 3000);
+            setSavedFilter(true);
             setSavedSearchName('');
         };
         
@@ -406,7 +413,7 @@ const customEncodeURIComponent = (str: string): string => {
 
             
                 {
-                (query && query.trim() !== "") &&
+                (query && query.trim() !== "" && !savedFilter) &&
                 <div className="mt-2 text-sm text-gray-600">
                     <input
                         className='border-b border-gray-200 m-1'
@@ -420,9 +427,10 @@ const customEncodeURIComponent = (str: string): string => {
                             onClick={handleSaveSearch}>
                         Save filter
                     </button>
-                    {successMessage && <p className="text-green-500 text-sm mt-2">{successMessage}</p>}
                 </div>
+                
             }
+            {successMessage && <p className="text-green-500 text-sm mt-2">{successMessage}</p>}
 
                 {/* <div className='mt-4'>
                     <button className="py-2 px-3 rounded-md border font-medium bg-white text-gray-700 align-middle hover:bg-gray-50 transition-all text-sm">

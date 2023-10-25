@@ -4,6 +4,7 @@ import SignUpForm  from './SignUpForm'
 import LoginForm from './LoginForm'
 import { RootState } from '../redux/store';
 import CreateGuest from './CreateGuest';
+import homePageAsset from '../assets/HomePage.png'
 
 type ModalState = 'signup' | 'login' | null;
 
@@ -55,7 +56,7 @@ const Home = () => {
   <div className="grid md:grid-cols-2 gap-4 md:gap-8 xl:gap-20 md:items-center">
     <div>
       <h1 className="block text-3xl font-bold sm:text-4xl lg:text-6xl lg:leading-tight ">A guiding thread to your perfect career.</h1>
-      <p className="mt-3 text-lg">Make room for more opportunities with a software platform designed with your job searching needs at the forefront.</p>
+      <p className="mt-3 text-lg">Make room for more opportunities with a software platform designed with your job searching needs in mind.</p>
 
     { loggedIn ? <></> : (
         <div className="mt-7 grid gap-3 w-full sm:inline-flex md:flex md:flex-col">
@@ -88,11 +89,11 @@ const Home = () => {
 
 
     <div className="mt-5 relative ml-4">
-      <img className="w-full rounded-md" src="https://images.unsplash.com/photo-1665686377065-08ba896d16fd?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=700&h=800&q=80" alt="Image Description"/>
+      <img className="w-full rounded-md" src={homePageAsset} alt="Image Description"/>
     
-      <div className="absolute inset-0 -z-[1] bg-gradient-to-tr from-gray-200 via-white/0 to-white/0 w-full h-full rounded-md mt-4 -mb-4 mr-4 -ml-4 lg:mt-6 lg:-mb-6 lg:mr-6 lg:-ml-6 dark:from-slate-800 dark:via-slate-900/0 dark:to-slate-900/0"></div>
+      <div className="absolute inset-0 -z-[1] bg-gradient-to-tr from-blue-200 via-white/0 to-white/0 w-full h-full rounded-md mt-4 -mb-4 mr-4 -ml-4 lg:mt-6 lg:-mb-6 lg:mr-6 lg:-ml-6 "></div>
 
-      <div className="absolute bottom-0 left-0">
+      {/* <div className="absolute bottom-0 left-0">
         <svg className="w-2/3 ml-auto h-auto text-white dark:text-slate-900" width="630" height="451" viewBox="0 0 630 451" fill="none" xmlns="http://www.w3.org/2000/svg">
           <rect x="531" y="352" width="99" height="99" fill="currentColor"/>
           <rect x="140" y="352" width="106" height="99" fill="currentColor"/>
@@ -112,7 +113,7 @@ const Home = () => {
           <rect x="507" y="124" width="49" height="24" fill="currentColor"/>
           <rect x="531" y="49" width="99" height="99" fill="currentColor"/>
         </svg>
-      </div>
+      </div> */}
 
     </div>
 

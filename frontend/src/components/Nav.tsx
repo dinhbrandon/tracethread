@@ -88,7 +88,7 @@ const Nav = () => {
 
       <div className="flex items-center">
     <div>
-        <a className="flex-none text-xl font-semibold whitespace-nowrap" href={baseUrl} aria-label="Tracethread">Trace Thread BETA</a>
+        <a className="flex-none text-xl font-semibold whitespace-nowrap text-gray-700" href={baseUrl} aria-label="Tracethread">Trace Thread BETA</a>
     </div>
 
     <div className='ml-10 flex items-center'>

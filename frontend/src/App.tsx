@@ -49,7 +49,7 @@ function App() {
                 <Route path="/jobnotebook" element={<JobNotebook />} />
                 <Route path="/editcolumns" element={<EditColumns />} />
                 <Route path="/search" element={<JobSearch />} />
-                <Route path="/saved" element={<SavedParameters isVisible={true} refreshKey={true} onSearch={() => {}} savedParameters={[]} />} />
+                <Route path="/search/filters" element={<SavedParameters isVisible={true} refreshKey={true} onSearch={() => {}} savedParameters={[]} />} />
                 <Route path="/about" element={<AboutUs />} />
                 <Route path="/careers" element={<OpenRoles />} />
                 <Route path="/support" element={<Support />} />
