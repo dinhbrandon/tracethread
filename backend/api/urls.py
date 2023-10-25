@@ -1,6 +1,6 @@
 from django.urls import path
-from .views import test
+from .views import FeedbackCreateView
 
 urlpatterns = [
-    path("test", test),
-    ]
+    path('submit-feedback/', FeedbackCreateView.as_view()),
+]

@@ -4,6 +4,9 @@ import { PersistGate } from 'redux-persist/integration/react';
 import { persistor } from './redux/store';
 import store from './redux/store';
 import Nav from './components/Nav';
+import Footer from './components/Footer';
+import AboutUs from './components/AboutUs';
+import OpenRoles from './components/OpenRoles';
 import SignUpForm from './components/SignUpForm';
 import LoginForm from './components/LoginForm';
 import Dashboard from './components/Dashboard';
@@ -15,26 +18,25 @@ import Home from './components/Home';
 import { useState } from 'react';
 
 
-
 function App() {
-
   const [loginModalVisible, setLoginModalVisible] = useState(false);
   const [signUpModalVisible, setSignUpModalVisible] = useState(false);
 
   const toggleLoginModal = () => {
-      setLoginModalVisible(!loginModalVisible);
+    setLoginModalVisible(!loginModalVisible);
   };
 
   const toggleSignUpModal = () => {
-      setSignUpModalVisible(!signUpModalVisible);
+    setSignUpModalVisible(!signUpModalVisible);
   };
 
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
-        <div>
-          <BrowserRouter>
-                <Nav />
+        <BrowserRouter>
+          <div className="flex flex-col min-h-screen">
+            <Nav />
+            <div className="flex-grow mb-20">
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/signup" element={<SignUpForm toggleSignUpModal={toggleSignUpModal} toggleLoginModal={toggleLoginModal} />} />
@@ -44,9 +46,13 @@ function App() {
                 <Route path="/editcolumns" element={<EditColumns />} />
                 <Route path="/search" element={<JobSearch />} />
                 <Route path="/saved" element={<SavedParameters isVisible={true} refreshKey={true} onSearch={() => {}} savedParameters={[]} />} />
+                <Route path="/about" element={<AboutUs />} />
+                <Route path="/careers" element={<OpenRoles />} />
               </Routes>
-          </BrowserRouter>
-        </div>
+            </div>
+            <Footer />
+          </div>
+        </BrowserRouter>
       </PersistGate>
     </Provider>
   );
