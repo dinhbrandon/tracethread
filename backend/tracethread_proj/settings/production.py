@@ -27,12 +27,14 @@ ALLOWED_HOSTS = [
 
 CSRF_TRUSTED_ORIGINS = [
     "https://tracethread.com",
-    "https://api.tracethread.com"
+    "https://api.tracethread.com",
+    "www.tracethread.com",
 ]
 
 CORS_ALLOWED_ORIGINS = [
     "https://tracethread.com",
-    "https://api.tracethread.com"
+    "https://api.tracethread.com",
+    "www.tracethread.com",
 ]
 
 DATABASES = {
