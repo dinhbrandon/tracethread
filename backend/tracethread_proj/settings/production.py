@@ -20,9 +20,9 @@ DB_PASSWORD = env("POSTGRES_PASSWORD")
 DEBUG = False
 
 ALLOWED_HOSTS = [
-    "https://www.tracethread.com",
-    "https://api.tracethread.com",
-    "https://tracethread.com",
+    "www.tracethread.com",
+    "api.tracethread.com",
+    "tracethread.com",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
@@ -40,9 +40,9 @@ CORS_ALLOWED_ORIGINS = [
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "tracethread",
-        "USER": "tracethread",
-        "PASSWORD": "tracethread",
+        "NAME": DB_NAME,
+        "USER": DB_USER,
+        "PASSWORD": DB_PASSWORD,
         "HOST": DATABASE_HOST,
         "PORT": "5432",
     }
