@@ -39,7 +39,7 @@ services:
       - db
     environment:
       WAIT_HOSTS: db:5432
-      DATABASE_URL: ${DATABASE_URL}
+      DATABASE_URL: ${DATABASE_HOSE}
       CHROMEDRIVER_PATH: ${CHROMEDRIVER_PATH}
 
 volumes:

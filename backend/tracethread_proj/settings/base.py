@@ -77,19 +77,6 @@ TEMPLATES = [
 WSGI_APPLICATION = "tracethread_proj.wsgi.application"
 
 
-# Database
-# https://docs.djangoproject.com/en/4.1/ref/settings/#databases
-
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "tracethread",
-        "USER": "tracethread",
-        "PASSWORD": "tracethread",
-        "HOST": "db",  # Using service name of Docker Postgres container
-        "PORT": "5432",
-    }
-}
 
 
 # Password validation
