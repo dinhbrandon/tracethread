@@ -20,21 +20,21 @@ DB_PASSWORD = env("POSTGRES_PASSWORD")
 DEBUG = False
 
 ALLOWED_HOSTS = [
-    "www.tracethread.com",
-    "api.tracethread.com",
-    "tracethread.com",
+    "https://www.tracethread.com",
+    "https://api.tracethread.com",
+    "https://tracethread.com",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     "https://tracethread.com",
     "https://api.tracethread.com",
-    "www.tracethread.com",
+    "https://www.tracethread.com",
 ]
 
 CORS_ALLOWED_ORIGINS = [
     "https://tracethread.com",
     "https://api.tracethread.com",
-    "www.tracethread.com",
+    "https://www.tracethread.com",
 ]
 
 DATABASES = {
