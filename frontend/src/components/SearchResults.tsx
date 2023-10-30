@@ -67,7 +67,7 @@ const SearchResults = ({ encodedQuery }: SearchResultsProps) => {
 
     
     async function getQueryFromURL(encodedQuery: string) {
-        console.log(encodedQuery)
+        // console.log(encodedQuery)
         const headers: Record<string, string> = {
             "Content-Type": "application/json",
         };
@@ -116,9 +116,9 @@ const SearchResults = ({ encodedQuery }: SearchResultsProps) => {
         }
     }
 
-    function closeModal() {
-        setIsModalVisible(false);
-    }
+    // function closeModal() {
+    //     setIsModalVisible(false);
+    // }
     
     useEffect(() => {
         getQueryFromURL(encodedQuery);

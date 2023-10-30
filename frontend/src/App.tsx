@@ -12,8 +12,20 @@ import EditColumns from './components/EditColumns';
 import JobSearch from './components/JobSearch';
 import SavedParameters from './components/SavedParameters';
 import Home from './components/Home';
+import { useState } from 'react';
 
 function App() {
+
+  const [loginModalVisible, setLoginModalVisible] = useState(false);
+  const [signUpModalVisible, setSignUpModalVisible] = useState(false);
+
+  const toggleLoginModal = () => {
+      setLoginModalVisible(!loginModalVisible);
+  };
+
+  const toggleSignUpModal = () => {
+      setSignUpModalVisible(!signUpModalVisible);
+  };
 
   return (
     <Provider store={store}>
@@ -23,8 +35,8 @@ function App() {
                 <Nav />
               <Routes>
                 <Route path="/" element={<Home />} />
-                <Route path="/signup" element={<SignUpForm />} />
-                <Route path="/login" element={<LoginForm />} />
+                <Route path="/signup" element={<SignUpForm toggleSignUpModal={toggleSignUpModal} toggleLoginModal={toggleLoginModal} />} />
+                <Route path="/login" element={<LoginForm toggleSignUpModal={toggleSignUpModal} toggleLoginModal={toggleLoginModal} />} />
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/jobnotebook" element={<JobNotebook />} />
                 <Route path="/editcolumns" element={<EditColumns />} />

@@ -1,22 +1,21 @@
 import { RootState } from '../redux/store';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
 import SearchForm from "./SearchForm";
 import SearchResults from "./SearchResults";
-import { resetJobAdditionStatus } from '../redux/jobSlice';
+// import { resetJobAdditionStatus } from '../redux/jobSlice';
 
 const JobSearch = () => {
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
-  const isAuthenticated = useSelector((state: RootState) => state.auth.loggedIn);
-  const username = useSelector((state: RootState) => state.auth.username);
+  // const isAuthenticated = useSelector((state: RootState) => state.auth.loggedIn);
+  // const username = useSelector((state: RootState) => state.auth.username);
   const jobAdditionStatus = useSelector((state: RootState) => state.job.jobAdditionStatus);
 
   const [searchUrl, setSearchUrl] = useState<string | null>(null);
-  const [showModal, setShowModal] = useState(false);
-  const [modalMessage, setModalMessage] = useState('');
-  const [modalColor, setModalColor] = useState('green');
+  const [_showModal, setShowModal] = useState(false);
+  const [_modalMessage, setModalMessage] = useState('');
+  const [_modalColor, setModalColor] = useState('green');
   const [refreshKey, setRefreshKey] = useState(false);
   const [showAdvancedSearch, setShowAdvancedSearch] = useState(false);
   const [searchText, setSearchText] = useState('');
@@ -59,10 +58,10 @@ const handleSearchButtonClick = () => {
     setSearchUrl(url);
   }
 
-  const handleCloseModal = () => {
-    setShowModal(false);
-    dispatch(resetJobAdditionStatus());
-  };
+  // const handleCloseModal = () => {
+  //   setShowModal(false);
+  //   dispatch(resetJobAdditionStatus());
+  // };
 
   useEffect(() => {
     if (jobAdditionStatus === 'added') {
@@ -90,7 +89,7 @@ const handleSearchButtonClick = () => {
 
 
 
-      <div className={`flex-grow p-4 transition-all duration-300 ease-in-out`} style={{ marginLeft: showAdvancedSearch ? '480px' : '0' }}>
+      <div className={`flex-grow p-4 transition-all duration-300 ease-in-out`} style={{ marginLeft: showAdvancedSearch ? '500px' : '0' }}>
             <div className="bg-white rounded-xl shadow-sm overflow-hidden ">
                 <div className="px-6 py-4">
                 <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">

@@ -79,9 +79,9 @@ const SignUpForm = forwardRef<HTMLDivElement, SignupLoginProps>((props: SignupLo
         }));
       };
 
-      const capitalizeName = (name: string): string => {
-        return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
-      };
+      // const capitalizeName = (name: string): string => {
+      //   return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
+      // };
 
       const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -98,7 +98,7 @@ const SignUpForm = forwardRef<HTMLDivElement, SignupLoginProps>((props: SignupLo
         };
     
         try {
-            const response = await fetch('http://localhost:8000/accounts/register', {
+            const response = await fetch('http://13.56.237.212/accounts/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

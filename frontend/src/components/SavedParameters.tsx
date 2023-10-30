@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useToken } from '../hooks/useToken';
 import { SavedSearchParameters, SavedParametersProps } from '../types/types';
 
@@ -42,8 +42,12 @@ const SavedParameters: React.FC<SavedParametersProps> = ({ isVisible, onSearch, 
     }
 
     useEffect(() => {
-        getParametersFromUser();
-    }, [refreshKey]);
+        if (savedParameters && savedParameters.length > 0) {
+            setSavedParameters(savedParameters);
+        } else {
+            getParametersFromUser();
+        }
+    }, [refreshKey, savedParameters]);
 
     return (
         <div>
@@ -62,7 +66,7 @@ const SavedParameters: React.FC<SavedParametersProps> = ({ isVisible, onSearch, 
                             <td className='text-left'>{param.query}</td>
                             <td className='text-center'>
                                 <button onClick={() => deleteParameter(param.id)}>Delete</button>
-                                {/* <button onClick={() => onSearch(param.query)}>Use Query</button> */}
+                                <button onClick={() => onSearch(param.query)}>Use Query</button>
                             </td>
                         </tr>
                     ))}

@@ -1,47 +1,50 @@
-import { useEffect, useState } from 'react';
-import { SavedSearchParameters } from '../types/types';
-import { useToken } from '../hooks/useToken';
+// import { useEffect, useState } from 'react';
+// import { SavedSearchParameters } from '../types/types';
+// import { useToken } from '../hooks/useToken';
 
 const Dashboard: React.FC = () => {
-    const [savedParameters, setSavedParameters] = useState<SavedSearchParameters[]>([]);
-    const token = useToken();
-    console.log(token)
+  //   const [savedParameters, setSavedParameters] = useState<SavedSearchParameters[]>([]);
+  //   const token = useToken();
 
-    async function getParametersFromUser() {
-        const url = `http://localhost:8000/querier/saved-search-parameters`;
-        const response = await fetch(url, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Token ${token}`
-            },
-        });
-        if (response.ok){
-            const fetchedData = await response.json();
-            setSavedParameters(fetchedData);
-        }
-    }
 
-    async function deleteParameter(id: number) {
-      const url = `http://localhost:8000/querier/saved-search-parameters/${id}`;
-      const response = await fetch(url, {
-          method: "DELETE",
-          headers: {
-              "Authorization": `Token ${token}`
-          },
-      });
+  //   async function getParametersFromUser() {
+  //       const url = `http://localhost:8000/querier/saved-search-parameters`;
+  //       const response = await fetch(url, {
+  //           method: "GET",
+  //           headers: {
+  //               "Content-Type": "application/json",
+  //               "Authorization": `Token ${token}`
+  //           },
+  //       });
+  //       if (response.ok){
+  //           const fetchedData = await response.json();
+  //           setSavedParameters(fetchedData);
+  //       }
+  //       else {
+  //           console.error('Failed to fetch the data');
+  //       }
+  //   }
 
-      if (response.ok) {
-          setSavedParameters(prevParams => prevParams.filter(param => param.id !== id));
-          getParametersFromUser();
-      } else {
-          console.error('Failed to delete the parameter');
-      }
-  }
+  //   async function deleteParameter(id: number) {
+  //     const url = `http://localhost:8000/querier/saved-search-parameters/${id}`;
+  //     const response = await fetch(url, {
+  //         method: "DELETE",
+  //         headers: {
+  //             "Authorization": `Token ${token}`
+  //         },
+  //     });
 
-    useEffect(() => {
-        getParametersFromUser();   
-    }, []); 
+  //     if (response.ok) {
+  //         setSavedParameters(prevParams => prevParams.filter(param => param.id !== id));
+  //         getParametersFromUser();
+  //     } else {
+  //         console.error('Failed to delete the parameter');
+  //     }
+  // }
+
+  //   useEffect(() => {
+  //       getParametersFromUser();   
+  //   }, []); 
 
     return (
         // <!-- Icon Blocks -->

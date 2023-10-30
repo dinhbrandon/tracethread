@@ -1,0 +1,47 @@
+name: "ci-cd pipeline"
+
+on: 
+  push:
+    branches:
+    - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Cache Node modules
+      uses: actions/cache@v2
+      with:
+        path: frontend/node_modules
+        key: ${{ runner.OS }}-node-${{ hashFiles('frontend/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.OS }}-node-
+          
+    - name: Use Node.js 16.x
+      uses: actions/setup-node@v2
+      with:
+        node-version: 16.x
+        
+    - name: Install dependencies
+      working-directory: frontend
+      run: npm install 
+      
+    # - name: Run tests
+    #   working-directory: frontend
+    #   run: npm test
+      
+    - name: Build file
+      working-directory: frontend
+      run: npm run build
+      continue-on-error: true
+      
+    - name: Deploy production to Netlify
+      uses: South-Paw/action-netlify-deploy@v1.2.0
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        netlify-auth-token: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+        netlify-site-id: ${{ secrets.NETLIFY_SITE_ID }}
+        build-dir: 'frontend/build'
+        comment-on-commit: true

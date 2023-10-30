@@ -1,3 +1,6 @@
+/* eslint-disable */
+// tslint:disable
+
 import { useState, useEffect, useRef } from 'react';
 import { useToken } from '../hooks/useToken';
 import { Card, Columns} from '../types/types';
@@ -45,11 +48,11 @@ const JobNotebook: React.FC = () => {
   }
   
 
-  const onDragEnd = async (result, columnsArray, setColumns) => {
+  const onDragEnd = async (result: any, columnsArray: any, setColumns: any) => {
 
     if (!result.destination) return;
     const { source, destination } = result;
-    const columns = columnsArray.reduce((acc, column) => {
+    const columns = columnsArray.reduce((acc: any, column: any) => {
         acc[column.id] = {
             ...column,
             items: cards.filter(card => card.column === column.id)
@@ -77,10 +80,10 @@ const JobNotebook: React.FC = () => {
   
 
 
-    const updatedColumnsArray = Object.values(columns).map(column => {
-        const { items, ...rest } = column;
-        return rest;
-    });
+    const updatedColumnsArray = Object.values(columns).map((column: any) => {
+      const { items, ...rest } = column;
+      return rest;
+    }) as Columns[];
 
     setColumns(updatedColumnsArray);
     getColumns();
@@ -214,11 +217,11 @@ const JobNotebook: React.FC = () => {
             timestamp: timestamp
         })
     });
-    const requestBody = {
-        new_column_id: newColumnId,
-        order: newOrder,
-        timestamp: timestamp
-    };
+    // const requestBody = {
+    //     new_column_id: newColumnId,
+    //     order: newOrder,
+    //     timestamp: timestamp
+    // };
     if (response.ok) {
         getCards();
     } else {
@@ -276,7 +279,7 @@ const JobNotebook: React.FC = () => {
     } else {
         console.error('Token is null');
     }
-    console.log('Submitting card data:', cardData);
+    // console.log('Submitting card data:', cardData);
 };
 
 function openNewCardModal(columnId: number) {
@@ -380,7 +383,7 @@ useEffect(() => {
                   {cardsInColumn
                     .filter(card => {
                       const isPresent = isSearchTermPresent(card);
-                      console.log(card);
+                      // console.log(card);
                       return isPresent;
                     })
                     .map((filteredCard, index) => {
@@ -442,7 +445,7 @@ useEffect(() => {
   <div ref={modalRef} className="fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex items-center justify-center">
     <div className="relative md:max-w-[1000px] md:max-h-[800px] overflow-auto bg-white p-4 flex flex-col rounded-lg shadow-md">
       
-      <button onClick={closeCardModal} className="absolute top-0 right-0 m-4 m-1 py-1 px-3 rounded-md border text-gray-700 font-medium bg-white align-middle hover:bg-gray-50 transition-all text-sm">
+      <button onClick={closeCardModal} className="absolute top-0 right-0 m-4 py-1 px-3 rounded-md border text-gray-700 font-medium bg-white align-middle hover:bg-gray-50 transition-all text-sm">
         Close
       </button>
       

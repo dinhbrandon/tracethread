@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,7 +26,6 @@ SECRET_KEY = "django-insecure-@-a6#kx$m6jq6k00xhb#zj2u!(6c+z@210c#rnoq9v_fn0*04k
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -57,9 +57,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ALLOWED_HOSTS = [
-    "localhost",
-]
+ALLOWED_HOSTS = ["*"]
 
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000",
@@ -102,7 +100,7 @@ DATABASES = {
         "NAME": "tracethread",
         "USER": "tracethread",
         "PASSWORD": "tracethread",
-        "HOST": "db",  # Using service name of Docker Postgres container
+        "HOST": "database-1.cggv6e9punko.us-west-1.rds.amazonaws.com",  # Using service name of Docker Postgres container
         "PORT": "5432",
     }
 }

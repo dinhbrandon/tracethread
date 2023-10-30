@@ -38,8 +38,9 @@ const Nav = () => {
             { loggedIn ? (
               <>
               <a className="font-medium" href="http://localhost:3000/dashboard">Dashboard</a>
-              <a className="font-medium" href="http://localhost:3000/jobnotebook">Job Notebook</a>
               <a className="font-medium" href="http://localhost:3000/search">Search</a>
+              <a className="font-medium" href="http://localhost:3000/jobnotebook">Job Notebook</a>
+              
               </>
             ) : <></>}
             
