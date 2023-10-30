@@ -41,18 +41,24 @@ const EditColumns = () => {
             console.error('Token is null');
             return;
         }
-        const result = await checkForAssociatedCards(id, token);
-        // console.log(result)
         
-        if (result.error) {
-            console.error('Error checking for associated cards:', result.error);
-        } else if (result.hasCards) {
-            alert('This column cannot be deleted because there are cards associated with it. Please remove cards before deleting the column.');
+        const result = await checkForAssociatedCards(id, token);
+        
+        // Check if 'result' is defined
+        if (result) {
+            if (result.error) {
+                console.error('Error checking for associated cards:', result.error);
+            } else if (result.hasCards) {
+                alert('This column cannot be deleted because there are cards associated with it. Please remove cards before deleting the column.');
+            } else {
+                setColumnToDelete(id);
+                setIsModalOpen(true);
+            }
         } else {
-            setColumnToDelete(id);
-            setIsModalOpen(true);
+            console.error('Result is undefined');
         }
     };
+    
 
     const handleNewColumnNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setNewColumnName(e.target.value);

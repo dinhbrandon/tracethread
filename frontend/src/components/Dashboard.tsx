@@ -3,12 +3,14 @@
 // import { useToken } from '../hooks/useToken';
 
 const Dashboard: React.FC = () => {
+  // const baseUrlApi = import.meta.env.VITE_API_BASE_URL;
+  const baseUrl = import.meta.env.VITE_BASE_URL;
   //   const [savedParameters, setSavedParameters] = useState<SavedSearchParameters[]>([]);
   //   const token = useToken();
 
 
   //   async function getParametersFromUser() {
-  //       const url = `http://localhost:8000/querier/saved-search-parameters`;
+  //       const url = `${baseUrlApi}/querier/saved-search-parameters`;
   //       const response = await fetch(url, {
   //           method: "GET",
   //           headers: {
@@ -26,7 +28,7 @@ const Dashboard: React.FC = () => {
   //   }
 
   //   async function deleteParameter(id: number) {
-  //     const url = `http://localhost:8000/querier/saved-search-parameters/${id}`;
+  //     const url = `${baseUrlApi}/querier/saved-search-parameters/${id}`;
   //     const response = await fetch(url, {
   //         method: "DELETE",
   //         headers: {
@@ -53,17 +55,19 @@ const Dashboard: React.FC = () => {
           <div className="grid md:grid-cols-2 gap-12">
             <div className="lg:w-3/4">
               <h2 className="text-3xl text-gray-800 font-bold lg:text-4xl">
-                Collaborative tools to design better user experience
+                Comprehensive job applicant tools designed to optimize your path to the perfect career.
               </h2>
               <p className="mt-3 text-gray-800">
-                We help businesses bring ideas to life in the digital world, by designing and implementing the technology tools that they need to win.
-              </p>
+              We assist tech professionals in securing their ideal roles by offering a comprehensive platform, enabling users to effectively track, organize, and manage their job applications, as well as discover new opportunities through advanced search and filtering options.</p>
+              <a href={`${baseUrl}/tutorial`}>
               <p className="mt-5 inline-flex items-center gap-x-2 font-medium text-blue-600">
-                Contact sales to learn more
+                Learn more with our tutorial
                 <svg className="w-2.5 h-2.5 transition ease-in-out group-hover:translate-x-1" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path fillRule="evenodd" clipRule="evenodd" d="M0.975821 6.92249C0.43689 6.92249 -3.50468e-07 7.34222 -3.27835e-07 7.85999C-3.05203e-07 8.37775 0.43689 8.79749 0.975821 8.79749L12.7694 8.79748L7.60447 13.7596C7.22339 14.1257 7.22339 14.7193 7.60447 15.0854C7.98555 15.4515 8.60341 15.4515 8.98449 15.0854L15.6427 8.68862C16.1191 8.23098 16.1191 7.48899 15.6427 7.03134L8.98449 0.634573C8.60341 0.268455 7.98555 0.268456 7.60447 0.634573C7.22339 1.00069 7.22339 1.59428 7.60447 1.9604L12.7694 6.92248L0.975821 6.92249Z" fill="currentColor"/>
                 </svg>
               </p>
+              </a>
+              <p className="text-sm text-gray-600">(Coming soon)</p>
             </div>
             {/* <!-- End Col --> */}
         
@@ -79,11 +83,12 @@ const Dashboard: React.FC = () => {
                 </span>
                 <div className="ml-5 sm:ml-8">
                   <h3 className="text-base sm:text-lg font-semibold text-gray-800">
-                    Industry-leading documentation
+                    Trace Thread: Beta Testing 
                   </h3>
-                  <p className="mt-1 text-gray-600">
-                    Our documentation and extensive Client libraries contain everything a business needs to build a custom integration in a fraction of the time.
+                  <p className="mt-1 text-gray-800">
+                    We're beyond excited to have you here to help test our service and we're looking forward to hearing your feedback. This is a beta version of Trace Thread, so the content on this site may not accurately reflect the final product.
                   </p>
+                  <p className="mt-2 text-gray-500 text-sm">Note: The beta version of our service is not intended for personal use, but rather for testing design and infrastructure. Please keep in mind that your saved data may be erased as we update our application.</p>
                 </div>
               </div>
               {/* <!-- End Icon Block --> */}
@@ -99,11 +104,13 @@ const Dashboard: React.FC = () => {
                 </span>
                 <div className="ml-5 sm:ml-8">
                   <h3 className="text-base sm:text-lg font-semibold text-gray-800">
-                    Developer community support
+                    Reporting bugs and providing feedback
                   </h3>
-                  <p className="mt-1 text-gray-600">
-                    We actively contribute to open-source projects—giving back to the community through development, patches, and sponsorships.
+                  <p className="mt-1 text-gray-800">
+                    At the top left of the screen, you'll see a button that says "Fix/Suggestions". Clicking this button will open a modal where you can report bugs and provide us with your valuable feedback.
                   </p>
+                  <p className="mt-2 text-gray-500 text-sm">• Please press the button on the specific page where you want to submit feedback for; this helps us accurately identify and address the problem.</p>
+                  <p className="mt-2 text-gray-500 text-sm">• Along with a text field to provide us with input, an optional screenshot upload field is also available if you would like to provice us with comprehensive notes.</p>
                 </div>
               </div>
               {/* <!-- End Icon Block --> */}
@@ -118,11 +125,14 @@ const Dashboard: React.FC = () => {
                 </span>
                 <div className="ml-5 sm:ml-8">
                   <h3 className="text-base sm:text-lg font-semibold text-gray-800">
-                    Simple and affordable
+                    Our goals
                   </h3>
-                  <p className="mt-1 text-gray-600">
-                    From boarding passes to movie tickets, there's pretty much nothing you can't store with Preline.
+                  <p className="mt-1 text-m text-gray-800">
+                    We have a lot of features that we're aiming to add to Trace Thread in the near future. Here are some of the features that we're currently working on:
                   </p>
+                  <p className="mt-2 text-gray-500 text-sm">• AI/ML tools for users to upload their resume and identify tech roles best suited to their skillset for a tailored job search.</p>
+                  <p className="mt-2 text-gray-500 text-sm">• Data visualization to display job-related trends and matching strengths between jobseekers and potential employers.</p>
+                  <p className="mt-2 text-gray-500 text-sm">• Enhancing our current features with your feedback to provide a more intuitive and efficient workflow.</p>
                 </div>
               </div>
               {/* <!-- End Icon Block --> */}

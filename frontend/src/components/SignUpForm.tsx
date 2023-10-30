@@ -5,6 +5,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../redux/store';
 import { loginUser } from '../redux/authActions';
 
+const baseUrlApi = import.meta.env.VITE_API_BASE_URL;
+
 const SignUpForm = forwardRef<HTMLDivElement, SignupLoginProps>((props: SignupLoginProps, ref: Ref<HTMLDivElement>) => {
   const { toggleSignUpModal, toggleLoginModal } = props;
   const dispatch = useDispatch<AppDispatch>();
@@ -98,7 +100,7 @@ const SignUpForm = forwardRef<HTMLDivElement, SignupLoginProps>((props: SignupLo
         };
     
         try {
-            const response = await fetch('http://13.56.237.212/accounts/register', {
+            const response = await fetch(`${baseUrlApi}/accounts/register`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -148,7 +150,6 @@ const SignUpForm = forwardRef<HTMLDivElement, SignupLoginProps>((props: SignupLo
                     </button>
                   </p>
                 </div>
-
                 <div className="mt-5">
                   <button type="button" className="w-full py-3 px-4 inline-flex justify-center items-center gap-2 rounded-md border font-medium bg-white text-black shadow-sm align-middle hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white transition-all text-sm ">
                     <svg className="w-4 h-auto" width="46" height="47" viewBox="0 0 46 47" fill="none">
@@ -159,6 +160,7 @@ const SignUpForm = forwardRef<HTMLDivElement, SignupLoginProps>((props: SignupLo
                     </svg>
                     Sign up with Google
                   </button>
+                  <p className='text-center font-semibold'>(Google sign up feature is in development)</p>
                 <div className="py-3 flex items-center text-xs text-gray-400 uppercase before:flex-[1_1_0%] before:border-t before:border-gray-200 before:mr-6 after:flex-[1_1_0%] after:border-t after:border-gray-200 after:ml-6">Or</div>
               </div>
       

@@ -4,6 +4,8 @@ import { JobListing, SearchResultsProps } from '../types/types';
 import TimeSince from "./TimeSince";
 import * as React from "react";
 
+const baseUrlApi = import.meta.env.VITE_API_BASE_URL;
+
 
 const Modal = ({ isVisible, onClose, status }: { 
     isVisible: boolean, 
@@ -67,7 +69,7 @@ const SearchResults = ({ encodedQuery }: SearchResultsProps) => {
 
     
     async function getQueryFromURL(encodedQuery: string) {
-        // console.log(encodedQuery)
+        
         const headers: Record<string, string> = {
             "Content-Type": "application/json",
         };
@@ -96,7 +98,7 @@ const SearchResults = ({ encodedQuery }: SearchResultsProps) => {
     
 
     async function saveJob(jobListingId: number) {
-        const url = `http://localhost:8000/querier/jobsaved/${jobListingId}`;
+        const url = `${baseUrlApi}/querier/jobsaved/${jobListingId}`;
         const response = await fetch(url, {
             method: "POST",
             headers: {

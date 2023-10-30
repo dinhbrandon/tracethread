@@ -1,5 +1,7 @@
+const baseUrlApi = import.meta.env.VITE_API_BASE_URL;
+
 export async function getColumns(token: string) {
-    const url = `http://localhost:8000/jobnotebook/columns`;
+    const url = `${baseUrlApi}/jobnotebook/columns`;
     try {
       const response = await fetch(url, {
         method: "GET",
@@ -21,7 +23,7 @@ export async function getColumns(token: string) {
 
 //function to add new columns
 export async function createColumn(name: string, order: string, token: string): Promise<{ success: boolean, error: string | null }> {
-  const url = `http://localhost:8000/jobnotebook/columns`;
+  const url = `${baseUrlApi}/jobnotebook/columns`;
 
   const orderInt = parseInt(order);
   const newOrder = orderInt + 1;
@@ -52,7 +54,7 @@ export async function createColumn(name: string, order: string, token: string): 
 
 //function to delete columns
 export async function deleteColumn(id: number, token: string): Promise<{ success: boolean, error: string | null }> {
-    const url = `http://localhost:8000/jobnotebook/columns/${id}`;
+    const url = `${baseUrlApi}/jobnotebook/columns/${id}`;
     try {
       const response = await fetch(url, {
           method: "DELETE",
@@ -73,7 +75,7 @@ export async function deleteColumn(id: number, token: string): Promise<{ success
 
 //function to check for associated cards
 export async function checkForAssociatedCards(columnId: number, token: string) {
-    const url = `http://localhost:8000/jobnotebook/cards`;
+    const url = `${baseUrlApi}/jobnotebook/cards`;
     try {
       const response = await fetch(url, {
         method: "GET",
@@ -112,7 +114,7 @@ export async function saveColumnOrder(columns: Array<{ id: number; order: number
       order: index
   }));
 
-  const url = `http://localhost:8000/jobnotebook/columns/batch_update`;
+  const url = `${baseUrlApi}/jobnotebook/columns/batch_update`;
   try {
       const response = await fetch(url, {
           method: 'PATCH',
@@ -150,8 +152,8 @@ export async function saveColumnOrder(columns: Array<{ id: number; order: number
 export async function getCards(token: string, columnId?: number) {
     // Adjust the URL based on whether columnId is provided
     const url = columnId 
-      ? `http://localhost:8000/jobnotebook/cards?column_id=${columnId}`
-      : `http://localhost:8000/jobnotebook/cards`;
+      ? `${baseUrlApi}/jobnotebook/cards?column_id=${columnId}`
+      : `${baseUrlApi}/jobnotebook/cards`;
   
     try {
       const response = await fetch(url, {
@@ -174,7 +176,7 @@ export async function getCards(token: string, columnId?: number) {
   
   //function to create cards
   export async function createCard(token: string, cardData: object) {
-    const url = `http://localhost:8000/jobnotebook/cards`;
+    const url = `${baseUrlApi}/jobnotebook/cards`;
   
     try {
       const response = await fetch(url, {

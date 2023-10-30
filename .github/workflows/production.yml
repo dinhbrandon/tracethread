@@ -35,13 +35,14 @@ jobs:
     - name: Build file
       working-directory: frontend
       run: npm run build
-      continue-on-error: true
+      env:
+        VITE_BASE_URL: https://tracethread.com
       
     - name: Deploy production to Netlify
       uses: South-Paw/action-netlify-deploy@v1.2.0
       with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
+        github-token: ${{ secrets.MY_GITHUB_TOKEN }}
         netlify-auth-token: ${{ secrets.NETLIFY_AUTH_TOKEN }}
         netlify-site-id: ${{ secrets.NETLIFY_SITE_ID }}
-        build-dir: 'frontend/build'
-        comment-on-commit: true
+        build-dir: 'frontend/dist'
+        comment-on-commit: false

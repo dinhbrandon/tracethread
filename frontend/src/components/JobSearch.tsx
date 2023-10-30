@@ -5,6 +5,9 @@ import SearchForm from "./SearchForm";
 import SearchResults from "./SearchResults";
 // import { resetJobAdditionStatus } from '../redux/jobSlice';
 
+const baseUrlApi = import.meta.env.VITE_API_BASE_URL;
+const baseUrl = import.meta.env.VITE_BASE_URL;
+
 const JobSearch = () => {
   // const dispatch = useDispatch();
 
@@ -30,11 +33,11 @@ const JobSearch = () => {
 const handleSearchButtonClick = () => {
   if (!searchText.trim()) {
     // setErrorMessage('Please enter a search query.');
-    setSearchUrl(`http://localhost:8000/querier/search-job-listing/?q=`);
+    setSearchUrl(`${baseUrlApi}/querier/search-job-listing/?q=`);
     setHasSearched(true);
   } else {
     // setErrorMessage('');
-    setSearchUrl(`http://localhost:8000/querier/search-job-listing/?q=%28job_title%3D'${searchText}'%20%7C%20company_name%3D'${searchText}'%29`);
+    setSearchUrl(`${baseUrlApi}/querier/search-job-listing/?q=%28job_title%3D'${searchText}'%20%7C%20company_name%3D'${searchText}'%29`);
     setHasSearched(true);
   }
 };
@@ -82,6 +85,11 @@ const handleSearchButtonClick = () => {
       <div className={`absolute top-0 left-0 h-full transition-transform duration-300 ease-in-out ${showAdvancedSearch ? 'translate-x-0' : '-translate-x-full'}`}>
         <div className="h-full border-r p-4 w-auto">
             <h1 className="text-xl font-semibold text-gray-700">Advanced Search Tool</h1>
+            <a href={`${baseUrl}/search/filters`}>
+            <p className="underline inline-flex items-center gap-x-2 text-xs text-blue-600">
+                Saved filters
+            </p>
+            </a>
             <SearchForm onSearch={handleSearch} onRefresh={refreshSavedParameters} refreshKey={refreshKey} />
         </div>
       </div>
@@ -155,7 +163,7 @@ const handleSearchButtonClick = () => {
 )}
       </div>
 
-      <div>
+      <div className="overflow-y-auto max-h-[calc(100vh-200px)] mb-10">
           {searchUrl && <SearchResults encodedQuery={searchUrl} />}
       </div>
 

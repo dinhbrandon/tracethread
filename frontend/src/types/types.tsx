@@ -1,4 +1,11 @@
 
+export type SubmitFeedbackProps = {
+    isOpen: boolean;
+    onClose: () => void;
+    pageUrl: string;
+  }
+
+
 export type Condition = {
     field: { name: string, label: string } | null;
     operator: 'contains' | 'does not contain';
