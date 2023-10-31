@@ -10,22 +10,6 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
-from pathlib import Path
-import os
-import environ
-
-env = environ.Env()
-
-
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
-
-env_file_path = os.path.join(BASE_DIR, ".env.production")
-
-environ.Env.read_env(env_file_path)
-
-SECRET_KEY = env("SECRET_KEY")
-
 CORS_ALLOW_CREDENTIALS = True
 
 
@@ -77,19 +61,6 @@ TEMPLATES = [
 WSGI_APPLICATION = "tracethread_proj.wsgi.application"
 
 
-# Database
-# https://docs.djangoproject.com/en/4.1/ref/settings/#databases
-
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "tracethread",
-        "USER": "tracethread",
-        "PASSWORD": "tracethread",
-        "HOST": "db",  # Using service name of Docker Postgres container
-        "PORT": "5432",
-    }
-}
 
 
 # Password validation
