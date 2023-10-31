@@ -26,7 +26,6 @@ services:
     build:
       context: ./backend
       dockerfile: ./Dockerfile.dev
-    command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - ./backend:/app
     ports:
