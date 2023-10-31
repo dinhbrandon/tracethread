@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Check</title>
+</head>
+<body>
+    <h1>Welcome to the Trace Thread health check page.</h1>
+
+<script>
+    fetch('/health_check/')
+        .then(response => response.json())
+        .then(data => {
+            document.body.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+        });
+</script>
+
+</body>
+</html>
