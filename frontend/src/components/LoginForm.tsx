@@ -1,6 +1,6 @@
 import { useState, useEffect, ChangeEvent, FormEvent, forwardRef, Ref } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { loginUser, getUserDetails } from '../redux/authActions';
+import { loginUser, getUserDetails, clearError } from '../redux/authActions';
 import { RootState, AppDispatch } from '../redux/store';
 import { useNavigate } from 'react-router-dom';
 import { SignupLoginProps } from '../types/types';
@@ -18,6 +18,7 @@ const LoginForm = forwardRef<HTMLDivElement, SignupLoginProps>((props: SignupLog
     const [loading, setLoading] = useState(false);
 
     const toggleModals = () => {
+        dispatch(clearError());
         toggleLoginModal();
         toggleSignUpModal();
     };
@@ -39,6 +40,8 @@ const LoginForm = forwardRef<HTMLDivElement, SignupLoginProps>((props: SignupLog
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
+
+    dispatch(clearError());
 
     if (!formData.email || !formData.password) {
       return;

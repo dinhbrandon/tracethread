@@ -9,12 +9,13 @@ env = environ.Env()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
-env_file_path = os.path.join(BASE_DIR, ".env.production")
+env_file_path = os.path.join(BASE_DIR, ".env.devleopment")
 
 environ.Env.read_env(env_file_path)
 
 DEBUG = True
 
+SECRET_KEY = env("SECRET_KEY")
 DATABASE_HOST = env("DATABASE_HOST")
 DB_NAME = env("POSTGRES_DATABASES")
 DB_USER = env("POSTGRES_USER")
@@ -28,9 +29,7 @@ CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000",
 ]
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-]
+CORS_ALLOW_ALL_ORIGINS = True
 
 DATABASES = {
     "default": {
