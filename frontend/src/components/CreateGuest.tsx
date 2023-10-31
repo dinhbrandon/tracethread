@@ -54,9 +54,9 @@ const GuestLoginButton = () => {
     <button
       type="button"
       onClick={handleGuestLogin}
-      className="bg-sky-600 py-3 px-4 inline-flex justify-center ml-8 items-center gap-2 rounded-md border font-medium text-white shadow-sm align-middle hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white transition-all text-sm "
+      className="text-sky-800 decoration-2 hover:underline font-medium"
     >
-      Guest Login
+      Try explorer mode
     </button>
   );
 };

@@ -1,5 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
+import { clearError } from '../redux/authSlice';
 import SignUpForm  from './SignUpForm'
 import LoginForm from './LoginForm'
 import { RootState } from '../redux/store';
@@ -9,6 +11,8 @@ import homePageAsset from '../assets/HomePage.png'
 type ModalState = 'signup' | 'login' | null;
 
 const Home = () => {
+  const dispatch = useDispatch();
+
     const [activeModal, setActiveModal] = useState<ModalState>(null);
     const loggedIn = useSelector((state: RootState) => state.auth.loggedIn);
     const modalRef = useRef(null);
@@ -21,10 +25,16 @@ const Home = () => {
     const toggleLoginModal = () => {
             setActiveModal(prev => prev === 'login' ? null : 'login');
     };
+
+    const handleCloseModal = () => {
+      dispatch(clearError()); // Dispatch clearError action when modal is closed
+      setActiveModal(null);
+    };
     
     useEffect(() => {
             const clickOutside = (e: MouseEvent) => {
                 if (activeModal && modalRef.current && !(modalRef.current as any).contains(e.target as Node)) {
+                    dispatch(clearError());
                     setActiveModal(null);
                 }
             };
@@ -41,14 +51,26 @@ const Home = () => {
 <div className="max-w-[85rem] mx-auto px-4 sm:px-6 lg:px-8">
     {activeModal === 'signup' && (
                 <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="w-[600px] relative rounded-lg  shadow-lg">
+                    <div className="w-[600px] relative">
+                    <button 
+                    onClick={() => setActiveModal(null)} 
+                    className="absolute right-28 top-28 m-3 text-black text-2xl"
+                >
+                    &times;
+                </button>
                         <SignUpForm ref={modalRef} toggleSignUpModal={toggleSignUpModal} toggleLoginModal={toggleLoginModal} />
                     </div>
                 </div>
             )}
             {activeModal === 'login' && (
                 <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="rounded-lg p-8 shadow-lg">
+                    <div className="p-8 relative">
+                    <button 
+                    onClick={handleCloseModal}
+                    className="absolute right-16 top-36 m-3 text-black text-2xl"
+                >
+                    &times;
+                </button>
                         <LoginForm ref={modalRef} toggleSignUpModal={toggleSignUpModal} toggleLoginModal={toggleLoginModal} />
                     </div>
                 </div>
@@ -56,29 +78,30 @@ const Home = () => {
   <div className="grid md:grid-cols-2 gap-4 md:gap-8 xl:gap-20 md:items-center">
     <div>
       <h1 className="block text-3xl font-bold sm:text-4xl lg:text-6xl lg:leading-tight ">A guiding thread to your perfect career.</h1>
-      <p className="mt-3 text-lg">Make room for more opportunities with a software platform designed with your job searching needs in mind.</p>
+      <p className="mt-3 text-lg">Save time for more opportunities with a software platform designed with your job searching needs in mind.</p>
 
     { loggedIn ? <></> : (
         <div className="mt-7 grid gap-3 w-full sm:inline-flex md:flex md:flex-col">
           <div className="flex">
             <button
         onClick={toggleSignUpModal}
-        className="inline-flex justify-center items-center gap-x-3 text-center hover:bg-grey border-2 text-sm lg:text-base font-medium rounded-md transition py-3 px-4 ">
+        className="inline-flex justify-center items-center gap-x-3 text-center hover:bg-gray-100 border-2 text-sm lg:text-base font-medium rounded-md transition py-3 px-4 ">
             Sign up
             <svg className="w-2.5 h-2.5" width="16" height="16" viewBox="0 0 16 16" fill="none">
                 <path d="M5.27921 2L10.9257 7.64645C11.1209 7.84171 11.1209 8.15829 10.9257 8.35355L5.27921 14" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
             </svg>
             </button>
-          <CreateGuest />
+            <button className="bg-sky-600 py-3 px-5 inline-flex justify-center ml-8 items-center gap-2 rounded-md border font-medium text-white shadow-sm align-middle hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white transition-all text-sm" onClick={toggleLoginModal}>
+            Login here
+            </button>
           </div>
 
         <div className="flex">
         <p className="mt-2 text-sm">
-            Already have an account?&nbsp;
-            <button className="text-sky-800 decoration-2 hover:underline font-medium" onClick={toggleLoginModal}>
-            Login here
-            </button>
+            Just checking us out?&nbsp;
+            <CreateGuest />
             </p>
+            
         </div>
         
     </div>

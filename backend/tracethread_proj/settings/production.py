@@ -12,6 +12,7 @@ env_file_path = os.path.join(BASE_DIR, ".env.production")
 
 environ.Env.read_env(env_file_path)
 
+SECRET_KEY = env("SECRET_KEY")
 DATABASE_HOST = env("DATABASE_HOST")
 DB_NAME = env("POSTGRES_DATABASES")
 DB_USER = env("POSTGRES_USER")

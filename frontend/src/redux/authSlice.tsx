@@ -38,8 +38,11 @@ const authSlice = createSlice({
     getUserDetailsSuccess: (state, action: PayloadAction<{ username: string }>) => {
       state.username = action.payload.username;
     },
+    clearError: (state) => {
+      state.error = null;
+    },
   },
 });
 
-export const { login, logout, loginSuccess, loginFailure, getUserDetailsSuccess } = authSlice.actions;
+export const { login, logout, loginSuccess, loginFailure, getUserDetailsSuccess, clearError } = authSlice.actions;
 export default authSlice.reducer;

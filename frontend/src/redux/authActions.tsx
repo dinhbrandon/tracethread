@@ -8,6 +8,9 @@ export const logout = createAction('auth/logout');
 export const getUserDetailsSuccess = createAction<{ username: string }>('auth/getUserDetailsSuccess');
 const baseUrlApi = import.meta.env.VITE_API_BASE_URL;
 
+export const clearError = createAction('auth/clearError');
+
+
 // Async action to handle user login
 export const loginUser = (email: string, password: string) => async (dispatch: any) => {
   try {
@@ -21,16 +24,23 @@ export const loginUser = (email: string, password: string) => async (dispatch: a
 
     if (response.ok) {
       const data = await response.json();
-      // Dispatch the loginSuccess action upon successful login
       dispatch(loginSuccess({username: data.username, token: data.token}));
     } else {
-      // Handle login failure, you can dispatch an error action if needed
-      dispatch(loginFailure(response.statusText));
+      let errorMessage = 'An error occurred while trying to log in. Please try again later.';
+
+      if (response.status === 401) {
+        errorMessage = 'Invalid email or password.';
+      } else if (response.status === 500) {
+        errorMessage = 'There seems to be a problem with the server. Please try again later.';
+      }
+
+      dispatch(loginFailure(errorMessage));
     }
   } catch (error: any) {
-    dispatch(loginFailure(error.toString()));
+    dispatch(loginFailure('A network error occurred. Please try again later.'));
   }
 };
+
 
 // Async action to handle fetching user details
 export const getUserDetails = () => async (dispatch: AppDispatch, getState: () => RootState) => {
