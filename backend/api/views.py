@@ -17,6 +17,7 @@ class FeedbackCreateView(generics.CreateAPIView):
 
 
 class HealthCheckView(APIView):
+    permission_classes = [AllowAny, ]
     
     def get(self, request, format=None):
         # Check database connectivity
