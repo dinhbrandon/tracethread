@@ -46,4 +46,5 @@ trio-websocket==0.11.1
 typing_extensions==4.7.1
 tzdata==2023.3
 urllib3==2.0.4
+whitenoise==6.6.0
 wsproto==1.2.0
