@@ -11,7 +11,7 @@ const SignUpForm = forwardRef<HTMLDivElement, SignupLoginProps>((props: SignupLo
   const { toggleSignUpModal, toggleLoginModal } = props;
   const dispatch = useDispatch<AppDispatch>();
   const loggedIn = useSelector((state: RootState) => state.auth.loggedIn);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   
   const navigate = useNavigate();
 
