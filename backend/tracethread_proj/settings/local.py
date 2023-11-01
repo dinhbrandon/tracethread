@@ -1,14 +1,5 @@
 from .base import *  # noqa: F401, F403
 
-import environ
-from pathlib import Path
-import os
-env = environ.Env()
-
-
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
-
 env_file_path = os.path.join(BASE_DIR, ".env.devleopment")
 
 environ.Env.read_env(env_file_path)
@@ -21,7 +12,6 @@ DB_NAME = env("POSTGRES_DATABASES")
 DB_USER = env("POSTGRES_USER")
 DB_PASSWORD = env("POSTGRES_PASSWORD")
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 ALLOWED_HOSTS = [
     "localhost",

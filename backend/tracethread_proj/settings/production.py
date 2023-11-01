@@ -1,13 +1,5 @@
 from .base import *  # noqa: F401, F403
-import os
-import environ
-from pathlib import Path
 from utils.aws_secrets import get_secret
-env = environ.Env()
-
-
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 env_file_path = os.path.join(BASE_DIR, ".env")
 
@@ -20,12 +12,6 @@ DB_USER = env("POSTGRES_USER")
 DB_PASSWORD = env("POSTGRES_PASSWORD")
 
 DEBUG = False
-
-# STATICFILES_DIRS = [
-#     os.path.join(BASE_DIR, 'assets'),  # or 'project_static' or whatever you renamed it to
-# ]
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-
 
 ALLOWED_HOSTS = [
     "www.tracethread.com",
