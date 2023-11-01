@@ -1,7 +1,8 @@
 from django.shortcuts import render
 from .serializers import FeedbackSerializer
 from .models import Feedback
-from rest_framework import generics, status
+from rest_framework import generics
+from django.http import HttpResponse
 from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 from django.db import connections
@@ -16,9 +17,11 @@ class FeedbackCreateView(generics.CreateAPIView):
     permission_classes = [AllowAny, ]
 
 
-class HealthCheckView(APIView):
-    permission_classes = [AllowAny, ]
-    
-    def get(self, request, format=None):
-        data = {"status": "ok"}
-        return Response(data, status=status.HTTP_200_OK)
+class HealthCheckMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        if request.path == '/health':
+            return HttpResponse('ok')
+        return self.get_response(request)
