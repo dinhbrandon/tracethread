@@ -24,5 +24,5 @@ COPY . /app/
 # Copying the production environment variables
 COPY .env.production /app/.env
 
-# Run migrations and start the Django server after waiting for the database
-CMD /wait && python manage.py migrate && python manage.py runserver 0.0.0.0:8000
+# Run migrations, collect static files and start the Gunicorn server after waiting for the database
+CMD /wait && python manage.py migrate && python manage.py collectstatic --noinput && gunicorn tracethread_proj.wsgi:application --bind 0.0.0.0:8000
