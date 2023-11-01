@@ -21,6 +21,8 @@ DB_NAME = env("POSTGRES_DATABASES")
 DB_USER = env("POSTGRES_USER")
 DB_PASSWORD = env("POSTGRES_PASSWORD")
 
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
 ALLOWED_HOSTS = [
     "localhost",
 ]

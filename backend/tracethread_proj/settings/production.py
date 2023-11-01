@@ -21,6 +21,8 @@ DB_PASSWORD = env("POSTGRES_PASSWORD")
 
 DEBUG = False
 
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
 ALLOWED_HOSTS = [
     "www.tracethread.com",
     "api.tracethread.com",
