@@ -11,10 +11,13 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-DJANGO_ENV = os.environ.get('DJANGO_ENV', 'local')  # default to 'local' if DJANGO_ENV is not set
+DJANGO_ENV = os.environ.get('DJANGO_ENV')
 if DJANGO_ENV == 'production':
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "tracethread_proj.settings.production")
-else:
+elif DJANGO_ENV == 'local':
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "tracethread_proj.settings.local")
+else:
+    raise ValueError("DJANGO_ENV environment variable must be set to either 'production' or 'local'")
+
 
 application = get_wsgi_application()

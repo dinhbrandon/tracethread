@@ -10,15 +10,16 @@ def main():
     """Run administrative tasks."""
     # Check the DJANGO_ENV environment variable to determine which settings file to use
     DJANGO_ENV = os.environ.get('DJANGO_ENV')
-
     if DJANGO_ENV == 'production':
         os.environ.setdefault("DJANGO_SETTINGS_MODULE", "tracethread_proj.settings.production")
         dotenv_path = Path(__file__).resolve().parent / '.env.production'
         print("This is the production environment")
-    else:
+    elif DJANGO_ENV == 'local':
         os.environ.setdefault("DJANGO_SETTINGS_MODULE", "tracethread_proj.settings.local")
         dotenv_path = Path(__file__).resolve().parent / '.env'
         print("This is the local environment")
+    else:
+        raise ValueError("DJANGO_ENV environment variable must be set to either 'production' or 'local'")
 
     load_dotenv(dotenv_path=dotenv_path)
 
