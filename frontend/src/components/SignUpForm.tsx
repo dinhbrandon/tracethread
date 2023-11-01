@@ -88,7 +88,7 @@ const SignUpForm = forwardRef<HTMLDivElement, SignupLoginProps>((props: SignupLo
 
       const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-
+        setLoading(true)
         setErrors({});
 
         const email = formData.email.toLowerCase();
@@ -110,19 +110,21 @@ const SignUpForm = forwardRef<HTMLDivElement, SignupLoginProps>((props: SignupLo
             });
 
             if (response.ok) {
-              try {
-                  setLoading(true)
+              try {                 
                   await dispatch(loginUser(formData.email, formData.password));
                   setLoading(false)
                   navigate('/dashboard');
               } catch (error) {
                   console.error('Login Error:', error);
+                  setLoading(false)
               }
           } else {
               console.error('Registration Error:', response.statusText);
+              setLoading(false)
           }
         } catch (error) {
             console.error('Network error:', error);
+            setLoading(false)
         }
     };
 
