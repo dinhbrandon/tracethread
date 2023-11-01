@@ -2,26 +2,15 @@
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
-from pathlib import Path
 from dotenv import load_dotenv
 
 
 def main():
     """Run administrative tasks."""
-    # Check the DJANGO_ENV environment variable to determine which settings file to use
-    DJANGO_ENV = os.environ.get('DJANGO_ENV')
-    if DJANGO_ENV == 'production':
-        os.environ.setdefault("DJANGO_SETTINGS_MODULE", "tracethread_proj.settings.production")
-        dotenv_path = Path(__file__).resolve() / '.env.production'
-        print("This is the production environment")
-    elif DJANGO_ENV == 'local':
-        os.environ.setdefault("DJANGO_SETTINGS_MODULE", "tracethread_proj.settings.local")
-        dotenv_path = Path(__file__).resolve() / '.env.development'
-        print("This is the local environment")
-    else:
-        raise ValueError("DJANGO_ENV environment variable must be set to either 'production' or 'local'")
-
-    load_dotenv(dotenv_path=dotenv_path)
+    # Load environment variables from .env file
+    load_dotenv()
+    
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "tracethread_proj.settings.local")
 
     try:
         from django.core.management import execute_from_command_line
