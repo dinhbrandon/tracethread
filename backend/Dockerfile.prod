@@ -7,6 +7,7 @@ RUN chmod +x /wait
 
 # Setting environment variable
 ENV PYTHONBUFFERED 1
+ENV DJANGO_ENV production
 
 # Creating and setting the working directory
 WORKDIR /app
