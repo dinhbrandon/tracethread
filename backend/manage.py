@@ -12,11 +12,11 @@ def main():
     DJANGO_ENV = os.environ.get('DJANGO_ENV')
     if DJANGO_ENV == 'production':
         os.environ.setdefault("DJANGO_SETTINGS_MODULE", "tracethread_proj.settings.production")
-        dotenv_path = Path(__file__).resolve().parent / '.env.production'
+        dotenv_path = Path(__file__).resolve() / '.env.production'
         print("This is the production environment")
     elif DJANGO_ENV == 'local':
         os.environ.setdefault("DJANGO_SETTINGS_MODULE", "tracethread_proj.settings.local")
-        dotenv_path = Path(__file__).resolve().parent / '.env'
+        dotenv_path = Path(__file__).resolve() / '.env.development'
         print("This is the local environment")
     else:
         raise ValueError("DJANGO_ENV environment variable must be set to either 'production' or 'local'")
