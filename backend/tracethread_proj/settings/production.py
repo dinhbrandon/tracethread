@@ -2,6 +2,7 @@ from .base import *  # noqa: F401, F403
 import os
 import environ
 from pathlib import Path
+from utils.aws_secrets import get_secret
 env = environ.Env()
 
 
@@ -12,7 +13,7 @@ env_file_path = os.path.join(BASE_DIR, ".env.production")
 
 environ.Env.read_env(env_file_path)
 
-SECRET_KEY = env("SECRET_KEY")
+SECRET_KEY = get_secret()
 DATABASE_HOST = env("DATABASE_HOST")
 DB_NAME = env("POSTGRES_DATABASES")
 DB_USER = env("POSTGRES_USER")
