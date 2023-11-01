@@ -9,7 +9,7 @@ env = environ.Env()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
-env_file_path = os.path.join(BASE_DIR, ".env.production")
+env_file_path = os.path.join(BASE_DIR, ".env")
 
 environ.Env.read_env(env_file_path)
 
@@ -20,6 +20,10 @@ DB_USER = env("POSTGRES_USER")
 DB_PASSWORD = env("POSTGRES_PASSWORD")
 
 DEBUG = False
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
