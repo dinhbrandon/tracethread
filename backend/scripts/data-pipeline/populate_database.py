@@ -29,7 +29,7 @@ URL_ENDPOINT = "http://localhost:8000/querier/post-job-listing"
 # Define the headers for the POST request
 # Assuming you have a token for authentication
 HEADERS = {
-    "Authorization": "Token e089ea031212b038598a932a24b3ca50d6eb6e77",  # Replace with your actual token
+    "Authorization": "Token 157a79637c6ab1d821dbc94debff40533a73fbca",  # Replace with your actual token
     "Content-Type": "application/json"
 }
 

@@ -14,19 +14,13 @@ def main():
     if DJANGO_ENV == 'production':
         os.environ.setdefault("DJANGO_SETTINGS_MODULE", "tracethread_proj.settings.production")
         dotenv_path = Path(__file__).resolve().parent / '.env.production'
-        load_dotenv(dotenv_path=dotenv_path)
         print("This is the production environment")
     else:
-        dotenv_path = Path(__file__).resolve().parent.parent.parent / '.env'
         os.environ.setdefault("DJANGO_SETTINGS_MODULE", "tracethread_proj.settings.local")
+        dotenv_path = Path(__file__).resolve().parent / '.env'
         print("This is the local environment")
 
     load_dotenv(dotenv_path=dotenv_path)
-
-    if DJANGO_ENV == 'production':
-        os.environ.setdefault("DJANGO_SETTINGS_MODULE", "tracethread_proj.settings.production")
-    else:
-        os.environ.setdefault("DJANGO_SETTINGS_MODULE", "tracethread_proj.settings.local")
 
     try:
         from django.core.management import execute_from_command_line
