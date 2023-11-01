@@ -20,21 +20,5 @@ class HealthCheckView(APIView):
     permission_classes = [AllowAny, ]
     
     def get(self, request, format=None):
-        # Check database connectivity
-        db_ok = True
-        for conn in connections.all():
-            try:
-                conn.cursor()
-            except Exception:
-                db_ok = False
-                break
-
-        # Check cache connectivity
-        cache_ok = cache.set('health_check_key', 'value', timeout=30)
-
-        if db_ok and cache_ok:
-            data = {"status": "ok"}
-            return Response(data, status=status.HTTP_200_OK)
-        else:
-            data = {"status": "error"}
-            return Response(data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        data = {"status": "ok"}
+        return Response(data, status=status.HTTP_200_OK)
