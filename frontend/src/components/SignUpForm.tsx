@@ -11,8 +11,8 @@ const SignUpForm = forwardRef<HTMLDivElement, SignupLoginProps>((props: SignupLo
   const { toggleSignUpModal, toggleLoginModal } = props;
   const dispatch = useDispatch<AppDispatch>();
   const loggedIn = useSelector((state: RootState) => state.auth.loggedIn);
-  const [loading, setLoading] = useState(false);
-
+  const [loading, setLoading] = useState(true);
+  
   const navigate = useNavigate();
 
 
@@ -168,9 +168,8 @@ const SignUpForm = forwardRef<HTMLDivElement, SignupLoginProps>((props: SignupLo
                   <p className='text-center font-semibold'>(Google sign up feature is in development)</p>
                 <div className="py-3 flex items-center text-xs text-gray-400 uppercase before:flex-[1_1_0%] before:border-t before:border-gray-200 before:mr-6 after:flex-[1_1_0%] after:border-t after:border-gray-200 after:ml-6">Or</div>
               </div>
-      
-                <div className="mt-5">
-                {loading ? 
+              {loading ? 
+              <div className='flex items-center justify-center'>
                 <div role="status">
                     <svg aria-hidden="true" className="inline w-8 h-8 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
@@ -178,8 +177,10 @@ const SignUpForm = forwardRef<HTMLDivElement, SignupLoginProps>((props: SignupLo
                     </svg>
                     <span className="sr-only">Loading...</span>
                 </div> 
+              </div>
                 : 
-                  (<form onSubmit={handleSubmit}>
+              (<div className="mt-5">
+                  <form onSubmit={handleSubmit}>
                     <div className="grid gap-y-4">
 
                       {/* First Name input box */}
@@ -418,8 +419,8 @@ const SignUpForm = forwardRef<HTMLDivElement, SignupLoginProps>((props: SignupLo
                     >
                       Sign up
                     </button>
-                  </form>)}
-                </div>
+                  </form>
+                </div>)}
               </div>
             </div>
           </main>
