@@ -445,23 +445,26 @@ useEffect(() => {
 
           {/* Modal for editing notes on a card */}
           {isModalOpen && selectedCard && (
-  <div ref={modalRef} className="fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex items-center justify-center">
+  <div ref={modalRef} className="fixed inset-0 z-50 overflow-auto bg-gray-500 bg-opacity-50 flex items-center justify-center">
     <div className="relative md:max-w-[1000px] md:max-h-[800px] overflow-auto bg-white p-4 flex flex-col rounded-lg shadow-md">
       
+      <div className='mb-4'>
       <button onClick={closeCardModal} className="absolute top-0 right-0 m-4 py-1 px-3 rounded-md border text-gray-700 font-medium bg-white align-middle hover:bg-gray-50 transition-all text-sm">
         Close
       </button>
+      </div>
       
       <div className='flex flex-row items-center p-5 mb-5'>
-        <img className='inline-block h-[2.875rem] w-[2.875rem] rounded-full ring-2 ring-white dark:ring-gray-800' src={selectedCard.job_saved?.job_listing?.company_logo} alt="Company Logo" />
+      <img className={ selectedCard.job_saved && selectedCard.job_saved.job_listing.company_logo ? 'inline-block min-h-[2.875rem] min-w-[2.875rem] w-[2.875rem] h-[2.875rem] rounded-full' : 'inline-block min-h-[2.875rem] min-w-[2.875rem] w-[2.875rem] h-[2.875rem] rounded-full bg-gray-400'}
+        src={selectedCard.job_saved && selectedCard.job_saved.job_listing.company_logo ? selectedCard.job_saved.job_listing.company_logo : "https://img.icons8.com/?size=128&id=6LvtpL48Lmmx&format=png&color=FFFFFF"} alt="Company Logo" />
         <div className='ml-4'>
-          <h3 className="text-xl font-bold">{selectedCard.job_saved?.job_listing?.job_title}</h3>
-          <div className='text-gray-600'>{selectedCard.job_saved?.job_listing?.company_name}</div>
+          <h3 className="text-xl font-bold">{selectedCard.job_saved?.job_listing?.job_title || selectedCard.job_title}</h3>
+          <div className='text-gray-600'>{selectedCard.job_saved?.job_listing?.company_name || selectedCard.company_name}</div>
         </div>
       </div>
       
-      <div><strong>Location:</strong> {selectedCard.job_saved?.job_listing?.location}</div>
-      <div><strong>Description:</strong> {selectedCard.job_saved?.job_listing?.description}</div>
+      <div><strong>Location:</strong> {selectedCard.job_saved?.job_listing?.location || selectedCard.location}</div>
+      <div><strong>Description:</strong> {selectedCard.job_saved?.job_listing?.description || selectedCard.description}</div>
       
       <div className='mt-5'>
   <strong>Notes:</strong>
@@ -535,8 +538,9 @@ useEffect(() => {
 
 
 {isAddCardModalOpen && (
-    <div className="fixed flex items-center justify-center">
-        <div className="md:max-w-[800px] md:max-h-[600px] overflow-auto bg-white p-4 flex flex-col rounded-lg shadow-md">
+    <div className="fixed flex items-center justify-center z-50">
+      <div className="fixed inset-0 bg-gray-500 bg-opacity-50"></div>
+        <div className="md:max-w-[800px] md:max-h-[600px] overflow-auto bg-white p-4 flex flex-col rounded-lg shadow-md z-10">
             <h3 className="text-xl font-bold mb-4">Add New Card</h3>
             <form onSubmit={handleAddCardSubmit}>
               <div>
@@ -620,6 +624,7 @@ useEffect(() => {
             </form>
         </div>
     </div>
+
 )}
 
 
