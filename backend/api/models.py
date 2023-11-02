@@ -9,3 +9,8 @@ class Feedback(models.Model):
 
     def __str__(self):
         return self.url
+
+
+class ScriptExecution(models.Model):
+    class Meta:
+        verbose_name_plural = "Script Execution"

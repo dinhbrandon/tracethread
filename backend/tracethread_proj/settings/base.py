@@ -57,7 +57,7 @@ ROOT_URLCONF = "tracethread_proj.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [os.path.join(BASE_DIR, "tracethread_proj/templates")],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [

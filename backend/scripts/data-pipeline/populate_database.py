@@ -24,14 +24,16 @@ import requests
 DATA_DIR = "/app/scripts/data-pipeline/serialized-job-data"
 
 # URL endpoint for the PostJobListing view
-URL_ENDPOINT = "http://localhost:8000/querier/post-job-listing"
+URL_ENDPOINT = os.environ['API_BASE_URL'] + "/querier/post-job-listing"
 
 # Define the headers for the POST request
 # Assuming you have a token for authentication
+# Define the headers for the POST request
 HEADERS = {
-    "Authorization": "Token 157a79637c6ab1d821dbc94debff40533a73fbca",  # Replace with your actual token
+    "Authorization": f"Token {os.environ['USER_TOKEN']}",
     "Content-Type": "application/json"
 }
+
 
 # Iterate over all the files in the directory
 for filename in os.listdir(DATA_DIR):
