@@ -20,7 +20,6 @@ const SubmitFeedback = ({ isOpen, onClose, pageUrl }: SubmitFeedbackProps) => {
 
   const handleSubmit = async () => {
     const baseUrl = import.meta.env.VITE_API_BASE_URL;
-    console.log('baseUrl', baseUrl);
     const formData = new FormData();
     formData.append('url', pageUrl);
     formData.append('feedback', feedback);
@@ -35,7 +34,6 @@ const SubmitFeedback = ({ isOpen, onClose, pageUrl }: SubmitFeedbackProps) => {
       });
 
       if (response.ok) {
-        console.log('Feedback submitted successfully');
         resetForm(); // Reset the form after successful submission
       } else {
         console.error('Failed to submit feedback.');
