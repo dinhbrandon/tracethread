@@ -10,6 +10,7 @@ from .views import (
     DeleteJobSaved,
     SavedSearchParametersListCreate,
     SavedSearchParametersDetail,
+    BatchJobListing
 )
 
 urlpatterns = [
@@ -23,4 +24,5 @@ urlpatterns = [
     path("delete-jobsaved/<int:pk>", DeleteJobSaved.as_view()),
     path("saved-search-parameters", SavedSearchParametersListCreate.as_view()),
     path("saved-search-parameters/<int:pk>", SavedSearchParametersDetail.as_view()),
+    path("batch-post-job-listings", BatchJobListing.as_view()),
 ]

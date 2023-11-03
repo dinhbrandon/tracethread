@@ -2,20 +2,20 @@ from django.shortcuts import render, get_object_or_404
 from .models import JobListing, JobSaved, SavedSearchParameters
 from JobNotebook.models import Card, Column
 from .serializers import JobListingSerializer, JobSavedSerializer, SavedSearchParametersSerializer
-from rest_framework import generics, authentication, permissions, viewsets
+from rest_framework import generics, authentication, permissions, viewsets, status
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 from rest_framework.exceptions import ParseError
-from django.core.exceptions import ValidationError
+from rest_framework.views import APIView
+from django.db import transaction
 from django.db.models import Q
 from functools import reduce
 from operator import or_, and_
-import json
+
 import ast
-import re
-import urllib.parse
+
 
 
 class SavedSearchParametersListCreate(generics.ListCreateAPIView):
@@ -92,6 +92,44 @@ class PostJobListing(generics.CreateAPIView):
 
 # This view gets list of all job listings
 
+class BatchJobListing(APIView):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request, *args, **kwargs):
+        job_listings = request.data
+        
+        if not isinstance(job_listings, list):
+            return Response({"error": "Expected a list of job listings."}, status=status.HTTP_400_BAD_REQUEST)
+
+        updated_urls = []
+        created_urls = []
+        
+        with transaction.atomic():
+            for job_data in job_listings:
+                job_url = job_data.get('url')
+                job_listing = JobListing.objects.filter(url=job_url).first()
+                
+                if job_listing:
+                    serializer = self.get_serializer(job_listing, data=job_data, partial=True)
+                    serializer.is_valid(raise_exception=True)
+                    serializer.save()
+                    updated_urls.append(job_url)
+                else:
+                    serializer = self.get_serializer(data=job_data)
+                    serializer.is_valid(raise_exception=True)
+                    serializer.save(posted_by=request.user)
+                    created_urls.append(job_url)
+
+        return Response({
+            "updated": updated_urls,
+            "created": created_urls
+        }, status=status.HTTP_200_OK)
+
+    def get_serializer(self, *args, **kwargs):
+        # Return the serializer instance that should be used for validating and
+        # deserializing input, and for serializing output.
+        return JobListingSerializer(*args, **kwargs)
 
 class JobListingList(generics.ListAPIView):
     queryset = JobListing.objects.all()

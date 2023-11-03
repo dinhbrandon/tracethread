@@ -20,15 +20,14 @@ import os
 import json
 import requests
 import time
+from requests.exceptions import ConnectionError, Timeout
 
 # Directory containing the serialized job data
 DATA_DIR = "/app/scripts/data-pipeline/serialized-job-data"
 
 # URL endpoint for the PostJobListing view
-URL_ENDPOINT = os.environ['API_BASE_URL'] + "/querier/post-job-listing"
+URL_ENDPOINT = os.environ['API_BASE_URL'] + "/querier/batch-post-job-listings"
 
-# Define the headers for the POST request
-# Assuming you have a token for authentication
 # Define the headers for the POST request
 HEADERS = {
     "Authorization": f"Token {os.environ['USER_TOKEN']}",
@@ -38,23 +37,33 @@ HEADERS = {
 session = requests.Session()
 session.headers.update(HEADERS)
 
-# Iterate over all the files in the directory
+def post_job_listings(job_listings):
+    try:
+        response = session.post(URL_ENDPOINT, json=job_listings)
+        response.raise_for_status()
+        print("Batch job listings posted successfully.")
+        return True
+    except ConnectionError as ce:
+        print(f"Connection error: {ce}")
+    except Timeout as te:
+        print(f"Timeout error: {te}")
+    except requests.exceptions.HTTPError as he:
+        print(f"HTTP error: {he.response.status_code} - {he.response.text}")
+    except Exception as e:
+        print(f"Failed to post batch job listings: {e}")
+    return False
+
+# Collect all job listings into a list
+all_job_listings = []
 for filename in os.listdir(DATA_DIR):
-    # Check if the file starts with 'job_data_'
     if filename.startswith('job_data_'):
         file_path = os.path.join(DATA_DIR, filename)
         with open(file_path, 'r') as f:
             data = json.load(f)
-            try:
-                for job_listing in data:
-                    response = session.post(URL_ENDPOINT, json=job_listing)
-                    print(response)
-                    if response.status_code != 201:
-                        print(f"Failed to post job listing from file: {filename}, job title: {job_listing['job_title']}")
-                    time.sleep(1)
-            except Exception as e:
-                print(f"Failed to post job listing from file: {filename}")
-                print(e)
-            
+            all_job_listings.extend(data)  # Append data from each file to the list
+
+# Now post all job listings in a single request
+if all_job_listings:
+    post_job_listings(all_job_listings)
 
 print("Done processing job listings!")
