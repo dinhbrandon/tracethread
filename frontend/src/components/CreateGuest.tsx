@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 const baseUrlApi = import.meta.env.VITE_API_BASE_URL;
 
-const GuestLoginButton = () => {
+const GuestLoginButton = ( {loadWheel}: any ) => {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
 
@@ -50,10 +50,15 @@ const GuestLoginButton = () => {
     }
   };
 
+  const handleClick = () => {
+    handleGuestLogin();
+    loadWheel();
+  };
+
   return (
     <button
       type="button"
-      onClick={handleGuestLogin}
+      onClick={handleClick}
       className="text-sky-800 decoration-2 hover:underline font-medium"
     >
       Try explorer mode

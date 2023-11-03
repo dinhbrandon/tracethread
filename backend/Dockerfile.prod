@@ -6,6 +6,7 @@ ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.9.0/wait
 RUN chmod +x /wait
 
 # Setting environment variable
+ENV PYTHONUNBUFFERED 1
 ENV DJANGO_ENV production
 
 # Creating and setting the working directory
@@ -26,4 +27,3 @@ COPY .env.production /app/.env
 
 # Run migrations, collect static files and start the Gunicorn server after waiting for the database
 CMD /wait && python manage.py migrate && python manage.py collectstatic --noinput && gunicorn tracethread_proj.wsgi:application --bind 0.0.0.0:8000 --access-logfile - --error-logfile - --log-level debug
-
