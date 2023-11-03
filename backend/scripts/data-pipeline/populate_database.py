@@ -19,6 +19,7 @@ This is the final step in the data pipeline, ensuring that processed data is sec
 import os
 import json
 import requests
+import time
 
 # Directory containing the serialized job data
 DATA_DIR = "/app/scripts/data-pipeline/serialized-job-data"
@@ -34,6 +35,8 @@ HEADERS = {
     "Content-Type": "application/json"
 }
 
+session = requests.Session()
+session.headers.update(HEADERS)
 
 # Iterate over all the files in the directory
 for filename in os.listdir(DATA_DIR):
@@ -42,11 +45,16 @@ for filename in os.listdir(DATA_DIR):
         file_path = os.path.join(DATA_DIR, filename)
         with open(file_path, 'r') as f:
             data = json.load(f)
-            for job_listing in data:
-                # Send a POST request with the job listing data
-                response = requests.post(URL_ENDPOINT, headers=HEADERS, json=job_listing)
-                print(response)
-                if response.status_code != 201:
-                    print(f"Failed to post job listing from file: {filename}, job title: {job_listing['job_title']}")
+            try:
+                for job_listing in data:
+                    response = session.post(URL_ENDPOINT, json=job_listing)
+                    print(response)
+                    if response.status_code != 201:
+                        print(f"Failed to post job listing from file: {filename}, job title: {job_listing['job_title']}")
+                    time.sleep(1)
+            except Exception as e:
+                print(f"Failed to post job listing from file: {filename}")
+                print(e)
+            
 
 print("Done processing job listings!")
