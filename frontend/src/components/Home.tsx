@@ -104,7 +104,7 @@ const Home = () => {
 
         <div className="flex">
         <p className="mt-2 text-sm">
-            Just checking us out?&nbsp;
+            Just checking us out?&nbsp;</p>
             {loading ? (
             
             <div className="fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex items-center justify-center">
@@ -120,7 +120,7 @@ const Home = () => {
             :
             (<CreateGuest loadWheel={loadWheel}/>) }
             
-            </p>
+            
             
         </div>
         

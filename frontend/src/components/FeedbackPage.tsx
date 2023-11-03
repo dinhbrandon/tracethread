@@ -56,7 +56,6 @@ const FeedbackPage = () => {
         if (result.error) {
             setError(result.error);
         } else {
-            // Assuming result.data contains the updated feedback
             setFeedback(prevFeedback => 
                 prevFeedback.map(item => item.id === feedbackItem.id ? result.data : item) as Feedback[]
             );
@@ -68,7 +67,7 @@ const FeedbackPage = () => {
             comment: commentContent,
             date_submitted: new Date().toISOString(),
             upvotes: 0,
-            id: feedbackId // Note: This seems a bit off. You may want to verify the structure.
+            id: feedbackId
         };
         if (!token) {
             console.error('Token is null');
@@ -78,7 +77,6 @@ const FeedbackPage = () => {
         if (result.error) {
             setError(result.error);
         } else {
-            // Assuming result.data contains the newly created comment
             setComments(prevComments => [...prevComments, result.data]);
             setFeedback(prevFeedback => 
                 prevFeedback.map(item => {
