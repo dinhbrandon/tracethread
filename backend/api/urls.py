@@ -6,6 +6,6 @@ urlpatterns = [
     path('list-feedback/', FeedbackListView.as_view()),
     path('upvote-feedback/<int:pk>/', FeedbackUpvoteView.as_view()),
     path('submit-comments/', CommentsCreateView.as_view()),
-    path('list-comments/', CommentsListView.as_view()),
+    path('list-comments/<int:pk>/', CommentsListView.as_view()),
     path('upvote-comments/<int:pk>/', CommentsUpvoteView.as_view()),   
 ]
