@@ -26,4 +26,4 @@ COPY . /app/
 COPY .env.production /app/.env
 
 # Run migrations, collect static files and start the Gunicorn server after waiting for the database
-CMD /wait && python manage.py migrate && python manage.py collectstatic --noinput && gunicorn tracethread_proj.wsgi:application --bind 0.0.0.0:8000 --access-logfile - --error-logfile - --log-level debug --timeout 300
+CMD /wait && python manage.py migrate && python manage.py collectstatic --noinput && gunicorn tracethread_proj.wsgi:application --bind 0.0.0.0:8000 --access-logfile - --error-logfile - --log-level debug --timeout 60
