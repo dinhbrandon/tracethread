@@ -3,6 +3,7 @@ from .models import Feedback, Comments, Upvote
 from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from django.shortcuts import get_object_or_404
 
 
 class FeedbackCreateView(generics.CreateAPIView):
@@ -41,8 +42,18 @@ class FeedbackUpvoteView(generics.GenericAPIView):
 
 class CommentsCreateView(generics.CreateAPIView):
     serializer_class = CommentsSerializer
-    queryset = Feedback.objects.all()
+    queryset = Comments.objects.all()
     permission_classes = [IsAuthenticated, ]
+
+    def create(self, request, *args, **kwargs):
+        feedback_id = self.kwargs['feedback']
+        data = request.data.copy()  # Make a mutable copy of the data
+        data['feedback'] = feedback_id  # Add the feedback field
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 
 class CommentsListView(generics.ListAPIView):
