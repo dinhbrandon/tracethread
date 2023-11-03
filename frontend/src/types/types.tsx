@@ -152,3 +152,19 @@ export interface JobNotebookSearchProps {
     searchTerm: string;
     onSearchTermChange: (newTerm: string) => void;
 }
+
+//Feedback types
+export interface Feedback {
+    id: number;
+    feedback: string;
+    date_submitted: string;
+    upvotes: number;
+    comments?: Comment[];
+}
+
+export interface Comment {
+    id: number;
+    comment: string;
+    date_submitted: string;
+    upvotes: number;
+}

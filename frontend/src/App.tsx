@@ -19,6 +19,7 @@ import ContactUs from './components/ContactUs';
 import Tutorial from './components/Tutorial';
 import SavedParameters from './components/SavedParameters';
 import Home from './components/Home';
+import FeedbackPage from './components/FeedbackPage';
 import { useState } from 'react';
 
 
@@ -50,6 +51,7 @@ function App() {
                 <Route path="/editcolumns" element={<EditColumns />} />
                 <Route path="/search" element={<JobSearch />} />
                 <Route path="/search/filters" element={<SavedParameters isVisible={true} refreshKey={true} onSearch={() => {}} savedParameters={[]} />} />
+                <Route path="/feedback" element={<FeedbackPage />} />
                 <Route path="/about" element={<AboutUs />} />
                 <Route path="/careers" element={<OpenRoles />} />
                 <Route path="/support" element={<Support />} />

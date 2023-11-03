@@ -1,3 +1,5 @@
+import { Feedback, Comment } from "../types/types";
+
 const baseUrlApi = import.meta.env.VITE_API_BASE_URL;
 
 export async function getColumns(token: string) {
@@ -196,4 +198,124 @@ export async function getCards(token: string, columnId?: number) {
         console.error(error);
         return { data: null, error: error.message };
     }
+}
+
+//Feedback api calls
+
+//Get feedback
+export async function getFeedback(token: string) {
+  const url = `${baseUrlApi}/api/list-feedback`;
+
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Token ${token}`
+      },
+    });
+    if (!response.ok) {
+      throw new Error(`Failed to fetch feedback: ${response.statusText}`);
+    }
+    const fetchedData = await response.json();
+    return { data: fetchedData, error: null };
+  } catch (error: any) {
+    console.error(error);
+    return { data: null, error: error.message };
+  }
+}
+
+//Upvote feedback
+export async function upvoteFeedback(token: string, feedback: Feedback) {
+  const url = `${baseUrlApi}/api/upvote-feedback/${feedback.id}`;
+
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Token ${token}`
+      },
+      body: JSON.stringify(feedback)
+    });
+    if (!response.ok) {
+      throw new Error(`Failed to upvote feedback: ${response.statusText}`);
+    }
+    const createdData = await response.json();
+    return { data: createdData, error: null };
+  } catch (error: any) {
+      console.error(error);
+      return { data: null, error: error.message };
+  }
+}
+
+//Get comments
+export async function getComments(token: string) {
+  const url = `${baseUrlApi}/api/list-comments`;
+
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Token ${token}`
+      },
+    });
+    if (!response.ok) {
+      throw new Error(`Failed to fetch feedback: ${response.statusText}`);
+    }
+    const fetchedData = await response.json();
+    return { data: fetchedData, error: null };
+  } catch (error: any) {
+    console.error(error);
+    return { data: null, error: error.message };
+  }
+}
+
+//Upvote comment
+export async function upvoteComment(token: string, comment: Comment) {
+  const url = `${baseUrlApi}/api/upvote-comment/${comment.id}`;
+
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Token ${token}`
+      },
+      body: JSON.stringify(comment)
+    });
+    if (!response.ok) {
+      throw new Error(`Failed to upvote comment: ${response.statusText}`);
+    }
+    const createdData = await response.json();
+    return { data: createdData, error: null };
+  } catch (error: any) {
+      console.error(error);
+      return { data: null, error: error.message };
+  }
+}
+
+//Submit comment
+export async function submitComment(token: string, comment: Comment) {
+  const url = `${baseUrlApi}/api/submit-comment/${comment.id}`;
+
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Token ${token}`
+      },
+      body: JSON.stringify(comment)
+    });
+    if (!response.ok) {
+      throw new Error(`Failed to upvote comment: ${response.statusText}`);
+    }
+    const createdData = await response.json();
+    return { data: createdData, error: null };
+  } catch (error: any) {
+      console.error(error);
+      return { data: null, error: error.message };
+  }
 }
