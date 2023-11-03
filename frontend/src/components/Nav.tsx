@@ -4,14 +4,15 @@ import { RootState } from '../redux/store';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { SubmitFeedbackProps } from '../types/types';
+import { useToken } from '../hooks/useToken';
 
 const baseUrl = import.meta.env.VITE_BASE_URL;
-
-
 
 const SubmitFeedback = ({ isOpen, onClose, pageUrl }: SubmitFeedbackProps) => {
   const [feedback, setFeedback] = useState('');
   const [image, setImage] = useState<File | null>(null);
+  const token = useToken();
+  console.log(token)
 
   const resetForm = () => {
     setFeedback('');
@@ -29,6 +30,9 @@ const SubmitFeedback = ({ isOpen, onClose, pageUrl }: SubmitFeedbackProps) => {
 
     try {
       const response = await fetch(`${baseUrl}/api/submit-feedback/`, {
+        headers: {
+          "Authorization": `Token ${token}`,
+        },
         method: 'POST',
         body: formData,
       });
