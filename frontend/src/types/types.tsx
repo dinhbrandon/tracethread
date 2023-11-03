@@ -156,15 +156,21 @@ export interface JobNotebookSearchProps {
 //Feedback types
 export interface Feedback {
     id: number;
+    url: string;
     feedback: string;
     date_submitted: string;
-    upvotes: number;
     comments?: Comment[];
 }
 
 export interface Comment {
     id: number;
+    feedback: number;
     comment: string;
     date_submitted: string;
-    upvotes: number;
+}
+
+export interface Upvote {
+    user: number;
+    feedback?: number;
+    comment?: number;
 }

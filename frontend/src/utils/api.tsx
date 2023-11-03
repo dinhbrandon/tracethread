@@ -204,13 +204,12 @@ export async function getCards(token: string, columnId?: number) {
 
 //Get feedback
 export async function getFeedback(token: string) {
-  const url = `${baseUrlApi}/api/list-feedback`;
+  const url = `${baseUrlApi}/api/list-feedback/`;
 
   try {
     const response = await fetch(url, {
       method: "GET",
       headers: {
-        "Content-Type": "application/json",
         "Authorization": `Token ${token}`
       },
     });
@@ -227,13 +226,12 @@ export async function getFeedback(token: string) {
 
 //Upvote feedback
 export async function upvoteFeedback(token: string, feedback: Feedback) {
-  const url = `${baseUrlApi}/api/upvote-feedback/${feedback.id}`;
+  const url = `${baseUrlApi}/api/upvote-feedback/${feedback.id}/`;
 
   try {
     const response = await fetch(url, {
-      method: "POST",
+      method: "PUT",
       headers: {
-        "Content-Type": "application/json",
         "Authorization": `Token ${token}`
       },
       body: JSON.stringify(feedback)
@@ -251,13 +249,12 @@ export async function upvoteFeedback(token: string, feedback: Feedback) {
 
 //Get comments
 export async function getComments(token: string) {
-  const url = `${baseUrlApi}/api/list-comments`;
+  const url = `${baseUrlApi}/api/list-comments/`;
 
   try {
     const response = await fetch(url, {
       method: "GET",
       headers: {
-        "Content-Type": "application/json",
         "Authorization": `Token ${token}`
       },
     });
@@ -274,13 +271,12 @@ export async function getComments(token: string) {
 
 //Upvote comment
 export async function upvoteComment(token: string, comment: Comment) {
-  const url = `${baseUrlApi}/api/upvote-comment/${comment.id}`;
+  const url = `${baseUrlApi}/api/upvote-comment/${comment.id}/`;
 
   try {
     const response = await fetch(url, {
-      method: "POST",
+      method: "PUT",
       headers: {
-        "Content-Type": "application/json",
         "Authorization": `Token ${token}`
       },
       body: JSON.stringify(comment)
@@ -297,14 +293,13 @@ export async function upvoteComment(token: string, comment: Comment) {
 }
 
 //Submit comment
-export async function submitComment(token: string, comment: Comment) {
-  const url = `${baseUrlApi}/api/submit-comment/${comment.id}`;
+export async function submitComment(token: string, comment: Comment, feedback: Feedback) {
+  const url = `${baseUrlApi}/api/submit-comment/${feedback.id}/`;
 
   try {
     const response = await fetch(url, {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
         "Authorization": `Token ${token}`
       },
       body: JSON.stringify(comment)
