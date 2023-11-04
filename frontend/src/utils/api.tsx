@@ -247,9 +247,31 @@ export async function upvoteFeedback(token: string, feedback: Feedback) {
   }
 }
 
+//Get upvotes on feedback
+export async function getUpvotesFeedback(token: string, feedback: Feedback) {
+  const url = `${baseUrlApi}/api/upvote-feedback/${feedback}/`;
+
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Authorization": `Token ${token}`
+      },
+    });
+    if (!response.ok) {
+      throw new Error(`Failed to get upvotes on feedback: ${response.statusText}`);
+    }
+    const fetchedData = await response.json();
+    return { data: fetchedData, error: null };
+  } catch (error: any) {
+    console.error(error);
+    return { data: null, error: error.message };
+  }
+}
+
 //Get comments
-export async function getComments(token: string) {
-  const url = `${baseUrlApi}/api/list-comments/`;
+export async function getComments(token: string, feedback: Feedback) {
+  const url = `${baseUrlApi}/api/list-comments/${feedback}/`;
 
   try {
     const response = await fetch(url, {
@@ -292,17 +314,24 @@ export async function upvoteComment(token: string, comment: Comment) {
   }
 }
 
+
+
 //Submit comment
-export async function submitComment(token: string, comment: Comment, feedback: Feedback) {
-  const url = `${baseUrlApi}/api/submit-comment/${feedback.id}/`;
+export async function submitComment(token: string, comment: string, feedback: Feedback) {
+  const url = `${baseUrlApi}/api/submit-comments/${feedback}/`;
 
   try {
     const response = await fetch(url, {
       method: "POST",
       headers: {
+        "Content-Type": "application/json",
         "Authorization": `Token ${token}`
       },
-      body: JSON.stringify(comment)
+      body: JSON.stringify(
+        {
+          comment: comment
+        }
+      )
     });
     if (!response.ok) {
       throw new Error(`Failed to upvote comment: ${response.statusText}`);

@@ -49,6 +49,7 @@ class CommentsCreateView(generics.CreateAPIView):
         feedback_id = self.kwargs['feedback']
         data = request.data.copy()  # Make a mutable copy of the data
         data['feedback'] = feedback_id  # Add the feedback field
+        data['user'] = request.user.id 
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)

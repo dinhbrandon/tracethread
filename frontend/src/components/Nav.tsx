@@ -121,6 +121,7 @@ const Nav = () => {
           <div className="flex flex-col gap-y-4 gap-x-0 mt-5 sm:flex-row sm:items-center sm:justify-end sm:gap-y-0 sm:gap-x-7 sm:mt-0 sm:pl-7">
             { loggedIn ? (
               <>
+              <a className="font-medium" href={`${baseUrl}/feedback`}>Feedback Thread</a>
               <a className="font-medium" href={`${baseUrl}/dashboard`}>Dashboard</a>
               <a className="font-medium" href={`${baseUrl}/search`}>Search</a>
               <a className="font-medium" href={`${baseUrl}/jobnotebook`}>Job Notebook</a>

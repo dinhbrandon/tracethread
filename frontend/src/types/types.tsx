@@ -158,15 +158,17 @@ export interface Feedback {
     id: number;
     url: string;
     feedback: string;
-    date_submitted: string;
+    screenshot: string;
+    date: string;
     comments?: Comment[];
 }
 
 export interface Comment {
     id: number;
+    user: string;
     feedback: number;
     comment: string;
-    date_submitted: string;
+    date: string;
 }
 
 export interface Upvote {
