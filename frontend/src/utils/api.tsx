@@ -226,7 +226,7 @@ export async function getFeedback(token: string) {
 
 //Upvote feedback
 export async function upvoteFeedback(token: string, feedback: Feedback) {
-  const url = `${baseUrlApi}/api/upvote-feedback/${feedback.id}/`;
+  const url = `${baseUrlApi}/api/upvote-feedback/${feedback}/`;
 
   try {
     const response = await fetch(url, {
@@ -248,7 +248,7 @@ export async function upvoteFeedback(token: string, feedback: Feedback) {
 }
 
 //Get upvotes on feedback
-export async function getUpvotesFeedback(token: string, feedback: Feedback) {
+export async function getUpvotesFeedback(token: string, feedback: any) {
   const url = `${baseUrlApi}/api/upvote-feedback/${feedback}/`;
 
   try {
@@ -270,7 +270,7 @@ export async function getUpvotesFeedback(token: string, feedback: Feedback) {
 }
 
 //Get comments
-export async function getComments(token: string, feedback: Feedback) {
+export async function getComments(token: string, feedback: any) {
   const url = `${baseUrlApi}/api/list-comments/${feedback}/`;
 
   try {
@@ -317,7 +317,7 @@ export async function upvoteComment(token: string, comment: Comment) {
 
 
 //Submit comment
-export async function submitComment(token: string, comment: string, feedback: Feedback) {
+export async function submitComment(token: any, comment: string, feedback: any) {
   const url = `${baseUrlApi}/api/submit-comments/${feedback}/`;
 
   try {

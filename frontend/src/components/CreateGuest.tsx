@@ -59,7 +59,7 @@ const GuestLoginButton = ( {loadWheel}: any ) => {
     <button
       type="button"
       onClick={handleClick}
-      className="text-sky-800 decoration-2 hover:underline font-medium"
+      className="mt-2 text-sky-800 text-sm decoration-2 hover:underline font-medium"
     >
       Try explorer mode
     </button>

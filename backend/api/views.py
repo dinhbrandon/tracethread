@@ -3,7 +3,7 @@ from .models import Feedback, Comments, Upvote
 from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from django.shortcuts import get_object_or_404
+from django.db.models import Exists, OuterRef
 
 
 class FeedbackCreateView(generics.CreateAPIView):
@@ -16,6 +16,14 @@ class FeedbackListView(generics.ListAPIView):
     serializer_class = FeedbackSerializer
     queryset = Feedback.objects.all()
     permission_classes = [IsAuthenticated,]
+
+    def get_queryset(self):
+        user = self.request.user
+
+        return Feedback.objects.annotate(
+            has_upvoted=Exists(Upvote.objects.filter(user=user, feedback=OuterRef('pk')))
+        )
+
 
 
 class FeedbackUpvoteView(generics.GenericAPIView):
