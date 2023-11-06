@@ -12,7 +12,6 @@ const SubmitFeedback = ({ isOpen, onClose, pageUrl }: SubmitFeedbackProps) => {
   const [feedback, setFeedback] = useState('');
   const [image, setImage] = useState<File | null>(null);
   const token = useToken();
-  console.log(token)
 
   const resetForm = () => {
     setFeedback('');
