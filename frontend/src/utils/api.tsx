@@ -1,4 +1,4 @@
-import { Feedback, Comment } from "../types/types";
+// import { Feedback, Comment } from "../types/types";
 
 const baseUrlApi = import.meta.env.VITE_API_BASE_URL;
 
