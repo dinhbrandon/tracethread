@@ -20,6 +20,11 @@ class CommentsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comments
         fields = '__all__'
+    
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation['has_upvoted'] = instance.has_upvoted if hasattr(instance, 'has_upvoted') else False
+        return representation
 
 
 class UpvoteSerializer(serializers.ModelSerializer):

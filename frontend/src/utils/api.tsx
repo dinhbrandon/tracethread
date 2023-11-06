@@ -225,7 +225,7 @@ export async function getFeedback(token: string) {
 }
 
 //Upvote feedback
-export async function upvoteFeedback(token: string, feedback: Feedback) {
+export async function upvoteFeedback(token: string, feedback: any) {
   const url = `${baseUrlApi}/api/upvote-feedback/${feedback}/`;
 
   try {
@@ -248,8 +248,8 @@ export async function upvoteFeedback(token: string, feedback: Feedback) {
 }
 
 //Get upvotes on feedback
-export async function getUpvotesFeedback(token: string, feedback: any) {
-  const url = `${baseUrlApi}/api/upvote-feedback/${feedback}/`;
+export async function getUpvotesFeedback(token: string, feedbackId: any) {
+  const url = `${baseUrlApi}/api/upvote-feedback/${feedbackId}/`;
 
   try {
     const response = await fetch(url, {
@@ -270,8 +270,8 @@ export async function getUpvotesFeedback(token: string, feedback: any) {
 }
 
 //Get comments
-export async function getComments(token: string, feedback: any) {
-  const url = `${baseUrlApi}/api/list-comments/${feedback}/`;
+export async function getComments(token: string, feedbackId: any) {
+  const url = `${baseUrlApi}/api/list-comments/${feedbackId}/`;
 
   try {
     const response = await fetch(url, {
@@ -292,8 +292,8 @@ export async function getComments(token: string, feedback: any) {
 }
 
 //Upvote comment
-export async function upvoteComment(token: string, comment: Comment) {
-  const url = `${baseUrlApi}/api/upvote-comment/${comment.id}/`;
+export async function upvoteComment(token: string, commentId: any) {
+  const url = `${baseUrlApi}/api/upvote-comments/${commentId}/`;
 
   try {
     const response = await fetch(url, {
@@ -301,7 +301,7 @@ export async function upvoteComment(token: string, comment: Comment) {
       headers: {
         "Authorization": `Token ${token}`
       },
-      body: JSON.stringify(comment)
+      body: JSON.stringify(commentId)
     });
     if (!response.ok) {
       throw new Error(`Failed to upvote comment: ${response.statusText}`);
@@ -311,6 +311,27 @@ export async function upvoteComment(token: string, comment: Comment) {
   } catch (error: any) {
       console.error(error);
       return { data: null, error: error.message };
+  }
+}
+
+export async function getUpvotesComment(token: string, commentId: any) {
+  const url = `${baseUrlApi}/api/upvote-comments/${commentId}/`;
+
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Authorization": `Token ${token}`
+      },
+    });
+    if (!response.ok) {
+      throw new Error(`Failed to get upvotes on comment: ${response.statusText}`);
+    }
+    const fetchedData = await response.json();
+    return { data: fetchedData, error: null };
+  } catch (error: any) {
+    console.error(error);
+    return { data: null, error: error.message };
   }
 }
 

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getFeedback, getUpvotesFeedback, getComments, submitComment, upvoteFeedback } from '../utils/api';
+import { getFeedback, getUpvotesFeedback, getComments, submitComment, upvoteFeedback, upvoteComment, getUpvotesComment } from '../utils/api';
 import { useToken } from '../hooks/useToken';
 import { Feedback, Comment } from '../types/types';
 
@@ -11,6 +11,29 @@ const FeedbackPage = () => {
     const [upvoteCounts, setUpvoteCounts] = useState<Record<number, number>>({});
     const [commentInputs, setCommentInputs] = useState<Record<number, string>>({});
     const [userUpvotes, setUserUpvotes] = useState<Record<number, boolean>>({});
+    const [userUpvotesComments, setUserUpvotesComments] = useState<Record<number, boolean>>({});
+    const [upvotesCommentsCounts, setUpvotesCommentsCounts] = useState<Record<number, number>>({});
+
+    async function handleUpvoteComment(commentId: number) {
+        if (!token) {
+            console.error('Token is null');
+            return;
+        }
+        if (userUpvotesComments[commentId]) {
+            console.error('User has already upvoted this comment');
+            return; 
+        }
+        try {
+            await upvoteComment(token, commentId);
+            fetchCommentsUpvotes(token, commentId);
+            setUserUpvotesComments(prevUpvotes => ({
+                ...prevUpvotes,
+                [commentId]: true
+            }));
+        } catch (error: any) {
+            setError(error.message);
+        }
+    }
 
     async function handleUpvote(feedbackId: number) {
         if (!token) {
@@ -43,17 +66,16 @@ const FeedbackPage = () => {
             const result = await getFeedback(token);
             setFeedback(result.data);
     
-            // Create a record of which feedback items the user has upvoted
-            const upvotes = {};
+            const upvotes: any = {};
             for (const item of result.data) {
                 upvotes[item.id] = item.has_upvoted;
             }
             setUserUpvotes(upvotes);
     
-            // After setting feedback, fetch upvotes for all of them
             result.data.forEach((item: Feedback) => {
                 fetchFeedbackUpvotes(token, item.id);
                 fetchComments(token, item.id);
+
             });
         } catch (error: any) {
             setError(error.message);
@@ -65,7 +87,6 @@ const FeedbackPage = () => {
     async function fetchFeedbackUpvotes(token: string, feedbackId: number) {
         try {
             const result = await getUpvotesFeedback(token, feedbackId);
-
             setUpvoteCounts(prevCounts => ({
                 ...prevCounts,
                 [feedbackId]: result.data.upvote_count,
@@ -78,9 +99,43 @@ const FeedbackPage = () => {
     async function fetchComments(token: any, feedbackId: any) {
         try {
             const result = await getComments(token, feedbackId);
+            
+            // Update comments state
             setComments(prevComments => ({
                 ...prevComments,
                 [feedbackId]: result.data,
+            }));
+    
+            const upvotes: any = {};
+    
+            // Collect all promises for fetching upvotes
+            const upvotePromises = result.data.map(async (item: Comment) => {
+                upvotes[item.id] = item.has_upvoted;
+                await fetchCommentsUpvotes(token, item.id);
+            });
+    
+            // Wait for all fetchCommentsUpvotes to finish before continuing
+            await Promise.all(upvotePromises);
+    
+            // Now update the state after all upvote data has been fetched
+            setUserUpvotesComments(prevUpvotes => ({
+                ...prevUpvotes,
+                ...upvotes
+            }));
+    
+        } catch (error: any) {
+            setError(error.message);
+        }
+    }
+    
+
+    async function fetchCommentsUpvotes(token: any, commentId: any) {
+        try {
+            const result = await getUpvotesComment(token, commentId);
+            // this is for counting upvotes
+            setUpvotesCommentsCounts(prevCounts => ({
+                ...prevCounts,
+                [commentId]: result.data.upvote_count,
             }));
             
         } catch (error: any) {
@@ -144,7 +199,7 @@ const FeedbackPage = () => {
                                 </g>
                             </svg>
                             </button>
-                            <p className='font-semibold text-lg text-green-400'>{upvoteCounts[feedbackItem.id]}</p>
+                            <p className='font-semibold text-lg '>{upvoteCounts[feedbackItem.id]}</p>
                         </div>
 
                         <h2 className=" font-semibold underline">Issue #{feedbackItem.id} at {feedbackItem.url}</h2>
@@ -178,12 +233,61 @@ const FeedbackPage = () => {
                         <div>
                             <p className='text font-semibold'>Comments</p>
                             {comments[feedbackItem.id]?.map(comment => (
-                                <div key={comment.id} className="mb-4">
+                                <div key={comment.id} className="mb-4 flex">
+                                        {/* <div className='flex'>
+                                            <p className='text-sm'> {upvotesCommentsCounts[comment.id]}</p>
+                                            <button
+                                                type="button"
+                                                onClick={() => handleUpvoteComment(comment.id)}
+                                                className={`flex items-center justify-center`}
+                                                disabled={userUpvotesComments[comment.id]}
+                                            >
+                                                <svg width="20px" height="20px" viewBox="-0.5 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                                                    <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                                                    <g id="SVGRepo_iconCarrier"> 
+                                                        <path d="M12 22.4199C17.5228 22.4199 22 17.9428 22 12.4199C22 6.89707 17.5228 2.41992 12 2.41992C6.47715 2.41992 2 6.89707 2 12.4199C2 17.9428 6.47715 22.4199 12 22.4199Z"
+                                                            stroke={userUpvotesComments[comment.id] ? "#86dcaa" : "#9f9f9f"}
+                                                            stroke-width="1.5"
+                                                            stroke-linecap="round"
+                                                            stroke-linejoin="round">
+                                                        </path> 
+                                                        <path d="M8 13.8599L10.87 10.8C11.0125 10.6416 11.1868 10.5149 11.3815 10.4282C11.5761 10.3415 11.7869 10.2966 12 10.2966C12.2131 10.2966 12.4239 10.3415 12.6185 10.4282C12.8132 10.5149 12.9875 10.6416 13.13 10.8L16 13.8599"
+                                                            stroke={userUpvotesComments[comment.id] ? "#86dcaa" : "#9f9f9f"}
+                                                            stroke-width="1.5"
+                                                            stroke-linecap="round"
+                                                            stroke-linejoin="round"></path> 
+                                                    </g>
+                                                </svg>
+
+                                            </button>
+                                        </div> */}
+                                                                <div className='items-center flex flex-col mr-2'>
+                            <button
+                                type="button"
+                                onClick={() => handleUpvoteComment(comment.id)}
+                                className={`flex items-center justify-center`}
+                                disabled={userUpvotesComments[comment.id]}
+                            >
+                            <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="15px" height="15px" viewBox="0,0,256,256">
+                                <g fillRule="nonzero" stroke="none" strokeWidth="1" strokeLinecap="butt" strokeLinejoin="miter" strokeMiterlimit="10" strokeDasharray="" strokeDashoffset="0" fontFamily="none" fontWeight="none" fontSize="none" textAnchor="none">
+                                    <g transform="scale(10.66667,10.66667)">
+                                        <path 
+                                            d="M23.86133,16.15277l-11.5,-12.00476c-0.18945,-0.19734 -0.5332,-0.19734 -0.72266,0l-11.5,12.00476c-0.1875,0.19637 -0.18457,0.50704 0.00781,0.6995l3,3.00119c0.09473,0.09476 0.21387,0.14068 0.36035,0.14654c0.13574,-0.00195 0.26367,-0.05862 0.35645,-0.15631l8.13672,-8.61865l8.13672,8.61865c0.09277,0.0977 0.2207,0.15436 0.35645,0.15631c0.00195,0 0.00488,0 0.00684,0c0.13281,0 0.25977,-0.05276 0.35352,-0.14654l3,-3.00119c0.19238,-0.19246 0.19531,-0.50313 0.00781,-0.6995z"
+                                            fill={userUpvotesComments[comment.id] ? "#86dcaa" : "#9f9f9f"}
+                                        ></path>
+                                    </g>
+                                </g>
+                            </svg>
+                            </button>
+                            <p className=' text-sm text-gray-500'>{upvotesCommentsCounts[comment.id]}</p>
+                        </div>
                                     <div>
                                     <p>
                                         <strong className='text-sm'>User {comment.user}: </strong> 
                                         <span className='text-sm text-gray-600'>{comment.comment}</span>
                                     </p>
+                                    
                                     <p className="text-xs">
                                     {new Date(comment.date).toLocaleDateString('en-US', {
                                         month: '2-digit',

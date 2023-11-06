@@ -25,7 +25,6 @@ class FeedbackListView(generics.ListAPIView):
         )
 
 
-
 class FeedbackUpvoteView(generics.GenericAPIView):
     serializer_class = FeedbackSerializer
     queryset = Feedback.objects.all()
@@ -72,7 +71,11 @@ class CommentsListView(generics.ListAPIView):
 
     def get_queryset(self):
         feedback_id = self.kwargs['pk']
-        return Comments.objects.filter(feedback__id=feedback_id)
+        user = self.request.user
+
+        return Comments.objects.filter(feedback=feedback_id).annotate(
+            has_upvoted=Exists(Upvote.objects.filter(user=user, comment=OuterRef('pk')))
+        )
 
 
 class CommentsUpvoteView(generics.GenericAPIView):

@@ -169,10 +169,11 @@ export interface Comment {
     feedback: number;
     comment: string;
     date: string;
+    has_upvoted: boolean;
 }
 
 export interface Upvote {
-    user: number;
+    user?: number;
     feedback?: number;
     comment?: number;
 }
