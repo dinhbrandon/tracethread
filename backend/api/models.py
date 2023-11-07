@@ -15,7 +15,7 @@ class Upvote(models.Model):
 
 
 class Comments(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     feedback = models.ForeignKey('Feedback', on_delete=models.CASCADE)
     comment = models.TextField()
     date = models.DateTimeField(auto_now_add=True)
