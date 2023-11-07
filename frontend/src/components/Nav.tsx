@@ -121,7 +121,7 @@ const Nav = () => {
             { loggedIn ? (
               <>
               <a className="font-medium" href={`${baseUrl}/feedback`}>Feedback Thread</a>
-              <a className="font-medium" href={`${baseUrl}/dashboard`}>Dashboard</a>
+              <a className="font-medium" href={`${baseUrl}/dashboard`}>Info</a>
               <a className="font-medium" href={`${baseUrl}/search`}>Search</a>
               <a className="font-medium" href={`${baseUrl}/jobnotebook`}>Job Notebook</a>
               

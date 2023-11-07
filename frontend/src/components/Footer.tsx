@@ -38,7 +38,7 @@ const Footer = () => {
 
     <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
       <div className="col-span-full lg:col-span-1">
-        <a className="flex-none text-xl font-semibold text-white" href="#" aria-label="Brand">Trace Thread</a>
+        <a className="flex-none text-xl font-semibold text-white" href={`${baseUrl}`} aria-label="Brand">Trace Thread</a>
       </div>
 
       <div className="col-span-1">
