@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../redux/authActions';
 import { RootState } from '../redux/store';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useState } from 'react';
 import { SubmitFeedbackProps } from '../types/types';
 import { useToken } from '../hooks/useToken';
@@ -73,10 +73,13 @@ const Nav = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const loggedIn = useSelector((state: RootState) => state.auth.loggedIn);
+  const location = useLocation();
 
   // const [isMenuOpen, toggleMenu] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const pageUrl = window.location.href;
+
+  const isActive = (path: any) => location.pathname === path;
 
   const handleLogout = () => {
     dispatch(logout());
@@ -120,11 +123,10 @@ const Nav = () => {
           <div className="flex flex-col gap-y-4 gap-x-0 mt-5 sm:flex-row sm:items-center sm:justify-end sm:gap-y-0 sm:gap-x-7 sm:mt-0 sm:pl-7">
             { loggedIn ? (
               <>
-              <a className="font-medium" href={`${baseUrl}/feedback`}>Feedback Thread</a>
-              <a className="font-medium" href={`${baseUrl}/dashboard`}>Info</a>
-              <a className="font-medium" href={`${baseUrl}/search`}>Search</a>
-              <a className="font-medium" href={`${baseUrl}/jobnotebook`}>Job Notebook</a>
-              
+                <a href={`${baseUrl}/feedback`} className={`font-medium ${isActive('/feedback') ? 'border-b-2 border-blue-500' : ''}`}>Feedback Thread</a>
+                <a href={`${baseUrl}/dashboard`} className={`font-medium ${isActive('/dashboard') ? 'border-b-2 border-blue-500' : ''}`}>Info</a>
+                <a href={`${baseUrl}/search`} className={`font-medium ${isActive('/search') ? 'border-b-2 border-blue-500' : ''}`}>Search</a>
+                <a href={`${baseUrl}/jobnotebook`} className={`font-medium ${isActive('/jobnotebook') ? 'border-b-2 border-blue-500' : ''}`}>Job Notebook</a>
               </>
             ) : <></>}
             
