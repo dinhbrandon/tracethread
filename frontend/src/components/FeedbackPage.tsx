@@ -13,6 +13,20 @@ const FeedbackPage = () => {
     const [userUpvotes, setUserUpvotes] = useState<Record<number, boolean>>({});
     const [userUpvotesComments, setUserUpvotesComments] = useState<Record<number, boolean>>({});
     const [upvotesCommentsCounts, setUpvotesCommentsCounts] = useState<Record<number, number>>({});
+    const [statusFilter, setStatusFilter] = useState<'active' | 'closed'>('active');
+    const [sortOption, setSortOption] = useState<'newest' | 'oldest' | 'highestUpvotes'>('newest');
+
+    const sortedFeedback = [...feedback].sort((a, b) => {
+        switch (sortOption) {
+            case 'newest':
+                return new Date(b.date).getTime() - new Date(a.date).getTime();
+            case 'oldest':
+                return new Date(a.date).getTime() - new Date(b.date).getTime();
+            case 'highestUpvotes':
+                return upvoteCounts[b.id] - upvoteCounts[a.id];
+        }
+    }
+    );
 
     async function handleUpvoteComment(commentId: number) {
         if (!token) {
@@ -174,12 +188,28 @@ const FeedbackPage = () => {
 
 
     return (
-        <div className="bg-gray-100 min-h-screen p-6">
-            <h1 className="text-center text-3xl font-semibold mb-6">Feedback Page</h1>
+        <div className="bg-gray-50 min-h-screen p-6">
+            <h1 className="text-center text-3xl font-semibold mb-6">Feedback</h1>
             {error && <p className="text-center text-red-500">{error}</p>}
 
             <div className="max-w-screen-md mx-auto space-y-6">
-                {feedback.map(feedbackItem => (
+            <div className='flex justify-between mb-2'>
+                <div className="flex space-x-1 font-semibold text-gray-500">
+                    <button onClick={() => setStatusFilter('active')} className={`${statusFilter === 'active' ? 'underline' : ''}`}>Active</button>
+                    <p>|</p>
+                    <button onClick={() => setStatusFilter('closed')} className={`${statusFilter === 'closed' ? 'underline' : ''}`}>Resolved</button>
+                </div>
+
+                <div className='flex items-center'>
+                    <p className='text-gray-500 mr-2'>Sort by:</p>
+                    <select className='border bg-white text-gray-500' onChange={(e) => setSortOption(e.target.value as 'newest' | 'oldest' | 'highestUpvotes')} value={sortOption}>
+                        <option value="newest">Newest</option>
+                        <option value="oldest">Oldest</option>
+                        <option value="highestUpvotes">Highest Upvotes</option>
+                    </select>
+                </div>
+            </div>
+            {sortedFeedback.filter(item => item.status === statusFilter).map(feedbackItem => (
                     <div key={feedbackItem.id} className="bg-white shadow-lg p-6 rounded-lg relative">
                         <div className='absolute top-5 right-4 flex flex-col items-center'>
                             <button
@@ -234,7 +264,7 @@ const FeedbackPage = () => {
                             <p className='text font-semibold'>Comments</p>
                             {comments[feedbackItem.id]?.map(comment => (
                                 <div key={comment.id} className="mb-4 flex">
-                                                                <div className='items-center flex flex-col mr-2'>
+                                <div className='items-center flex flex-col mr-2'>
                             <button
                                 type="button"
                                 onClick={() => handleUpvoteComment(comment.id)}

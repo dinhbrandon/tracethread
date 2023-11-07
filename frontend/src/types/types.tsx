@@ -159,6 +159,7 @@ export interface Feedback {
     url: string;
     feedback: string;
     screenshot: string;
+    status: string;
     date: string;
     comments?: Comment[];
 }

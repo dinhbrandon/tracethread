@@ -29,10 +29,15 @@ class Comments(models.Model):
 
 
 class Feedback(models.Model):
+    STATUS_CHOICES = [
+        ('active', 'Active'),
+        ('closed', 'Closed')
+    ]
     url = models.URLField(max_length=2000)
     feedback = models.TextField()
     screenshot = models.ImageField(upload_to='feedback', null=True, blank=True)
     date = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='active')
 
     @property
     def comments(self):

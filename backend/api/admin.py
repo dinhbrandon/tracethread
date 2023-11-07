@@ -26,7 +26,8 @@ def get_api_base_url():
 
 @admin.register(Feedback)
 class FeedbackAdmin(admin.ModelAdmin):
-    list_display = ('url', 'feedback', 'display_screenshot', 'date', 'screenshot')
+    list_display = ('url', 'feedback', 'display_screenshot', 'date', 'status', 'screenshot')
+    list_editable = ('status',)
     list_per_page = 25
 
     def display_screenshot(self, obj):
