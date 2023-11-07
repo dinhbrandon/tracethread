@@ -541,7 +541,12 @@ useEffect(() => {
     <div className="fixed flex items-center justify-center z-50">
       <div className="fixed inset-0 bg-gray-500 bg-opacity-50"></div>
         <div className="md:max-w-[800px] md:max-h-[600px] overflow-auto bg-white p-4 flex flex-col rounded-lg shadow-md z-10">
-            <h3 className="text-xl font-bold mb-4">Add New Card</h3>
+            <div className='flex justify-between'>
+              <h3 className="text-xl font-bold mb-4">Add New Card</h3>
+              <button onClick={() => {setIsAddCardModalOpen(false); setNewCardData(null);}} className="mb-2 py-2 px-3 rounded-md border font-medium text-gray-700 bg-white align-middle hover:bg-gray-50 transition-all text-sm">
+                  Close
+              </button>
+            </div>
             <form onSubmit={handleAddCardSubmit}>
               <div>
                   {/* Existing Fields */}
