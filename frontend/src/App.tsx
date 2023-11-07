@@ -46,7 +46,7 @@ function App() {
                 <Route path="/" element={<Home />} />
                 <Route path="/signup" element={<SignUpForm toggleSignUpModal={toggleSignUpModal} toggleLoginModal={toggleLoginModal} />} />
                 <Route path="/login" element={<LoginForm toggleSignUpModal={toggleSignUpModal} toggleLoginModal={toggleLoginModal} />} />
-                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/info" element={<Dashboard />} />
                 <Route path="/jobnotebook" element={<JobNotebook />} />
                 <Route path="/editcolumns" element={<EditColumns />} />
                 <Route path="/search" element={<JobSearch />} />

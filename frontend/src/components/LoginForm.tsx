@@ -55,7 +55,7 @@ const LoginForm = forwardRef<HTMLDivElement, SignupLoginProps>((props: SignupLog
   //navigates the user if login was successful
   useEffect(() => {
     if (loggedIn) {
-      navigate('/dashboard');
+      navigate('/info');
     }
   }, [loggedIn, navigate]);
 

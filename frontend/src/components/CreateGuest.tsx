@@ -38,7 +38,7 @@ const GuestLoginButton = ( {loadWheel}: any ) => {
         if (response.ok) {
             try {
                 await dispatch(loginUser(email, guestPassword));
-                navigate('/dashboard');
+                navigate('/info');
             } catch (error) {
                 console.error('Login Error:', error);
             }

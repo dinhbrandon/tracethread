@@ -126,8 +126,8 @@ const Nav = () => {
           <div className="flex flex-col gap-y-4 gap-x-0 mt-5 sm:flex-row sm:items-center sm:justify-end sm:gap-y-0 sm:gap-x-7 sm:mt-0 sm:pl-7">
             {loggedIn ? (
               <>
+                <a href={`${baseUrl}/info`} className={`font-medium ${isActive('/info') ? 'border-b-2 border-blue-500' : ''}`}>Info</a>
                 <a href={`${baseUrl}/feedback`} className={`font-medium ${isActive('/feedback') ? 'border-b-2 border-blue-500' : ''}`}>Feedback Thread</a>
-                <a href={`${baseUrl}/dashboard`} className={`font-medium ${isActive('/dashboard') ? 'border-b-2 border-blue-500' : ''}`}>Info</a>
                 <a href={`${baseUrl}/search`} className={`font-medium ${isActive('/search') ? 'border-b-2 border-blue-500' : ''}`}>Search</a>
                 <a href={`${baseUrl}/jobnotebook`} className={`font-medium ${isActive('/jobnotebook') ? 'border-b-2 border-blue-500' : ''}`}>Job Notebook</a>
               </>

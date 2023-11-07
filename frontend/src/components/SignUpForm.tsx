@@ -113,7 +113,7 @@ const SignUpForm = forwardRef<HTMLDivElement, SignupLoginProps>((props: SignupLo
               try {                 
                   await dispatch(loginUser(formData.email, formData.password));
                   setLoading(false)
-                  navigate('/dashboard');
+                  navigate('/info');
               } catch (error) {
                   console.error('Login Error:', error);
                   setLoading(false)
@@ -130,7 +130,7 @@ const SignUpForm = forwardRef<HTMLDivElement, SignupLoginProps>((props: SignupLo
 
     useEffect(() => {
       if (loggedIn) {
-        navigate('/dashboard');
+        navigate('/info');
       }
     }, [loggedIn, navigate]);
   
