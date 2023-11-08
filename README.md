@@ -2,6 +2,8 @@
 
 Trace Thread draws its name from the legendary tale where a thread helped navigate a complex maze, symbolizing the often convoluted journey junior tech professionals embark on during their job search.
 
+Deployed site: https://tracethread.com
+
 ## Core Objective
 
 To provide a comprehensive platform for tech job seekers, particularly those at the early stage of their careers. It provides an advanced querying system for a nuanced job database search, robust data visualization to assist in matching roles to skillsets, and a machine learning mechanism to align job listings with applicants' resumes.
