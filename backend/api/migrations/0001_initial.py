@@ -15,7 +15,7 @@ class Migration(migrations.Migration):
             name='Feedback',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('url', models.CharField(max_length=200)),
+                ('url', models.URLField(max_length=2000)),
                 ('feedback', models.TextField()),
                 ('screenshot', models.ImageField(blank=True, null=True, upload_to='feedback')),
                 ('date', models.DateTimeField(auto_now_add=True)),

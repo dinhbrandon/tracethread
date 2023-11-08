@@ -9,7 +9,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('api', '0007_feedback_latest'),
+        ('api', '0004_feedback_upvotes_comments'),
     ]
 
     operations = [

@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0008_alter_comments_user'),
+        ('api', '0005_alter_comments_user'),
     ]
 
     operations = [
