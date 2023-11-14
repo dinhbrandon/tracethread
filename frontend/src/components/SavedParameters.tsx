@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useToken } from '../hooks/useToken';
+import { useNavigate } from 'react-router-dom';
 import { SavedSearchParameters, SavedParametersProps } from '../types/types';
 const baseUrlApi = import.meta.env.VITE_API_BASE_URL;
 
@@ -9,6 +10,7 @@ const SavedParameters: React.FC<SavedParametersProps> = ({ isVisible, onSearch, 
         return null;
     }
 
+    const navigate = useNavigate();
     const [savedParametersState, setSavedParameters] = useState<SavedSearchParameters[]>([]);
     const [deletingRows, setDeletingRows] = useState<number[]>([]);
     const token = useToken();
@@ -56,6 +58,12 @@ const SavedParameters: React.FC<SavedParametersProps> = ({ isVisible, onSearch, 
     useEffect(() => {
         getParametersFromUser();
     }, [refreshKey]);
+
+    useEffect(() => {
+        if (!token) {
+          navigate('/login');
+        }
+      }, [token, navigate]);
 
     return (
         <div className="flex flex-col items-center h-screen">

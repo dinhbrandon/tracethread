@@ -3,6 +3,7 @@ import { CustomQueryBuilderProps, SearchFormProps, Condition, LogicCard } from '
 import { useToken } from '../hooks/useToken';
 import SavedParameters from './SavedParameters';
 import { SavedSearchParameters } from '../types/types';
+import { useNavigate } from 'react-router-dom';
 
 // const baseUrl = import.meta.env.VITE_BASE_URL;
 const baseUrlApi = import.meta.env.VITE_API_BASE_URL;
@@ -237,7 +238,14 @@ const customEncodeURIComponent = (str: string): string => {
             setSavedFilter(true);
             setSavedSearchName('');
         };
+
+        const navigate = useNavigate();
         
+        useEffect(() => {
+            if (!token) {
+              navigate('/login');
+            }
+          }, [token, navigate]);
 
 
         // BELOW IS THE JSX (UI DISPLAY) FOR THE CUSTOM QUERY BUILDER

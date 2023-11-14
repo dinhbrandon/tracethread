@@ -1,12 +1,14 @@
-// import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 // import { SavedSearchParameters } from '../types/types';
-// import { useToken } from '../hooks/useToken';
+import { useToken } from '../hooks/useToken';
 
 const Dashboard: React.FC = () => {
   // const baseUrlApi = import.meta.env.VITE_API_BASE_URL;
   const baseUrl = import.meta.env.VITE_BASE_URL;
   //   const [savedParameters, setSavedParameters] = useState<SavedSearchParameters[]>([]);
-  //   const token = useToken();
+    const token = useToken();
+    const navigate = useNavigate();
 
 
   //   async function getParametersFromUser() {
@@ -47,6 +49,11 @@ const Dashboard: React.FC = () => {
   //   useEffect(() => {
   //       getParametersFromUser();   
   //   }, []); 
+  useEffect(() => {
+    if (!token) {
+      navigate('/login');
+    }
+  }, [token, navigate]);
 
     return (
         // <!-- Icon Blocks -->

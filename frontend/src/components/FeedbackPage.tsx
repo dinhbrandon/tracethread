@@ -2,9 +2,11 @@ import { useState, useEffect } from 'react';
 import { getFeedback, getUpvotesFeedback, getComments, submitComment, upvoteFeedback, upvoteComment, getUpvotesComment } from '../utils/api';
 import { useToken } from '../hooks/useToken';
 import { Feedback, Comment } from '../types/types';
+import { useNavigate } from 'react-router-dom';
 
 const FeedbackPage = () => {
     const token = useToken();
+    const navigate = useNavigate();
     const [feedback, setFeedback] = useState<Feedback[]>([]);
     const [error, setError] = useState<string | null>(null);
     const [comments, setComments] = useState<Record<number, Comment[]>>({});
@@ -185,6 +187,12 @@ const FeedbackPage = () => {
     useEffect(() => {
         fetchFeedback();
     }, [token]);
+
+    useEffect(() => {
+        if (!token) {
+          navigate('/login');
+        }
+      }, [token, navigate]);
 
 
     return (

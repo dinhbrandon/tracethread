@@ -194,6 +194,12 @@ const EditColumns = () => {
         fetchCards();
     }, [token]);
 
+    useEffect(() => {
+        if (!token) {
+          navigate('/login');
+        }
+      }, [token, navigate]);
+
   return (
     <div>
       {isModalOpen && 

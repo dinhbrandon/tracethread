@@ -8,11 +8,13 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import JobNotebookSearch from './JobNotebookSearch';
 import TimeSince from './TimeSince';
 import { createCard } from '../utils/api.tsx';
+import { useNavigate } from 'react-router-dom';
 
 const baseUrlApi = import.meta.env.VITE_API_BASE_URL;
 
 const JobNotebook: React.FC = () => {
   const token = useToken();
+  const navigate = useNavigate();
   const [columns, setColumns] = useState<Columns[]>([]);
   const [cards, setCards] = useState<Card[]>([]);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -327,6 +329,12 @@ useEffect(() => {
     getColumns();
     getCards();
   }, [])
+
+  useEffect(() => {
+    if (!token) {
+      navigate('/login');
+    }
+  }, [token, navigate]);
 
   //useEffect for closing the modal when clicked outside
   useEffect(() => {

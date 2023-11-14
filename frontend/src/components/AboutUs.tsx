@@ -62,10 +62,10 @@ const AboutUs = () => {
                     </div>
                     <div className='mb-10'>
                     <p className="mt-3 text-gray-500">
-                    My name is Dara Karbassioon, and I am a full stack developer with a passion for creating innovative and effective solutions to complex technical challenges. I have a strong expertise in using a range of modern tools and technologies, including React, Tailwind CSS, Node.js, and Next.js, to develop high-quality, scalable, and maintainable code.
+                    My name is Dara Karbassioon, and I am a full stack developer with a passion for creating innovative and effective solutions to complex technical challenges. I have a strong expertise in using a range of modern tools and technologies, including React, Tailwind CSS, Django, and Next.js, to develop high-quality, scalable, and maintainable code.
                     </p>
                     <p className='mt-5 text-gray-500'>
-                    Having lived in Japan, I am also fluent in Japanese, which enables me to effectively collaborate with Japanese-speaking teams. Let's connect!
+                    Having lived in Japan, I am also fluent in Japanese, which enables me to effectively collaborate with Japanese-speaking teams.
                     </p>
                     </div>
               <div className="mt-3 space-x-1 absolute bottom-2 left-6">
