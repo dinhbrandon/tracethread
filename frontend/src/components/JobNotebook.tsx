@@ -334,7 +334,7 @@ useEffect(() => {
     if (!token) {
       navigate('/login');
     }
-  }, [token, navigate]);
+  }, [token]);
 
   //useEffect for closing the modal when clicked outside
   useEffect(() => {

@@ -63,7 +63,7 @@ const SavedParameters: React.FC<SavedParametersProps> = ({ isVisible, onSearch, 
         if (!token) {
           navigate('/login');
         }
-      }, [token, navigate]);
+      }, [token]);
 
     return (
         <div className="flex flex-col items-center h-screen">

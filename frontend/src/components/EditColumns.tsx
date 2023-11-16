@@ -198,7 +198,7 @@ const EditColumns = () => {
         if (!token) {
           navigate('/login');
         }
-      }, [token, navigate]);
+      }, [token]);
 
   return (
     <div>

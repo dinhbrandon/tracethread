@@ -192,7 +192,7 @@ const FeedbackPage = () => {
         if (!token) {
           navigate('/login');
         }
-      }, [token, navigate]);
+      }, [token]);
 
 
     return (

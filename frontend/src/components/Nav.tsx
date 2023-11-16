@@ -93,6 +93,7 @@ const Nav = () => {
       <nav className="relative w-full mx-auto px-4 sm:flex sm:items-center sm:justify-between sm:px-6 lg:px-8" aria-label="Global">
         <div className='flex items-center justify-between'>
           <a className="flex-none text-xl font-semibold whitespace-nowrap text-gray-700" href={baseUrl} aria-label="Tracethread">Trace Thread BETA</a>
+          { loggedIn ? 
           <div className='lg:ml-10'>
               <button
                 onClick={() => setModalOpen(true)}
@@ -105,7 +106,7 @@ const Nav = () => {
                 <span className='whitespace-nowrap'>Fix/Suggestions</span>
               </button>
               <SubmitFeedback isOpen={modalOpen} onClose={() => setModalOpen(false)} pageUrl={pageUrl} />
-          </div>
+          </div> : null }
           <div className="flex justify-between items-center">
             <div className='flex justify-between'>
               <div className="sm:hidden">

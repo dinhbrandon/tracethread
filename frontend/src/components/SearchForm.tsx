@@ -245,7 +245,7 @@ const customEncodeURIComponent = (str: string): string => {
             if (!token) {
               navigate('/login');
             }
-          }, [token, navigate]);
+          }, [token]);
 
 
         // BELOW IS THE JSX (UI DISPLAY) FOR THE CUSTOM QUERY BUILDER

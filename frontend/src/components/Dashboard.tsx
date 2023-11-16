@@ -53,7 +53,7 @@ const Dashboard: React.FC = () => {
     if (!token) {
       navigate('/login');
     }
-  }, [token, navigate]);
+  }, [token]);
 
     return (
         // <!-- Icon Blocks -->
