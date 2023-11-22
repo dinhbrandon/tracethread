@@ -42,11 +42,12 @@ load_dotenv()
 def setup_driver():
     options = webdriver.ChromeOptions()
     options.add_argument("--start-maximized")
-    path_to_chromedriver = os.environ['CHROMEDRIVER_PATH']
-    service = Service(executable_path=path_to_chromedriver)
-    driver = webdriver.Chrome(service=service, options=options)
+    # path_to_chromedriver = os.environ['CHROMEDRIVER_PATH']
+    # print(f"*****Using chromedriver at {path_to_chromedriver}*****")
+    # service = Service(executable_path=path_to_chromedriver)
+    # print(f"*****Using chromedriver at {service}*****")
+    driver = webdriver.Chrome(options=options)
     return driver
-
 
 def navigate_to_url(driver):
     # BASE_URL = 'https://www.linkedin.com/jobs/search?keywords={job_role}&location=United%20States&geoId=103644278&f_TPR=r604800&position=1&pageNum=0'
@@ -132,7 +133,8 @@ def extract_job_data(driver, processed_links):
                 
                 # Extracting description
                 description_element = soup.find('div', {'class': 'description__text'})
-                job_data['description'] = description_element.text.strip() if description_element else None
+                print(description_element.text)
+                job_data['description'] = str(description_element).strip() if description_element else None
 
                 # Extracting location
                 location_element = soup.find('span', {'class': 'topcard__flavor topcard__flavor--bullet'})
@@ -186,11 +188,13 @@ def extract_job_data(driver, processed_links):
 
                 except Exception as e:
                     print(f"Error while processing job listing {job_link}: {e}")
+                    driver.switch_to.window(driver.window_handles[0])
 
                 yield job_data
                 processed_links.add(job_link)
         except StaleElementReferenceException as e:
             print(f"Error while processing job listing {job_link}: {e}. Skipping...")
+            driver.switch_to.window(driver.window_handles[0])
             continue
     return processed_links
 

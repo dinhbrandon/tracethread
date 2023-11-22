@@ -28,6 +28,7 @@ services:
       dockerfile: ./Dockerfile.dev
     volumes:
       - ./backend:/app
+      - /Users/brandon/webdriver/chromedriver:/usr/bin/chromedriver
     ports:
       - "8000:8000" 
     depends_on:
