@@ -1,5 +1,3 @@
-// import { Feedback, Comment } from "../types/types";
-
 const baseUrlApi = import.meta.env.VITE_API_BASE_URL;
 
 export async function getColumns(token: string) {
@@ -147,6 +145,26 @@ export async function saveColumnOrder(columns: Array<{ id: number; order: number
   }
 }
 
+export async function editCardColumn(cardId: number, newColumnId: number, newOrder: number, timestamp: Date, token: string) {
+  const response = await fetch(`${baseUrlApi}/jobnotebook/cards/${cardId}/change-column`, {
+      method: 'PATCH',
+      headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Token ${token}`
+      },
+      body: JSON.stringify({
+          new_column_id: newColumnId,
+          order: newOrder,
+          timestamp: timestamp
+      })
+  });
+  if (response.ok) {
+      getCards(token || '');
+  } else {
+      console.error('Failed to update column.');
+  }
+}
+
 
 //card api calls
 
@@ -199,6 +217,35 @@ export async function getCards(token: string, columnId?: number) {
         return { data: null, error: error.message };
     }
 }
+
+//function to delete cards
+export const deleteCard = async (token: string, cardId: number, jobId?: number) => {
+  const cardUrl = `${baseUrlApi}/jobnotebook/delete-card/${cardId}`;
+
+  let response = await fetch(cardUrl, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Token ${token}`
+    },
+  });
+
+  // If card deletion is successful and jobId exists, proceed to delete the job
+  if (response.ok && jobId) {
+    const jobUrl = `${baseUrlApi}/querier/delete-jobsaved/${jobId}`;
+
+    response = await fetch(jobUrl, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Token ${token}`
+      },
+    });
+  }
+
+  return response.ok;
+};
+
 
 //Feedback api calls
 

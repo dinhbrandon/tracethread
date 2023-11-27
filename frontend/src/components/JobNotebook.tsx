@@ -9,6 +9,7 @@ import JobNotebookSearch from './JobNotebookSearch';
 import TimeSince from './TimeSince';
 import { createCard } from '../utils/api.tsx';
 import { useNavigate } from 'react-router-dom';
+import { getColumns,getCards } from '../utils/api.tsx';
 
 const baseUrlApi = import.meta.env.VITE_API_BASE_URL;
 
@@ -52,7 +53,7 @@ const JobNotebook: React.FC = () => {
   }
   
 
-  const onDragEnd = async (result: any, columnsArray: any, setColumns: any) => {
+  const onDragEnd = async (result: any, columnsArray: Columns[], setColumns: React.Dispatch<React.SetStateAction<Columns[]>>) => {
 
     if (!result.destination) return;
     const { source, destination } = result;
@@ -102,14 +103,6 @@ const JobNotebook: React.FC = () => {
     setIsModalOpen(false);
     setSelectedCard(null);
   }
-
-
-  // function closeEditModal() {
-  //   setIsNotesModalOpen(false);
-  //   setCurrentCardId(null);
-  //   setCurrentNotes("");
-  // }
-
 
   async function getColumns() {
     const url = `${baseUrlApi}/jobnotebook/columns`;
@@ -309,7 +302,7 @@ function openNewCardModal(columnId: number) {
 
 
 
-
+//runs when you update notes
 useEffect(() => {
   setSelectedCard(prevState => {
     if (prevState) {
@@ -439,9 +432,6 @@ useEffect(() => {
                           )}
                         </Draggable>
                       )
-                      
-                      
-
                     })}
                     {provided.placeholder}
                   </div>
