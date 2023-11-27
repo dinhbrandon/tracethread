@@ -71,7 +71,7 @@ const SearchResults = ({ encodedQuery }: SearchResultsProps) => {
                 setExpandedJobId(null);
                 setTimeout(() => {
                     setExpandedJobId(jobId);
-                }, 200);
+                }, 500);
             } else {
                 setExpandedJobId(jobId);
             }
@@ -182,10 +182,10 @@ const SearchResults = ({ encodedQuery }: SearchResultsProps) => {
                     <tr>
                         <td colSpan={6}>
                             <div 
-                                className={`transition-all ease-in-out duration-500 overflow-hidden 
-                                            ${expandedJobId === job.id ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-70'}`}
+                                className={`transition-all ease-in-out duration-500 bg-white 
+                                            ${expandedJobId === job.id ? 'max-h-[3000px] opacity-100 visible py-2' : 'max-h-0 opacity-0 overflow-hidden py-0'}`}
                             >
-                                <p className="text-left font-semibold text-gray-700 mb-2 mt-2">Job Description</p>
+                                <p className="text-left font-semibold text-gray-700 mb-2">Job Description</p>
                                 <p className="text-sm text-gray-600" dangerouslySetInnerHTML={{ __html: job.description }}></p>
 
                                 <button className="m-1 py-2 px-3 rounded-md border font-medium bg-white text-gray-700 align-middle hover:bg-gray-50 transition-all text-sm">
