@@ -117,17 +117,9 @@ const JobNotebook: React.FC = () => {
     setColumns(fetchedData);
   }
 
-  async function getCards() {
-    const url = `${baseUrlApi}/jobnotebook/cards`;
-    const response = await fetch(url, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Token ${token}`
-      },
-    });
-    const fetchedData = await response.json();
-    setCards(fetchedData);
+  async function handleCards() {
+    const result = await getCards(token || '');
+    setCards(result.data);
   }
 
   async function deleteCard(e: React.FormEvent, cardId: number, jobId?: number) {
@@ -163,7 +155,7 @@ const JobNotebook: React.FC = () => {
     // If the final response is successful, refresh the UI
     if (response.ok) {
       closeCardModal();
-      getCards();
+      handleCards();
     } else {
       // Handle errors as needed
       console.error('An error occurred while deleting the card or job.');
@@ -194,7 +186,7 @@ const JobNotebook: React.FC = () => {
           return prevState;
         });
 
-        getCards();
+        handleCards();
       } else {
         console.error('Failed to update notes.');
       }
@@ -220,7 +212,7 @@ const JobNotebook: React.FC = () => {
     //     timestamp: timestamp
     // };
     if (response.ok) {
-        getCards();
+        handleCards();
     } else {
         console.error('Failed to update column.');
     }
@@ -320,7 +312,7 @@ useEffect(() => {
 
   useEffect(() => {
     getColumns();
-    getCards();
+    handleCards();
   }, [])
 
   useEffect(() => {
