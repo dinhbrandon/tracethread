@@ -62,6 +62,22 @@ const SearchResults = ({ encodedQuery }: SearchResultsProps) => {
     const currentItems = results.slice(indexOfFirstItem, indexOfLastItem);
     const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
+    const handleRowClick = (jobId: number) => {
+        if (expandedJobId === jobId) {
+            setExpandedJobId(null);
+        } else {
+
+            if (expandedJobId !== null) {
+                setExpandedJobId(null);
+                setTimeout(() => {
+                    setExpandedJobId(jobId);
+                }, 200);
+            } else {
+                setExpandedJobId(jobId);
+            }
+        }
+    };
+
   
 
     const pageNumbers = [];
@@ -151,7 +167,7 @@ const SearchResults = ({ encodedQuery }: SearchResultsProps) => {
                         <tr 
                         className={`cursor-pointer border-b 
                         ${expandedJobId === job.id ? 'bg-gray-100' : 'bg-white hover:bg-gray-50'}`}
-                        onClick={() => setExpandedJobId(expandedJobId === job.id ? null : job.id)}
+                        onClick={() => handleRowClick(job.id)}
                     >
                         <td className="pr-0">
                             <img src={job.company_logo} alt="Company Logo" className="object-cover mx-auto"/>
