@@ -91,7 +91,7 @@ const JobNotebook: React.FC = () => {
     }) as Columns[];
 
     setColumns(updatedColumnsArray);
-    getColumns();
+    handleColumns();
   };
 
   function openCardModal(card: Card) {
@@ -104,17 +104,9 @@ const JobNotebook: React.FC = () => {
     setSelectedCard(null);
   }
 
-  async function getColumns() {
-    const url = `${baseUrlApi}/jobnotebook/columns`;
-    const response = await fetch(url, {
-        method: "GET",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Token ${token}`
-        },
-    });
-    const fetchedData = await response.json();
-    setColumns(fetchedData);
+  async function handleColumns() {
+    const result = await getColumns(token || '');
+    setColumns(result.data);
   }
 
   async function handleCards() {
@@ -311,7 +303,7 @@ useEffect(() => {
 
 
   useEffect(() => {
-    getColumns();
+    handleColumns();
     handleCards();
   }, [])
 
