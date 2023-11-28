@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { useToken } from '../hooks/useToken';
 import { JobListing, SearchResultsProps } from '../types/types';
 import TimeSince from "./TimeSince";
