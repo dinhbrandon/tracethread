@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useToken } from '../hooks/useToken';
 import { JobListing, SearchResultsProps } from '../types/types';
 import TimeSince from "./TimeSince";
@@ -61,6 +61,24 @@ const SearchResults = ({ encodedQuery }: SearchResultsProps) => {
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
     const currentItems = results.slice(indexOfFirstItem, indexOfLastItem);
     const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+
+    const handleRowClick = (jobId: number) => {
+        if (expandedJobId === jobId) {
+            setExpandedJobId(null);
+        } else {
+
+            if (expandedJobId !== null) {
+                setExpandedJobId(null);
+                setTimeout(() => {
+                    setExpandedJobId(jobId);
+                }, 500);
+            } else {
+                setExpandedJobId(jobId);
+            }
+        }
+    };
+
+  
 
     const pageNumbers = [];
     for (let i = 1; i <= Math.ceil(results.length / itemsPerPage); i++) {
@@ -149,7 +167,7 @@ const SearchResults = ({ encodedQuery }: SearchResultsProps) => {
                         <tr 
                         className={`cursor-pointer border-b 
                         ${expandedJobId === job.id ? 'bg-gray-100' : 'bg-white hover:bg-gray-50'}`}
-                        onClick={() => setExpandedJobId(expandedJobId === job.id ? null : job.id)} // Toggle the expanded job ID on row click
+                        onClick={() => handleRowClick(job.id)}
                     >
                         <td className="pr-0">
                             <img src={job.company_logo} alt="Company Logo" className="object-cover mx-auto"/>
@@ -164,11 +182,12 @@ const SearchResults = ({ encodedQuery }: SearchResultsProps) => {
                     <tr>
                         <td colSpan={6}>
                             <div 
-                                className={`transition-all ease-in-out duration-500 overflow-hidden 
-                                            ${expandedJobId === job.id ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-70'}`}
+                                className={`transition-all ease-in-out duration-500 bg-white 
+                                            ${expandedJobId === job.id ? 'max-h-[3000px] opacity-100 visible py-2' : 'max-h-0 opacity-0 overflow-hidden py-0'}`}
                             >
-                                <p className="text-left font-semibold text-gray-700 mb-2 mt-2">Job Description</p>
-                                <p className="text-sm text-gray-600">{job.description}</p>
+                                <p className="text-left font-semibold text-gray-700 mb-2">Job Description</p>
+                                <p className="text-sm text-gray-600" dangerouslySetInnerHTML={{ __html: job.description }}></p>
+
                                 <button className="m-1 py-2 px-3 rounded-md border font-medium bg-white text-gray-700 align-middle hover:bg-gray-50 transition-all text-sm">
                                     <a href={job.url} target="_blank" rel="noreferrer">Apply</a>
                                 </button>

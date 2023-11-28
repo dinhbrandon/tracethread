@@ -117,7 +117,7 @@ const handleSearchButtonClick = () => {
         value={searchText}
         onChange={handleSearchTextChange}
         className="py-2 px-3 pl-11 block w-full border-gray-200 shadow-sm rounded-md text-sm"
-        placeholder="Search"
+        placeholder="e.g. Software Engineer"
         disabled={isSimpleSearchLocked}
       />
       <div className="absolute inset-y-0 left-0 flex items-center pl-4">
