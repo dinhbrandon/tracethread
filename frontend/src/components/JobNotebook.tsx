@@ -471,8 +471,8 @@ useEffect(() => {
         </div>
       </div>
       
-      <div><strong>Location:</strong> {selectedCard.job_saved?.job_listing?.location || selectedCard.location}</div>
-      <div><strong>Description:</strong> {selectedCard.job_saved?.job_listing?.description || selectedCard.description}</div>
+      <div className='mb-5'><strong>Location:</strong> {selectedCard.job_saved?.job_listing?.location || selectedCard.location}</div>
+      <div dangerouslySetInnerHTML={{ __html: selectedCard.job_saved?.job_listing?.description || selectedCard.description || '' }}></div>
       
       <div className='mt-5'>
   <strong>Notes:</strong>
